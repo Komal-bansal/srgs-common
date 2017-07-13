@@ -1,0 +1,66 @@
+<div class="profile">
+  <div class="row">
+    <a data-toggle="modal" data-target="#myModal"> <img src="{{lg.getData('picUrl')}}" class= "profile-picture"></a>
+  </div>
+  <div class="row">
+    <div class="name" name="name">{{name}}({{nickName}})</div>
+  </div>
+    <div class="row">
+    <div class="role" name="role">{{role}}</div>
+  </div>
+    <div class="row">
+    <div class="email" name="email">{{email}}</div><hr class="style-line">
+  </div>
+  <div class="row">
+      <div class="col-sm-4">
+        <div class="row">
+        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/add-circular']">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+        </div>
+        <div class="row">Add Circular</div>
+      </div>
+      <div class="col-sm-4">
+        <div class="row">
+        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/homework-add']">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+        </div>
+        <div class="row">Add Homework</div>
+      </div>
+      <div class="col-sm-4">
+        <div class="row">
+        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/suggestion-add']">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+        </div>
+        <div class="row">Add Suggestion</div>
+      </div>
+</div>
+</div>
+<br>
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Update Modal content-->
+   <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Update Profile Picture </h4>
+      </div>
+      <form [formGroup]="uploadPicForm" (submit)="submitAccountDetails(d)">
+        <div class="modal-body">
+          <div class="row text-center">
+            <loader [condition]="loader"></loader>
+          </div>
+          <div class="form-group">
+        <input type="file" class="form-control-file" accept="image/*" formControlName="imgFile" id="exampleInputFile" aria-describedby="fileHelp" (change)="getFile($event)">
+      </div>
+        </div>
+        <div class="modal-footer">
+          <button type="Submit" class="btn btn-default">Submit</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

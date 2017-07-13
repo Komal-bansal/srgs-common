@@ -1,0 +1,271 @@
+<div class="tab-pane">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="add-button">
+        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/suggestion-add']" style="border-radius:15px !important">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+      </div>
+    <!-- <div class="form-group row">
+      <div class="col-lg-12">
+        <input class="form-control" type="search" placeholder="Search by suggestion title .,. " id="example-search-input">
+      </div>
+    </div> -->
+
+    <div style="text-align: center" *ngIf="EmptyComplaints"><b>No Suggestion added by you</b></div>
+    <!--cards -->
+  <div style="margin-top: 2%;padding-top: 1%;">
+    <div class="container card" *ngFor="let c of complaints; let i = index;">
+      <div class="row">
+        <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(c)" data-toggle="modal" data-target="#myModal-card"></span>
+      </div>
+      <!--<div class="row">
+        <div class="col-sm-6" *ngIf="!complaintStatus">
+          <span [style.background]="c.statusColor" class="badge">{{c.statusName}}</span>
+        </div>
+        <div class="col-sm-6">{{c.priorityName}}</div>
+      </div>-->
+      <div class="row">
+        <img class="image" [attr.src]="fileUrl + c.studentPicUrl">
+      </div>
+      <div class="row name">{{c.studentName}}</div>
+      <div class="row class">{{c.standardName}}</div><hr class="style-line">
+      <div class="row title">{{c.title}}</div>
+      <!--<div class="row">
+        <div class="col-sm-6 col-xs-6 edit" *ngIf="!(complaintStatus == 4 || complaintStatus == 5)">
+          <a [ngClass]="{'disabled-click' : c.statusId == 4}" (click)="selectComplaint(c,in)" data-toggle="modal" data-target="#myModal"
+              class="action"><i class="glyphicon glyphicon-pencil"></i>
+          </a>
+        </div>
+        <div class="col-sm-6 col-xs-6 comment">
+          <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
+          </a>
+        </div>
+      </div>-->
+    </div>
+  </div>
+    <!--end cards-->
+<div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" *ngIf="selectedComplaint" >
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="gridSystemModalLabel">{{selectedComplaint.title}}</h4>
+      </div>
+      <div class="modal-body card-modal" >
+        <div class="row first-row">
+          <div class="col-sm-6">
+              <div class="badge">{{selectedComplaint.statusName}}</div>
+          </div>
+          <div class="col-sm-6">
+          <div class="row badge" *ngIf="selectedComplaint.assignedEmployeeName"><span class="empName">@{{selectedComplaint.assignedEmployeeName}}</span></div>
+          </div>
+        </div>
+        <div class="row modal-heading">
+          <div class="complaint-modal-head">
+            <img  class="modal-image" [attr.src]="fileUrl + selectedComplaint.studentPicUrl">
+          </div>
+          
+        </div>
+        <div class="row modal-name">{{selectedComplaint.studentName}}
+          <div class="modal-class">{{selectedComplaint.standardName}}</div>
+        </div>
+        <div class="row modal-description">
+          <div class="row " ><label class="heading" >Description : </label><span > {{selectedComplaint.description}}</span></div>
+        </div>
+        <hr class="style-line">
+        <!--<div class="row complaint-category">
+          <div class="col-sm-5 col-xs-5">
+              <label class="heading">Complaint-Category</label>
+              <div class="result">{{selectedComplaint.againstCategoryName}}</div>
+          </div>
+          <div class="col-sm-5 col-xs-5" >
+            <label class="heading">Complaint-Against</label>
+            <div class="result">{{selectedComplaint.againstEmployeeNam}}<div *ngIf="!selectedComplaint.againstEmployeeNam">-</div></div>
+          </div>
+          <div class="col-sm-2 col-xs-2"><img src="https://cdn4.iconfinder.com/data/icons/hr-recruitment-management-part-3/360/opinion_feedback_comment_employee_staff_complain-128.png" class="complaint-icon"></div>
+        </div><hr class="style-line">-->
+        <div class="row">
+          <div class="created-at">
+          <i class="glyphicon glyphicon-calendar"></i>
+          <span style="display:inline-block;">
+            <label class="heading">Created At</label>
+            <div class=" row result">{{selectedComplaint.createdAt | date: "shortDate"}}</div>
+          </span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+    <div class="row text-center">
+      <loader [condition]="loader"></loader>
+    </div>
+    </div>
+    <div class="panel-footer">
+      <button (click)="previousComplaint()" class="btn nav-btn right" [disabled]="currentPage === 1">Previous</button>
+      <button (click)="nextComplaint()" class="btn right nav-btn" [disabled]="EmptyComplaints || noMore">Next</button>
+    </div>
+  </div>
+</div>
+<!--<!- chat -->
+<div id="chat" class="panel panel-chat">
+  <div class="panel-heading">
+    <a href="#" class="chatMinimize" onclick="return false"><span>{{complaintTitleOfCommentModel | uppercase}}</span></a>
+    <a href="#" class="chatClose" onclick="return false"><i class="glyphicon glyphicon-remove"></i></a>
+    <div class="clearFix"></div>
+  </div>
+  <div class="panel-body">
+    <div *ngFor="let c of comments">
+      <div class="messageMe" *ngIf="c.employeeId == currentUser" >
+        <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt="" />
+        <span>{{c.comment}}</span>
+        <div class="msgDate right-align my">me: {{c.createdAt|date}}</div>
+        <div class="clearFix"></div>
+      </div>
+      <div class="messageHer" *ngIf="c.employeeId != currentUser">
+        <img src="http://www.bitrebels.com/wp-content/uploads/2011/02/Original-Facebook-Geek-Profile-Avatar-1.jpg" alt="" />
+        <span>{{c.comment}}</span>
+        <div class="msgDate"><span *ngIf="c.employeeName">{{c.employeeName}}</span><span *ngIf="c.parentName">{{c.parentName}}</span>: {{c.createdAt|date}}</div>
+        <div class="clearFix"></div>
+      </div>
+    </div>
+    <div class="clearFix"></div>
+  </div>
+  <div class="panel-footer">
+    <textarea name="textMessage" cols="0" rows="0"></textarea>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">Edit Suggestion</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form name="form1" [formGroup]="editForm" (submit)="updateComplaint()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="sel1">Assigned To:</label>
+            <select class="form-control" formControlName="assignedTo">
+              <option *ngFor="let s of students" [value]="s.id">{{s.name}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <p><b>Priority:</b></p>
+            <div class="radio" *ngFor="let prio of priorities;">
+              <label><input type="radio" name="priorityId" [value]="prio.id" formControlName="priorityId">{{prio.name}}</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <p><b>Status:</b></p>
+            <div class="checkbox">
+              <label><input type="checkbox" name="progress" formControlName="statusId">In Progress</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default pull-right" (click)="resetComplaints()">Reset</button>
+          <button type="submit" class="btn btn-default pull-right">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!--End of Edit-->
+
+<!-- Close Modal -->
+<div class="modal fade" id="myModal3" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Close Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Close Complaint </h4>
+      </div>
+      <form [formGroup]="closeForm" (submit)="closeComplaint()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="rootCause">Root Cause</label>
+            <textarea class="form-control" formControlName="rca" id="rootCause" rows="3" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="exampleTextarea">Comment</label>
+            <textarea class="form-control" formControlName="comment" id="commentClose" rows="3" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="Submit" [disabled]= "closeForm.invalid" class="btn btn-default">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- chat -->
+<div id="chat" class="panel panel-chat">
+  <div class="panel-heading">
+    <a href="#" class="chatMinimize" onclick="return false"><span>{{complaintTitleOfCommentModel | uppercase}}</span></a>
+    <a href="#" class="chatClose" onclick="return false"><i class="glyphicon glyphicon-remove"></i></a>
+    <div class="clearFix"></div>
+  </div>
+  <div class="panel-body">
+    <div class="row text-center">
+      <loader [condition]="!comments"></loader>
+    </div>
+    <div *ngFor="let c of comments">
+      <div *ngIf="c.employeeId == currentUser">
+        <div class="myMsg">
+          <img src="http://www.clker.com/cliparts/f/8/a/6/1376432218623075512little%20girl%20dreaming-hi.png" class="myImg" />
+          <div class="myText">
+            <span class="myText-style">
+              {{c.comment}}
+            </span>
+          </div>
+        </div>
+        <div class="myMsgDate">
+          me: {{c.createdAt|date}}
+        </div>
+      </div>
+      <div *ngIf="c.employeeId != currentUser">
+        <div class="msg">
+          <img src="http://www.kpop-map.com/wp-content/uploads/2016/01/sm-rookies-kun-profile.jpg" class="img" />
+          <div class="text">
+            <span class="text-style">
+              {{c.comment}}
+            </span>
+          </div>
+        </div>
+        <div class="msgDate">
+          <span *ngIf="c.employeeName">{{c.employeeName}}</span>
+          <span *ngIf="c.parentName">{{c.parentName}}</span>
+          <span>: {{c.createdAt|date}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="clearFix"></div>
+  </div>
+  <div class="panel-footer" *ngIf="!closedOn">
+    <form [formGroup]="commentForm" (submit)="submitComment()">
+      <textarea name="comment" formControlName="comment" cols="0" rows="0"></textarea>
+      <span class="send-button">
+        <button type="submit" class="btn btn-success btn-circle btn-lg"><i class="glyphicon glyphicon-share-alt"></i></button>
+    </span>
+    </form>
+  </div>
+</div>
+
+

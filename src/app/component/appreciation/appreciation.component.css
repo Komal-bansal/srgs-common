@@ -1,0 +1,11 @@
+.appreciation>ul{
+  width: 100%;
+
+}
+.appreciation ul li{
+  width: 50%;
+}
+
+.custom-icon{
+  display: inline-block;
+}

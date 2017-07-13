@@ -1,0 +1,126 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+<div class="add-button">
+  <button type="button" class="btn btn-success btn-circle pull-right" [routerLink]="['/add-survey']">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+  </button>
+</div>
+
+    <div style="text-align: center" *ngIf="emptySurveys"><b>No Survey is added to the View</b></div>
+  <div style="margin-top: 2%;padding-top: 1%;">
+    <div class="container card" *ngFor="let s of surveys; let i = index;">
+      <div class="row">
+         
+         <p routerLinkActive="active"><a [routerLink]="['/view-survey', s.surveyId]"><span class="glyphicon glyphicon-resize-full expand"></span></a></p>
+      </div>
+
+      <div class="row class" style="text-align:center;">{{s.typeName}}</div>
+      <div class="row"><span class="badge">{{s.questionLength}} Question(s)</span></div>
+      <hr class="style-line">
+      <div class="row title" style="text-align:center;"><b>{{s.title}}</b></div>
+     
+      <div class="row desc" style="text-align:center;">{{s.description}}</div>
+      
+      <hr class="style-line">
+      <div class="row name" style="text-align:center;"><span class="glyphicon glyphicon-calendar"></span>{{s.expiredAt | date:"dd/MM/yyyy"}}</div>
+    </div>
+  </div>
+  </div>
+
+  <div class="panel-body" *ngIf="selectedStudent">
+     <!--<router-outlet></router-outlet>-->
+     heading
+  </div>
+  <div class="panel-footer">
+    <button (click)="previousSurvey()" [disabled]="currentPage === 1" type="button" class="btn btn-primary">Previous</button>
+    <button (click)="nextSurvey()" type="button" [disabled]="EmptySurveys || noMore" class="btn btn-primary">Next</button>
+  </div>
+</div>
+
+
+
+<!--Modal-->
+<!--<div id="selectedSurvey" class="modal fade" role="dialog" *ngIf="selectedSurvey">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{selectedSurvey.title}}</h4>
+      </div>
+      <div class="modal-body">
+        <h4>Details</h4>
+        <ul class="list-group">
+          <li class="list-group-item"><label>Description:</label> {{selectedSurvey.description}}</li>
+          <li class="list-group-item"><label>Survey By: </label> {{selectedSurvey.employeeName}}</li>
+          <li class="list-group-item"><label>Expired At: </label> {{selectedSurvey.expiredAt}}</li>
+        </ul>
+        <h4>Results</h4>
+        <ul class="list-group" style="list-style-type:none;margin:0;padding:0;" *ngFor="let o of selectedSurvey.surveyQuestions, let i=index">
+          <li class="list-group-item">{{i+1}}.&nbsp;&nbsp;{{o.questionText}}
+            <div *ngFor = "let a of o.subOptions, let ii=index">
+            <div class="progress">
+              <span class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" [attr.aria-valuenow]="a.percent"
+                aria-valuemin="0" aria-valuemax="100" [style.width]="(a.percent/100)*100 + '%'">
+                       <span style="color:black;"> {{a.name}}&nbsp;-&nbsp;{{a.percent}}% </span>
+              </span>
+            </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>-->
+
+
+
+<!--<div class="panel panel-default">
+  
+  <div class="panel-body">
+    <div class="row text-center">
+      <loader [condition]="loader"></loader>
+    </div>
+<div *ngIf="emptySurveys"> <b>No Survey is added to the View</b> </div>
+    <table class="table table-hover" *ngIf="(!emptySurveys)">
+   <thead>
+        <tr>
+          <th>Title</th>
+          <th>Questions</th>
+          <th>Audience</th>
+          <th>Expired At</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let s of surveys" class="container-border">
+        <tr data-toggle="collapse" (click)= "selectToExpand" [attr.data-target]="'#' + s.surveyId">
+          <td>{{s.title}}</td>
+          <td>{{s.questionLength}}</td>
+          <td>{{s.typeName}}</td>
+          <td>{{s.expiredAt |  date:"dd/MM/yy" }}</td>
+        </tr>
+        <tr class="collapse" [attr.id]="s.surveyId">
+          
+          <td colspan="5" style="border:none;">
+            <b>Description : </b>{{s.description}}
+             <br>
+          <b>Survey By: </b> {{selectedSurvey.employeeName}}
+           <br>
+          <b>Expired At:</b> {{selectedSurvey.expiredAt}}
+            <br>
+            <p *ngIf="circular.standards"> 
+            <b>Class : </b> {{s.standards}}
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+  </div>
+  <div class="panel-footer">
+    <button (click)="previousCircular()" class="btn btn-primary nav-btn right" [disabled]="currentPage === 1">Previous</button>
+    <button (click)="nextCircular()" class="btn right btn-primary nav-btn" [disabled]="EmptyCirculars || noMore">Next</button>
+  </div>
+</div>-->

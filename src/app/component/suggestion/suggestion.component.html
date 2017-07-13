@@ -1,0 +1,15 @@
+<div class="suggestion">
+  <!-- <h1>Suggestions 
+      <button type="button" class="btn btn-success btn-circle" [routerLink]="['/suggestion-add']">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+  </button>
+  </h1> -->
+
+  <ul class="nav nav-tabs">
+    <li routerLinkActive="active"><a [routerLink]="['/suggestion/for-me']" >For Staff</a></li>
+    <li routerLinkActive="active"><a [routerLink]="['/suggestion/for-student']" >For Student</a></li>
+  </ul>
+  <div class="tab-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Create New Appreciation
+    <button type="button" class="close pull-right" aria-label="Close">
+      <span aria-hidden="true">&times; </span>
+    </button>
+  </div>
+  <div class="panel-body">
+    <form name="appreciation" [formGroup]="appreciation" (ngSubmit)="submitAppreciation()" novalidate>
+      <div class="form-group">
+        <label for="standardId">title</label>
+        <span class="badge">{{50 - appreciation.value.title.length}}</span>
+        <textarea class="form-control" name="title" formControlName="title" maxlength="50" rows="1"></textarea>
+        <div [hidden]="appreciation.controls.title.untouched || appreciation.controls.title.prestine || appreciation.controls.title.valid" class="alert alert-warning">This field is required</div>
+
+      </div>
+      <div class="form-group">
+        <label for="standardId">Select Year</label>
+        <select class="form-control" id="standardId" name="standardId"(ngModelChange)="selectStandards($event)" [(ngModel)]="StandardId"
+          [ngModelOptions]="{standalone: true}">
+          <option *ngFor="let a of standards" [ngValue]="a.id"> {{a.name}}</option>
+        </select>
+      <!-- <div [hidden]="appreciation.controls.standardId.valid || appreciation.controls.standardId.untouched " class="alert alert-warning">This field is required</div> -->
+
+      </div>
+      <div class="form-group">
+        <label for="studentId">Student Name</label>
+        <select class="form-control" formControlName="studentId" name="studentId">
+            <option *ngFor="let s of students" [ngValue]="s.id">{{s.name}}</option>
+          </select>
+      <div>
+        <div [hidden]="appreciation.controls.studentId.untouched  ||appreciation.controls.studentId.valid" class="alert alert-warning">This field is required</div>  
+      </div>      
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <span class="badge">{{2500 - appreciation.value.description.length}}</span>
+        <textarea class="form-control" name="description" formControlName="description" maxlength="2500"></textarea>
+        <div [hidden]="appreciation.controls.description.untouched || appreciation.controls.description.prestine || appreciation.controls.description.valid" class="alert alert-warning">This field is required</div>
+      </div>
+      <button type="submit" class="btn btn-success" [disabled]="appreciation.invalid" data-toggle="modal" data-target="#appreciationModal">Submit</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="apprecaitionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">Appreciation Added</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        You have successfully added a new appreciation
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" [routerLink]="['/suggestion/for-student']">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Add More</button>
+      </div>
+    </div>
+  </div>
+</div>

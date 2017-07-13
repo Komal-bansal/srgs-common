@@ -1,0 +1,103 @@
+<div class="tab-pane">
+  <div class="panel panel-default">
+    <!--<div class="panel-heading">Current Homework</div>-->
+    <div class="panel-body" id="accordion">
+      <div class="add-button">
+        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/homework-add']">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div style="text-align: center" *ngIf="EmptyHomeworks" ><b>No Homework</b></div>
+    <div style="margin-top: 2%;padding-top: 1%;">
+      <div class="container card" *ngFor="let a of homeworks; let i = index;">
+      <div class="row">
+        <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(a,i)" data-toggle="modal" data-target="#myModal-card" style="margin-bottom:10px;"></span>
+      </div>
+      <!--<div class="row">
+        <div class="col-sm-6" *ngIf="!complaintStatus">
+          <span [style.background]="c.statusColor" class="badge">{{c.statusName}}</span>
+        </div>
+        <div class="col-sm-6">{{c.priorityName}}</div>
+      </div>-->
+        <div class="row" >
+        <span  *ngIf="a.fileTimestamp">
+          <img class="image" [attr.src]="fileUrl + a.fileTimestamp">
+        </span>
+        <span>
+          <img *ngIf="!a.fileTimestamp" src="data:image/jpeg;base64,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" class="alternate-img">
+        </span>
+      </div>
+      <!--<div class="row name">{{circular.employeeName}}</div>-->
+      <div class="row class"><label class="heading">For</label>
+        <span  class="class">{{ a.standardName }}</span>
+      </div><hr class="style-line">
+      <div class="row title" style="text-align:center"><label >Subject : </label><span>{{a.subjectName}}</span></div>
+        <div class="row">
+          <label class="Due Date :"></label>
+          <span class="badge" style="background-color:gray">Due Date: {{a.dueDate}} {{a.dueMonth}}</span>
+        </div>
+      <!--<div class="row">
+        <div class="col-sm-6 edit" *ngIf="!(complaintStatus == 4 || complaintStatus == 5)">
+          <a [ngClass]="{'disabled-click' : c.statusId == 4}" (click)="selectComplaint(c,in)" data-toggle="modal" data-target="#myModal"
+              class="action"><i class="glyphicon glyphicon-pencil"></i>
+          </a>
+        </div>
+        <div class="col-sm-6 comment">
+          <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
+          </a>
+        </div>
+      </div>-->
+    </div>
+  </div>
+      <div class="row text-center">
+        <loader [condition]="loader"></loader>
+      </div>
+    </div>
+    
+    <div class="panel-footer">
+      <!--<nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <li class="page-item" [ngClass]="{'disabled': currentPage === 1}"><a class="page-link" (click)="previousHomework()" >Previous</a></li>
+          <li class="page-item"><a class="page-link active" >1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item" [ngClass]="{'disabled': EmptyHomeworks}"><a class="page-link" (click)="nextHomework()" >Next</a></li>
+        </ul>
+      </nav>-->
+      <button type="button" (click)="previousHomework()" [disabled]="currentPage === 1" class="btn btn-primary">Previous</button>
+      <button type="button" (click)="nextHomework()" [disabled]="EmptyHomeworks || noMore" class="btn btn-primary">Next</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal-card"tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" *ngIf="selectedHomework">
+      <div class="modal-header">
+        <h4 class="modal-title" id="gridSystemModalLabel">{{selectedHomework.subjectName}}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body card-modal">
+        <div class="modal-heading">
+          <div class="row">
+            <span *ngIf="selectedHomework.fileTimestamp">
+              <img class="image" [attr.src]="fileUrl + selectedHomework.fileTimestamp">
+            </span>
+            <span>
+              <img *ngIf="!selectedHomework.fileTimestamp" src="data:image/jpeg;base64,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" class="alternate-img">
+            </span>
+          </div>
+        </div>
+        <div class=" row modal-class" ><label>For : </label><span>{{selectedHomework.standardName}}</span></div><hr class="style-line">
+      </div>
+      <div class="row modal-description">{{selectedHomework.description}}</div><hr class="style-line">
+      <div class="row modal-date">
+        <div class="col-sm-6" ><label class="heading">Created At</label><div class="result">{{selectedHomework.createdAt | date: "shortDate"}}</div></div>
+        <div class="col-sm-6" ><label class="heading">Due date</label><div class="result">{{selectedHomework.dueDate | date: "shortDate"}}</div></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

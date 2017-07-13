@@ -1,0 +1,127 @@
+<h1>Student Rating </h1>
+
+<br>
+<br>
+
+
+
+<div class="panel panel-default" *ngIf="emptyStudents">
+  <div class="panel panel-heading">
+    No students
+  </div>
+  <div class="panel panel-body">
+    No students have been added to your class.
+  </div>
+  <div class="panel panel-footer">
+  </div>
+
+</div>
+
+
+<div class="panel panel-default" *ngIf="!emptyStudents">
+  <div class="row text-center">
+    <loader [condition]="loader"></loader>
+  </div>
+  <div class="panel-heading">
+    Search Students
+  </div>
+  <div class="panel-body">
+    <input *ngIf="!selectedStudent" class="form-control" type="text" placeholder="Search by Student Name ... " id="example-search-input"
+      (keyup)="searchStudents($event)">
+    <input *ngIf="selectedStudent" class="form-control foc" type="text" value="{{selectedStudent.name}}" id="example-search-input"
+      onfocus="this.value= ''" (keyup)="searchStudents($event)">
+
+    <div class="studentList" *ngIf="(selected)">
+      <ul class="list-group">
+        <li class="list-group-item" *ngIf="emptySearchResult">No Data to Display</li>
+        <span *ngFor="let s of students">
+               <li class="list-group-item" (click)="selectStudent(s)"> {{s.name}} </li> 
+               </span>
+      </ul>
+    </div>
+    <br><br>
+  <div class="panel panel-default" *ngIf="selectedStudent">
+    <div class="panel-heading custom-panel-heading">{{selectedStudent.name}}</div>
+    <div>
+        <form [formGroup]="ratingForm" *ngIf="respStu" >
+    <div class="panel-body">
+      <div class="row text-center">
+        <loader [condition]="loader1"></loader>
+      </div>
+      <input type="text" formControlName="studentId" style="display:none;">
+      <div formArrayName="responsibilitiesWithRating">
+        <table class="table table-striped">
+          <thead>
+            <th>Responsibilty</th>
+            <th>Rating</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of respStu.profile; let i=index;" [formGroupName]="i">
+              <td class="col-sm-10 col-xs-6">
+                <input *ngIf="respStu.isEmpty" type="text" formControlName="profileId" style="display:none;">
+                <input *ngIf="!respStu.isEmpty" type="text" formControlName="profileId" style="display:none;" [value]="r.id" [ngModel]="r.id">
+
+
+                <input type="text" formControlName="responsibilityId" style="display:none;" [(value)]="r.responsibilityId" [ngModel]="r.responsibilityId">{{r.responsibility}}
+              </td>
+
+              <td class="col-sm-2 col-xs-6">
+                <span  *ngFor="let p of respStu.rating;let ii=index">
+                  <!--<div class="star-rating" >-->
+                  <!--<div class="star-rating__wrap">-->
+                    <fieldset class="rating">
+
+                    <input *ngIf="respStu.isEmpty"  id="star{{i+'a'+ii+1}}" type="radio" formControlName="ratingId" [value]="p.id" [title]="p.name" >
+                    <label class="star-rating__ico fa fa-star-o fa-lg" for="star{{i+'a'+ii+1}}" *ngIf="respStu.isEmpty" ></label>
+                    </fieldset>
+                    <fieldset class="rating">
+   
+                    <input *ngIf="!respStu.isEmpty" id="star{{i+'a'+ii+1}}" [ngModel]="r.ratingId" type="radio" formControlName="ratingId" [value]="p.id" [title]="p.name">
+                    <label class="star-rating__ico fa fa-star-o fa-lg" for="star{{i+'a'+ii+1}}" *ngIf="!respStu.isEmpty"></label>
+                    </fieldset>
+                    <!--</div>-->
+                  <!--</div>-->
+                  </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+
+    </div>
+
+    <div class="panel-footer custom">
+      <span class="pull-right">
+      <button type="submit" class="btn btn-success" (click) ="submitRating()" [disabled]="(!ratingForm.controls.responsibilitiesWithRating.dirty) || (ratingForm.invalid)">Submit</button>
+       <button type="button" class="btn btn-success" [disabled]="!ratingForm.controls.responsibilitiesWithRating.dirty" (click)="resetForm()">Reset</button>
+       <!--{{ratingForm.dirty}} (click) = "ratingForm.markAsDirty()"-->
+      </span>
+    </div>
+  </form>
+    </div>
+  </div>
+  </div>
+</div>
+
+<br>
+
+<!---->
+
+<div id="submitModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Rating Submitted!</h4>
+      </div>
+      <div class="modal-body">
+        <p>Entry submitted successfully.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

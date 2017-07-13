@@ -1,0 +1,21 @@
+.badge{
+    background-color: #ea212e;
+}
+
+/*.title{
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}*/
+
+.desc{
+      font-size: 15px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    overflow: hidden; 
+}
+
+.card{
+  width: 22%;
+}
+
