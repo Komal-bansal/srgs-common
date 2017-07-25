@@ -18,13 +18,35 @@ public serveUrl:string="";
   ){
     this.serveUrl=this.con.Server;
   }
-  
-  getEvents(eventMonth){
-    return this.http.get(this.serveUrl + '/month/' + eventMonth)
+    GetEvent(pageNo){
+    return this.http.get(this.serveUrl + '/planner/page/' +pageNo)
     .map(this.extractData)
     .catch(this.handleError);
   }
 
+      GetEvents(){
+    return this.http.get(this.serveUrl + '/planner/month/2017-07')
+    .map(this.extractData)
+    .catch(this.handleError);
+  }
+  GetEventById(id:any){
+      return this.http.get(this.serveUrl + '/planner/' + id)
+    .map(this.extractData)
+    .catch(this.handleError);
+  }
+
+    
+  // GetEventByMonth(){
+  //   return this.http.get(this.serveUrl + '/planner/')
+  //   .map(this.extractData)
+  //   .catch(this.handleError);
+  // }
+
+  // PostEvent(data:any){
+  //   return this.http.post(this.serveUrl +'/event',data)
+  //   .map(this.extractData)
+  //   .catch(this.handleError)
+  // }
   private extractData(res: Response) {
     if (res.status === 204) { return res; }
     let body = res.json();
