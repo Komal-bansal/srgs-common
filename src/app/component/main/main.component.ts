@@ -40,7 +40,7 @@ export class MainComponent implements OnInit, AfterViewInit{
       { title: 'Suggestion', component: EventComponent, icon: 'icons/suggestion.png', url: '/suggestion/for-me'} ,
       { title: 'Profile', component: AccountComponent, icon: 'icons/profile.png', url: '/account'},      
       // { title: 'Message', component: MessageComponent, icon: 'icons/message.png', url: '/messaging'},
-      // { title: 'Events', component: EventComponent, icon: 'icons/event.png', url: '/event'}
+      { title: 'Events', component: EventComponent, icon: 'icons/event.png', url: '/event'}
     
     ];
 

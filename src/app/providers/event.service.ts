@@ -18,14 +18,15 @@ public serveUrl:string="";
   ){
     this.serveUrl=this.con.Server;
   }
-    GetEvent(pageNo){
-    return this.http.get(this.serveUrl + '/planner/page/' +pageNo)
-    .map(this.extractData)
-    .catch(this.handleError);
-  }
+  //   GetEvent(pageNo){
+  //   return this.http.get(this.serveUrl + '/planner/page/' +pageNo)
+  //   .map(this.extractData)
+  //   .catch(this.handleError);
+  // }
 
-      GetEvents(){
-    return this.http.get(this.serveUrl + '/planner/month/2017-07')
+      GetEvents(eventMonth:any){
+    return this.http.get(this.serveUrl + '/planner/month/' +eventMonth)
+    // return this.http.get(this.serveUrl + '/planner/month/2017-07')   
     .map(this.extractData)
     .catch(this.handleError);
   }
@@ -34,19 +35,34 @@ public serveUrl:string="";
     .map(this.extractData)
     .catch(this.handleError);
   }
+  GetPlanner(){
+    return this.http.get(this.serveUrl+'/planner/type/')
+    .map(this.extractData)
+    .catch(this.handleError);
+  }
+  postEvent(data:any){
+    return this.http.post(this.serveUrl +'/planner',data)
+    .map(this.extractData)
+    .catch(this.handleError)
+  }
 
-    
-  // GetEventByMonth(){
-  //   return this.http.get(this.serveUrl + '/planner/')
-  //   .map(this.extractData)
-  //   .catch(this.handleError);
-  // }
+  deleteEvent(id:any){
+    return this.http.delete(this.serveUrl +'/planner/'+id)
+    .map(this.extractData)
+    .catch(this.handleError)
+  }
 
-  // PostEvent(data:any){
-  //   return this.http.post(this.serveUrl +'/event',data)
-  //   .map(this.extractData)
-  //   .catch(this.handleError)
-  // }
+  updateEvent(id:any,event:any){
+    return this.http.put(this.serveUrl +'/planner/' +id, event)
+    .map(this.extractData)
+    .catch(this.handleError)
+  }
+
+  getStandards(){
+        return this.http.get(this.serveUrl + '/homework/standard')
+                    .map(this.extractData)
+                    .catch(this.handleError);
+  }
   private extractData(res: Response) {
     if (res.status === 204) { return res; }
     let body = res.json();

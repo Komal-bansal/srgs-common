@@ -114,6 +114,7 @@ export class AddCircular implements OnInit, AfterViewInit{
   stdIds:any = [];
   standard:any;
   selectStandards(e:any){
+    console.log(e);
     this.stdIds = [];
     e.forEach((element:any) => {
       this.stdIds.push(element.id);

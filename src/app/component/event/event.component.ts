@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, AfterContentChecked, AfterViewChecked, ElementRef} from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { EventService } from '../../providers/event.service';
+import {CommonService} from '../../providers/common.service';
 import * as moment_ from 'moment';
 import { Http } from '@angular/http';
 import 'fullcalendar';
@@ -20,32 +21,51 @@ export class EventComponent implements OnInit, AfterViewInit {
   public thisdate:any;
   public eventsInfo:any;
   public eventId:any;
-  public calendarOptions:any;
+  // public calendarOptions:any;
   public pageNo:any=1;
-     
+  public eventMonth:any;
+  public emptyEvent:boolean; 
+  public planner:any; 
+  public standard:any;
+  public editEvent:FormGroup;
+  public start:any;
+  public end:any;
+  public stdIds:any[];
+  public selectedEvent:any[];
+  
+
   constructor(
      
     private eventService: EventService,
     private http: Http,
-    private element:ElementRef
+    private element:ElementRef,
+    private cs:CommonService,
   ) {
-    // $.noConflict();
-    // this.viewEvent();
-    // this.getEventById(id);
-    this.getEvents(); 
-    
+    // this.getEvents(); 
+    this.getPlanner();
+    this.getStandardId();
      
   }
 
-  ngOnInit() {
-// this.newEvents=[];
-     this.calendarOptions={
+    ngOnInit() {   
+    this.event=this.initForm(); 
+    this.editEvent=this.editForm(); 
+    console.log(this.event);
+  
+  }
+
+  ngAfterViewInit(){
+      _('#calendar').fullCalendar('renderEvents', this.calendarOptions.events, true); 
+  }
+    
+     public calendarOptions:any={
         fixedWeekCount: false,
         editable: true,
         eventLimit: true,
         firstDay: 1,
         selectable: true,
         selectHeader: true,
+        timeFormat: ' ',
         header: {
           right: 'today,month,listMonth, prev,next'
         },
@@ -53,106 +73,205 @@ export class EventComponent implements OnInit, AfterViewInit {
         events: [
           ],
 
-        eventClick: function (event, jsEvent, view) {
-          this.eventsInfo={
-            'eventTitle':event.title,
-            'startDate':JSON.stringify(event.start),
-            // 'plannerType':event.planner,
-            'endDate':JSON.stringify(event.end),
-            'description':event.description,
-            // 'location':event.location
-          }
+        eventClick:(event, jsEvent, view)=> {
+          this.getEventById(event.id);          
+          // this.eventsInfo={
+          //   'eventTitle':event.title,
+          //   'startDate':JSON.stringify(event.start),
+          //   'plannerType':event.plannerTypeName,
+          //   'endDate':JSON.stringify(event.end),
+          //   'description':event.description,
+          //   // 'location':event.location
+          //   'id':event.id,
+          // }
+          
           $('#fullCalModal').modal();         
-          $('#event-title').html(this.eventsInfo.eventTitle);
-          $('#start-date').html(this.eventsInfo.startDate);
-          $('#end-date').html(this.eventsInfo.endDate);
+          // $('#event-title').html(this.eventsInfo.eventTitle);
+          // $('#start-date').html(this.eventsInfo.startDate);
+          // $('#end-date').html(this.eventsInfo.endDate);
           // $('#planner-type').html(this.eventsInfo.plannerType);
-          $('#description').html(this.eventsInfo.description);     
-          $('#location').html(this.eventsInfo.location); 
+          // $('#description').html(this.eventsInfo.description);     
+          // $('#location').html(this.eventsInfo.location); 
+          // this.eventId=event.id;
+          // console.log(this.eventId);
         },
 
-        select: function (start, end) {
-          $('#fullCalView').modal();        
+        select: (start, end)=> {
+        if(start.isBefore(moment_().subtract(1, "days"))) {
+          _('#calendar').fullCalendar('unselect');
+          $('#modal-unselect').modal();
+          return false;
+          }
+        else{
+      this.event=this.initForm();            
+          $('#fullCalView').modal();    
+          this.start=moment_(start).format('YYYY-MM-DD');
+          // $("#startDate1").val(this.start);
+          var tomorrow = new Date(this.start);
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          this.end=moment_(tomorrow).format('YYYY-MM-DD');
+          // $('#end').val(this.end);          
         }
-
-      }
+        },
+        
+        dayRender:function(date,cell){
+          if(date.isBefore(moment_().subtract(1, "days")))
+          cell.css("background-color","#fbfdff");
+          cell.css("color","grey");
+          
+        },
       
-    this.event=this.initForm();   
-    console.log(this.calendarOptions.events);
-    //  this.calendarOptions.events = this.newEvents;
-    // $('#myCalendar').fullCalendar('rerenderEvents');
-      // _('#calendar').fullCalendar('renderEvents', this.newEvents, true);
-    //  console.log(this.calendarOptions.events);
-    // $('#calendar').fullCalendar({events: { title: 'All Day Event',
-    //         start: '2017-07-03',
-    //         description: 'testing'}});
-  
-  }
+        // that:0,
+       viewRender: (view, element)=> {
+          var b = _('#calendar').fullCalendar('getDate');
+          var check = moment_(b, 'YYYY/MM/DD');
+          var month = check.format('MM');
+          var year  = check.format('YYYY');       
+          this.eventMonth= year + "-" + month;
+          this.getEvents();
+      },
+     }
 
-  ngAfterViewInit(){
-      _('#calendar').fullCalendar('renderEvents', this.calendarOptions.events, true);
-      console.log(this.calendarOptions.events);
-    
-  }
     public initForm(){ 
+       console.log(this.start);
+      
      return new FormGroup({
       title:new FormControl('', [Validators.required]),
-      planner:new FormControl([], [Validators.required]),
-      date:new FormControl('',[Validators.required]),
-      endDate:new FormControl('',[Validators.required]),
+      plannerTypeId:new FormControl([], [Validators.required]),
+      startDate:new FormControl(this.start,[Validators.required]),
+      endDate:new FormControl(this.end,[Validators.required]),
+      startTime:new FormControl('',[Validators.required]),
+      endTime:new FormControl('',[Validators.required]),
       location:new FormControl(''),
       description:new FormControl(''),
+      // standardId:new FormControl('')
      })
 
   }
-    public getEvent(){
-    this.eventService.GetEvent(this.pageNo).subscribe((res) => {
-      console.log(res);
-      }, (err) => {
-      // this.onError(err);
-    });
+    public editForm(){
+      return new FormGroup({
+      // title:new FormControl(this.eventsInfo.title),
+      // startDate:new FormControl(this.eventsInfo.startDate),
+      // endDate:new FormControl(this.eventsInfo.endDate),
+      // startTime:new FormControl(this.startTime),
+      // endTime:new FormControl(this.endTime),
+      // location:new FormControl(this.eventsInfo.location),
+      // description:new FormControl(this.eventsInfo.description),
+      title:new FormControl(),        
+      startDate:new FormControl(''),
+      endDate:new FormControl(''),
+      startTime:new FormControl(''),
+      endTime:new FormControl(''),
+      location:new FormControl(''),
+      description:new FormControl(''),
+      standardId:new FormControl('')
+    })
+    }
+
+
+
+    public selectPlannerType(type:any){
+    if(type==2){
+      this.event.addControl("standardIds", new FormControl('', [Validators.required]));
+      // console.log(this.event);
+      console.log(type);
+    }
+    else{
+      this.event.removeControl("standardIds");
+      this.standard = [];
+    }
   }
 
-      public getEvents(){
-    this.eventService.GetEvents().subscribe((res) => {
-    // this.newEvents=res;
-      // _('#calendar').fullCalendar( 'removeEvents');
-      // _('#calendar').fullCalendar('addEventSource',this.newEvents);
-      // _('#calendar').fullCalendar('rerenderEvents');
-      // console.log(this.newEvents);
-    // this.newEvents=[
-    //   {
-    //     createdAt:"2017-07-05T12:21:57.349+0530",
-    //     description:"",
-    //     durationDays:0,
-    //     durationHours:0,
-    //     durationMinutes:0,
-    //     employeeId:1606441971,
-    //     employeeName:"Ms. Seema Singh",
-    //     employeeUsername:"seema",
-    //     end:"2017-07-26T12:21:59.000+0530",
-    //     endDate:"2017-07-26",
-    //     endTime:"12:21 PM",
-    //     id:57,
-    //     location:"",
-    //     plannerTypeColor:"#F44336",
-    //     plannerTypeId:4,
-    //     plannerTypeName:"Restricted Holiday",
-    //     start:"2017-07-26T12:21:01.000+0530",
-    //     startDate:"2017-07-26",
-    //     startTime:"12:21 PM",
-    //     title:"njbnjbjbj"
-    //   }]
-    this.newEvents=res;
-       _('#calendar').fullCalendar('addEventSource', this.newEvents);
-      _('#calendar').fullCalendar('rerenderEvents');
-      // console.log(res);
-    console.log( this.newEvents);
+    public getEvents(){  
+      this.eventService.GetEvents(this.eventMonth).subscribe((res) => {  
+        if(res.status===204){
+          this.emptyEvent=true;
+        }
+        else{ 
+      this.newEvents=res;
+      _('#calendar').fullCalendar('removeEvents');
+      _('#calendar').fullCalendar('addEventSource', this.newEvents);
+        }
       
     }, (err) => {
-      // this.onError(err);
+    });
+  }
+public startTime:any;
+public endTime:any;
+  public getEventById(id){
+    this.eventService.GetEventById(id).subscribe((res)=>{
+      this.eventsInfo=res;
+      console.log(this.eventsInfo);
+      $('#fullCalModal').modal('show');         
+    this.startTime = moment_(this.eventsInfo.start).format('HH-MM-SS-A');
+     this.endTime = moment_(this.eventsInfo.end).format('HH-MM-SS-A');
+    })
+
+  }
+
+  public getPlanner(){
+    this.eventService.GetPlanner().subscribe((res)=>{
+      this.planner=res;
+      console.log(res);
+    },(err)=>{
+      console.log("error");
+    })
+  }
+      public getStandardId() {
+    this.eventService.getStandards().subscribe((res) => {
+      this.standard = res;
+      console.log(this.standard);
+    }, (err) => {
     });
   }
 
-  
+  public postEvent(){
+    this.eventService.postEvent(this.event.value).subscribe((res)=>{
+      $('#modal-success').modal('show');   
+      this.getEvents();
+    },(err)=>{
+      console.log(this.event.value);
+    })
+  }
+
+  public deleteEvent(){
+    this.eventService.deleteEvent(this.eventsInfo.id).subscribe((res)=>{
+      this.getEvents();
+      
+    },(err)=>{})
+    
+  }
+
+  public editevent(){
+    this.eventService.updateEvent(this.eventsInfo.id,this.editEvent.value).subscribe((res)=>{
+      this.newEvents=res;
+    },(err)=>{})
+    console.log(this.editEvent.value);
+  }
+
+
+    public selectStandards(e:any){
+    this.stdIds = [];
+    e.forEach((element:any) => {
+      this.stdIds.push(element.id);
+    });
+    this.event.controls['standardIds'].patchValue(this.stdIds);
+    console.log(this.stdIds);
+  }
+  public currentDate:any;
+  public onDueDate(e:any){
+    this.currentDate=e.target.value;
+    if(new Date(e.target.value) < new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())){
+      alert("Please choose an upcoming date from the calendar.");
+      this.event.controls['startDate'].patchValue(this.start);
+    }
+  }
+
+  public checkDate(e:any){
+    if(new Date(e.target.value)<new Date(new Date(this.currentDate)))
+      {alert("Choose upcoming date");
+      this.event.controls['endDate'].patchValue(this.currentDate);
+      }
+    
+  }
 }

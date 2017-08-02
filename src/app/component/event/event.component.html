@@ -1,41 +1,90 @@
-this is event component
-  <!--<button type="button" class="btn btn-success btn-circle"  data-toggle="modal" data-target="#MyModal" >
-  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-</button>-->
-<!--<button  (click)="clickDay1()">uhnunubunu</button>-->
-<angular2-fullcalendar [options]="calendarOptions" id="calendar"></angular2-fullcalendar>
-  
+<div class="calendar-custom">
+    <angular2-fullcalendar [options]="calendarOptions" id="calendar"></angular2-fullcalendar>
+</div> 
 <div id="fullCalModal" class="modal fade" >
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content"  *ngIf="eventsInfo">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
-                <h4 id="event-title" class="event-title"></h4>
+                <h4 id="event-title" class="event-title" >{{eventsInfo.title}}</h4>
             </div>
             <div id="modalBody" class="modal-body">
-                <div class="start-date">
-                    <label for="start-date">Start date:</label>
-                    <span  id="start-date"></span>
+                <div class="row date">
+                    <div class="col-sm-2">
+                        <span class="glyphicon glyphicon-calendar pull-right"></span>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="start-date">
+                            <label for="start-date">Start date:</label>
+                            <div  id="start-date" >{{eventsInfo.startDate}}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="end-date" id="end-date">
+                            <label for="end-date">End date:</label>
+                            <div id="end-date" >{{eventsInfo.endDate}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="end-date" id="end-date">
-                    <label for="end-date">End date:</label>
-                    <span id="end-date"></span>
+                <hr class="style-line" *ngIf="!((eventsInfo.plannerTypeId==3) ||(eventsInfo.plannerTypeId==4))">
+                <div class=" row time" *ngIf="!((eventsInfo.plannerTypeId==3) ||(eventsInfo.plannerTypeId==4))">
+                    <div class="col-sm-2">
+                        <span class="glyphicon glyphicon-time pull-right"></span>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="start-time" id="start-time">
+                            <label for="start-time">Start Time:</label>
+                            <div id="start-time" >{{startTime}}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="end-time" id="end-time">
+                            <label for="end-time">End Time:</label>
+                            <div id="end-time" >{{endTime}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="planner-type">
-                    <label for="planner-type">Planner-type</label>
-                    <span id="planner-type"></span>
+                <hr class="style-line">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <span class="glyphicon glyphicon-list-alt pull-right"></span>
+                    </div>
+                    <div class="col-sm-10">
+                        <div class="planner-type">
+                            <label for="planner-type">Planner-type</label>
+                            <div id="planner-type">{{eventsInfo.plannerTypeName}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="description">
-                    <label for="description">Description:</label>
-                    <span id="description"></span>
+                <hr class="style-line" *ngIf="eventsInfo.description">
+                <div class="row" *ngIf="eventsInfo.description">
+                    <div class="col-sm-2">
+                        <span class="glyphicon glyphicon-align-justify pull-right"></span>
+                    </div>
+                    <div class="col-sm-10">
+                        <div class="description" >
+                            <label for="description" >Description:</label>
+                            <div id="description">{{eventsInfo.description}}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="location">
-                    <label for="location">location:</label>
-                    <span id="location"></span>
-                </div>  
+                <hr class="style-line" *ngIf="eventsInfo.location">
+                <div class="row" *ngIf="eventsInfo.location">
+                    <div class="col-sm-2">
+                        <span class="glyphicon glyphicon-map-marker pull-right"></span>
+                    </div>
+                    <div class="col-sm-10">
+                        <div class="location"  >
+                            <label for="location">location:</label>
+                            <div id="location">{{eventsInfo.location}}</div>
+                        </div> 
+                    </div> 
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-dismiss="modal" data-target="#modal-edit">Edit</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-dismiss="modal" data-target="#modal-delete">Delete</button>              
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
             </div>
         </div>
     </div>
@@ -45,53 +94,82 @@ this is event component
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
+                <span>Create new Event</span>
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
                 <h4 id="title" class="modal-title"></h4>
             </div>
              <div id="modalBody" class="modal-body">
-                <form name="event" [formGroup]="event">
+                <form name="event" [formGroup]="event" novalidate>
                     <div class="form-group">
                         <label for="title">Title</label>
-                        <span class="badge">50</span>
-                        <input type="text" class="form-control" id="title" name="title" formControlName="title" maxlength="50" placeholder="Enter Title">
-                        <!-- <div [hidden]="(event.controls.title.valid) || (circular.value.title.untouched) ||(circular.value.title.pristine)" class="alert alert warning">This field is required</div>                                                 -->
-                    </div>
+                        <span class="badge">{{50-event.value.title.length}}</span>
+                        <input type="text" class="form-control" id="title" formControlName="title" maxlength="50" placeholder="Enter Title">
+                        <div [hidden]="event.controls.title.untouched || event.controls.title.prestine || event.controls.title.valid" class="alert alert-warning">
+                            This field is required
+                        </div>
+                        </div>
                     
                     <div class="form-group">
                         <label for="planner">Planner-type</label>
-                        <select class="form-control" id="planner" name="planner" formControlName="planner" >
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
+                        <select class="form-control" id="planner" name="planner" formControlName="plannerTypeId" (ngModelChange)="selectPlannerType($event)">
+                            <option *ngFor="let p of planner" [value]="p.id">{{p.name}}</option>
                         </select>
-                        <!-- <div [hidden]="(event.controls.planner-type.valid) || (event.controls.planner-type.untouched) || (event.controls.planner-type.pristine)">This field is required</div> -->
+                        <div [hidden]="event.controls.plannerTypeId.untouched || event.controls.plannerTypeId.prestine || event.controls.plannerTypeId.valid" class="alert alert-warning">
+                            This field is required
+                        </div>  
                     </div>
-    
-                    <!-- <div class="form-group">
-                        <label for="start-date">Start Date</label>
-                        <input type="date" class="form-control" id="title" name="title" formControlName="startDate" maxlength="50">
-                        <div [hidden]="(event.controls.title.valid) || (circular.value.title.untouched) ||(circular.value.title.pristine)" class="alert alert warning">This field is required</div>                                                
-                    </div> -->
-
+                     <div class="form-group" *ngIf="event.value.plannerTypeId==2">
+                        <label for="standard">Standard Id</label>
+                         <select class="form-control" id="standard" name="standardId"[(ngModel)]="standards" (ngModelChange)="selectStandards($event)" [ngModelOptions]="{standalone: true}" multiple>
+                            <option *ngFor="let s of standard" [ngValue]="s">{{s.name}}</option>
+                        </select> 
+                         <!-- <div [hidden]="event.controls.title.untouched || event.controls.title.prestine || event.controls.title.valid" class="alert alert-warning">
+                            This field is required
+                        </div>  -->
+                    </div>
+                     <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input class="form-control glyphicon glyphicon-calendar" type="date" id="startDate1" name="startDate" formControlName="startDate" [ngModel]="currentDate"(change)="onDueDate($event)" >                                                
+                           <div [hidden]="(event.controls.startDate.valid) || (event.controls.startDate.untouched) || (event.controls.startDate.pristine)">This field is required</div>                           
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" class="form-control glyphicon glyphicon-calendar" id="end" name="endDate" formControlName="endDate" (change)="checkDate($event)">                                                
+                           <div [hidden]="(event.controls.endDate.valid) || (event.controls.endDate.untouched) || (event.controls.endDate.pristine)">This field is required</div>                           
+                    
+                    </div>
+                    <div *ngIf="((event.value.plannerTypeId==1) || (event.value.plannerTypeId==2) ||(event.value.plannerTypeId==5) ||(event.value.plannerTypeId==6))">
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label>
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="startTime" name="startTime" formControlName="startTime"  >                                                
+                           <div [hidden]="(event.controls.startTime.valid) || (event.controls.startTime.untouched) || (event.controls.startTime.pristine)">This field is required</div>                                                   
+                        </div>
+                        <div class="form-group">
+                            <label for="startTime">End Time</label>
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="endTime" name="endTime" formControlName="endTime"  >                                                
+                           <div [hidden]="(event.controls.startTime.valid) || (event.controls.startTime.untouched) || (event.controls.startTime.pristine)">This field is required</div>                                                                               
+                        </div> 
+                    </div>  
+                    
+                    
                     <div class="form-group">
                         <label for="description">Description</label>
                         <span class="small">Optional</span>
-                        <span class="badge">200</span>
-                        <input type="text" class="form-control" id="description" name="description" formControlName="description" maxlength="200" placeholder="Description">                                                
+                        <span class="badge">{{250-event.value.description.length}}</span>
+                        <input type="text" class="form-control" id="description" name="description" formControlName="description" maxlength="250" placeholder="Description">                                                
                     </div>
 
 
                     <div class="form-group">
-                        <label for="location">location</label>
+                        <label for="location">Location</label>
                         <span class="small">Optional</span>
                         <input type="text" class="form-control" id="location" name="location" formControlName="location" placeholder=" Enter location of event">                                                
                     </div>
                 </form>     
             </div> 
             <div class="modal-footer">
-                <button type="button" (click)="submitEvent()" class="btn btn-primary" data-toggle="modal" data-dismiss="modal" data-target="#modal-success">Submit</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" (click)="postEvent()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
             </div>
         </div>
     </div>
@@ -113,9 +191,112 @@ this is event component
     </div>
 </div>  
 
-<div id="eventContent" title="Event Details" style="display:none;">
-    Start: <span id="startTime"></span><br>
-    End: <span id="endTime"></span><br><br>
-    <p id="eventInfo"></p>
-    <p><strong><a id="eventLink" href="" target="_blank">Read More</a></strong></p>
+<div id="modal-delete" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <h4>Are You sure You want to delete this event</h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" (click)="deleteEvent()">Yes, I am sure</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">No, thanks</button>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<div id="modal-edit" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content"  *ngIf="eventsInfo">
+            <div class="modal-header">
+                <span>Edit Event</span>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                <h4 id="title" class="modal-title"></h4>
+            </div>
+             <div id="modalBody" class="modal-body">
+                <form name="event" [formGroup]="editEvent" novalidate *ngIf=false>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <!-- <span class="badge">{{50-event.value.title.length}}</span> -->
+                        <input type="text" class="form-control" id="title" formControlName="title" maxlength="50" placeholder="Enter Title">
+                        <!-- <div [hidden]="event.controls.title.untouched || event.controls.title.prestine || event.controls.title.valid" class="alert alert-warning">
+                            This field is required
+                        </div> -->
+                        </div>
+  
+                     <div class="form-group" *ngIf="event.value.plannerTypeId==2">
+                        <label for="standard">Standard Id</label>
+                         <select class="form-control" id="standard" name="standardId"[(ngModel)]="standards" (ngModelChange)="selectStandards($event)" [ngModelOptions]="{standalone: true}" multiple>
+                            <option *ngFor="let s of standard" [ngValue]="s">{{s.name}}</option>
+                        </select> 
+                         <!-- <div [hidden]="event.controls.title.untouched || event.controls.title.prestine || event.controls.title.valid" class="alert alert-warning">
+                            This field is required
+                        </div>  -->
+                    </div>
+                     <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input class="form-control glyphicon glyphicon-calendar" type="date" id="startDate" name="startDate" formControlName="startDate" >                                                
+                           <!-- <div [hidden]="(event.controls.startDate.valid) || (event.controls.startDate.untouched) || (event.controls.startDate.pristine)">This field is required</div>                            -->
+                    </div>
+                    <div class="form-group">
+                        <label for="description">End Date</label>
+                        <input type="date" class="form-control glyphicon glyphicon-calendar" id="endDate" name="endDate" formControlName="endDate"  >                                                
+                           <!-- <div [hidden]="(event.controls.endDate.valid) || (event.controls.endDate.untouched) || (event.controls.endDate.pristine)">This field is required</div>                            -->
+                    
+                    </div>
+                    <div *ngIf="((event.value.plannerTypeId==1) || (event.value.plannerTypeId==2) ||(event.value.plannerTypeId==5) ||(event.value.plannerTypeId==6))">
+                        <div class="form-group">
+                            <label for="startTime">Start Time</label>
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="startTime" name="startTime" formControlName="startTime"  >                                                
+                           <!-- <div [hidden]="(event.controls.startTime.valid) || (event.controls.startTime.untouched) || (event.controls.startTime.pristine)">This field is required</div>                                                    -->
+                        </div>
+                        <div class="form-group">
+                            <label for="startTime">End Time</label>
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="endTime" name="endTime" formControlName="endTime"  >                                                
+                           <!-- <div [hidden]="(event.controls.startTime.valid) || (event.controls.startTime.untouched) || (event.controls.startTime.pristine)">This field is required</div>                                                                                -->
+                        </div> 
+                    </div>  
+                    
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <span class="small">Optional</span>
+                        <!-- <span class="badge">{{250-event.value.description.length}}</span> -->
+                        <input type="text" class="form-control" id="description" name="description" formControlName="description" maxlength="250" placeholder="Description">                                                
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <span class="small">Optional</span>
+                        <input type="text" class="form-control" id="location" name="location" formControlName="location" placeholder=" Enter location of event">                                                
+                    </div>
+                </form> 
+                     
+            </div> 
+            <div class="modal-footer">
+                <button type="button" (click)="editevent()" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+            </div>
+        </div>
+    </div>
 </div>
+
+<div id="modal-unselect" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
+            </div>
+            <div id="modalBody" class="modal-body">
+                <h5>Please choose an upcoming date</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div> 

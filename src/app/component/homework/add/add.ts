@@ -122,6 +122,7 @@ export class HomeworkAddComponent implements OnInit{
     this.homeworkService.PostHomework(formData).subscribe((data) => {
       $('#homeworkModal').modal('show');
       this.initForm();
+      this.file=null;
       // this.nl.hideLoader();
       // this.viewCtrl.dismiss(data);
       // this.nl.showToast("Homework created successfully");
