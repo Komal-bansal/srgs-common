@@ -129,7 +129,7 @@
                     </div>
                      <div class="form-group">
                         <label for="startDate">Start Date</label>
-                        <input class="form-control glyphicon glyphicon-calendar" type="date" id="startDate1" name="startDate" formControlName="startDate" [ngModel]="currentDate"(change)="onDueDate($event)" >                                                
+                        <input class="form-control glyphicon glyphicon-calendar" type="date" id="startDate1" name="startDate" formControlName="startDate" (change)="onDueDate($event)" >                                                
                            <div [hidden]="(event.controls.startDate.valid) || (event.controls.startDate.untouched) || (event.controls.startDate.pristine)">This field is required</div>                           
                     </div>
                     <div class="form-group">
@@ -219,12 +219,12 @@
                     </div>
                      <div class="form-group">
                         <label for="startDate">Start Date</label>
-                        <input class="form-control glyphicon glyphicon-calendar" type="date" id="startDate" name="startDate" formControlName="startDate" (change)="onDueDate($event)" >                                                
+                        <input class="form-control glyphicon glyphicon-calendar" type="date" id="startDate" name="startDate" formControlName="startDate" (change)="onStartDate($event)" >                                                
                            <!-- <div [hidden]="(event.controls.startDate.valid) || (event.controls.startDate.untouched) || (event.controls.startDate.pristine)">This field is required</div>                            -->
                     </div>
                     <div class="form-group">
                         <label for="endDate">End Date</label>
-                        <input type="date" class="form-control glyphicon glyphicon-calendar" id="end" name="endDate" formControlName="endDate" (change)="checkDate($event)">                                                
+                        <input type="date" class="form-control glyphicon glyphicon-calendar" id="end" name="endDate" formControlName="endDate" (change)="check($event)">                                                
                            <!-- <div [hidden]="(event.controls.endDate.valid) || (event.controls.endDate.untouched) || (event.controls.endDate.pristine)">This field is required</div>                            -->
                     
                     </div>

@@ -135,9 +135,7 @@ export class EventComponent implements OnInit, AfterViewInit {
       },
      }
 
-    public initForm(){ 
-       console.log(this.start);
-      
+    public initForm(){       
      return new FormGroup({
       title:new FormControl('', [Validators.required]),
       plannerTypeId:new FormControl([], [Validators.required]),
@@ -262,19 +260,47 @@ public endTime:any;
     console.log(this.stdIds);
   }
   public currentDate:any;
+
   public onDueDate(e:any){
     this.currentDate=e.target.value;
     if(new Date(e.target.value) < new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())){
       alert("Please choose an upcoming date from the calendar.");
       this.event.controls['startDate'].patchValue(this.start);
+      this.event.controls['endDate'].patchValue(this.start);
+      console.log(this.start);
+      console.log(this.event.value);
     }
   }
 
   public checkDate(e:any){
-    if(new Date(e.target.value)<new Date(new Date(this.currentDate)))
-      {alert("Choose upcoming date");
-      this.event.controls['endDate'].patchValue(this.currentDate);
+    if(new Date(e.target.value)<new Date(this.event.controls['startdate'].value))
+      {
+      alert("Please choose a date after start date");
+      this.event.controls['endDate'].patchValue(this.start);
+      }
+    
+  }
+
+
+public onStartDate(e:any){
+    // this.currentDate=e.target.value;
+    if(new Date(e.target.value) < new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())){
+      alert("Please choose an upcoming date from the calendar.");
+      this.editEvent.controls['startDate'].patchValue(this.selectedEvent.startDate);
+      this.editEvent.controls['endDate'].patchValue(this.selectedEvent.startDate);
+      console.log(this.selectedEvent.startDate);
+      console.log(this.event.value);
+    }
+  }
+
+  public check(e:any){
+    console.log(this.editEvent.controls['startDate'].value);
+    if(new Date(e.target.value)<new Date(this.editEvent.controls['startDate'].value))
+      {
+      alert("Please choose a date after start date");
+      this.editEvent.controls['endDate'].patchValue(this.selectedEvent.startDate);
       }
     
   }
 }
+
