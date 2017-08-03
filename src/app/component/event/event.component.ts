@@ -31,7 +31,7 @@ export class EventComponent implements OnInit, AfterViewInit {
   public start:any;
   public end:any;
   public stdIds:any[];
-  public selectedEvent:any[];
+  public selectedEvent:any;
   
 
   constructor(
@@ -49,7 +49,7 @@ export class EventComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {   
     this.event=this.initForm(); 
-    this.editEvent=this.editForm(); 
+    // this.editEvent=this.editForm(); 
     console.log(this.event);
   
   }
@@ -74,6 +74,9 @@ export class EventComponent implements OnInit, AfterViewInit {
           ],
 
         eventClick:(event, jsEvent, view)=> {
+          this.selectedEvent=event;                    
+          this.editEvent=this.editForm();
+          this.event=this.initForm(); 
           this.getEventById(event.id);          
           // this.eventsInfo={
           //   'eventTitle':event.title,
@@ -157,14 +160,14 @@ export class EventComponent implements OnInit, AfterViewInit {
       // endTime:new FormControl(this.endTime),
       // location:new FormControl(this.eventsInfo.location),
       // description:new FormControl(this.eventsInfo.description),
-      title:new FormControl(),        
-      startDate:new FormControl(''),
-      endDate:new FormControl(''),
-      startTime:new FormControl(''),
-      endTime:new FormControl(''),
-      location:new FormControl(''),
-      description:new FormControl(''),
-      standardId:new FormControl('')
+      title:new FormControl(this.selectedEvent.title),        
+      startDate:new FormControl(this.selectedEvent.startDate),
+      endDate:new FormControl(this.selectedEvent.endDate),
+      startTime:new FormControl(this.selectedEvent.startTime),
+      endTime:new FormControl(this.selectedEvent.endTime),
+      location:new FormControl(this.selectedEvent.location),
+      description:new FormControl(this.selectedEvent.description),
+      // standardId:new FormControl('')
     })
     }
 
@@ -242,7 +245,7 @@ public endTime:any;
     
   }
 
-  public editevent(){
+  public updateEvent(){
     this.eventService.updateEvent(this.eventsInfo.id,this.editEvent.value).subscribe((res)=>{
       this.newEvents=res;
     },(err)=>{})
