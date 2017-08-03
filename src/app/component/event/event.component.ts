@@ -21,7 +21,6 @@ export class EventComponent implements OnInit, AfterViewInit {
   public thisdate:any;
   public eventsInfo:any;
   public eventId:any;
-  // public calendarOptions:any;
   public pageNo:any=1;
   public eventMonth:any;
   public emptyEvent:boolean; 
@@ -32,7 +31,7 @@ export class EventComponent implements OnInit, AfterViewInit {
   public end:any;
   public stdIds:any[];
   public selectedEvent:any;
-  
+  public message:any;
 
   constructor(
      
@@ -41,7 +40,6 @@ export class EventComponent implements OnInit, AfterViewInit {
     private element:ElementRef,
     private cs:CommonService,
   ) {
-    // this.getEvents(); 
     this.getPlanner();
     this.getStandardId();
      
@@ -77,26 +75,9 @@ export class EventComponent implements OnInit, AfterViewInit {
           this.selectedEvent=event;                    
           this.editEvent=this.editForm();
           this.event=this.initForm(); 
-          this.getEventById(event.id);          
-          // this.eventsInfo={
-          //   'eventTitle':event.title,
-          //   'startDate':JSON.stringify(event.start),
-          //   'plannerType':event.plannerTypeName,
-          //   'endDate':JSON.stringify(event.end),
-          //   'description':event.description,
-          //   // 'location':event.location
-          //   'id':event.id,
-          // }
-          
+          this.getEventById(event.id); 
+          this.checkPlannerType(event.plannerTypeId);                   
           $('#fullCalModal').modal();         
-          // $('#event-title').html(this.eventsInfo.eventTitle);
-          // $('#start-date').html(this.eventsInfo.startDate);
-          // $('#end-date').html(this.eventsInfo.endDate);
-          // $('#planner-type').html(this.eventsInfo.plannerType);
-          // $('#description').html(this.eventsInfo.description);     
-          // $('#location').html(this.eventsInfo.location); 
-          // this.eventId=event.id;
-          // console.log(this.eventId);
         },
 
         select: (start, end)=> {
@@ -106,14 +87,12 @@ export class EventComponent implements OnInit, AfterViewInit {
           return false;
           }
         else{
-      this.event=this.initForm();            
-          $('#fullCalView').modal();    
           this.start=moment_(start).format('YYYY-MM-DD');
-          // $("#startDate1").val(this.start);
           var tomorrow = new Date(this.start);
           tomorrow.setDate(tomorrow.getDate() + 1);
-          this.end=moment_(tomorrow).format('YYYY-MM-DD');
-          // $('#end').val(this.end);          
+          this.end=moment_(tomorrow).format('YYYY-MM-DD');  
+          this.event=this.initForm();            
+          $('#fullCalView').modal();    
         }
         },
         
@@ -124,7 +103,6 @@ export class EventComponent implements OnInit, AfterViewInit {
           
         },
       
-        // that:0,
        viewRender: (view, element)=> {
           var b = _('#calendar').fullCalendar('getDate');
           var check = moment_(b, 'YYYY/MM/DD');
@@ -141,8 +119,8 @@ export class EventComponent implements OnInit, AfterViewInit {
       plannerTypeId:new FormControl([], [Validators.required]),
       startDate:new FormControl(this.start,[Validators.required]),
       endDate:new FormControl(this.end,[Validators.required]),
-      startTime:new FormControl('',[Validators.required]),
-      endTime:new FormControl('',[Validators.required]),
+      // startTime:new FormControl('',[Validators.required]),
+      // endTime:new FormControl('',[Validators.required]),
       location:new FormControl(''),
       description:new FormControl(''),
       // standardId:new FormControl('')
@@ -151,13 +129,6 @@ export class EventComponent implements OnInit, AfterViewInit {
   }
     public editForm(){
       return new FormGroup({
-      // title:new FormControl(this.eventsInfo.title),
-      // startDate:new FormControl(this.eventsInfo.startDate),
-      // endDate:new FormControl(this.eventsInfo.endDate),
-      // startTime:new FormControl(this.startTime),
-      // endTime:new FormControl(this.endTime),
-      // location:new FormControl(this.eventsInfo.location),
-      // description:new FormControl(this.eventsInfo.description),
       title:new FormControl(this.selectedEvent.title),        
       startDate:new FormControl(this.selectedEvent.startDate),
       endDate:new FormControl(this.selectedEvent.endDate),
@@ -174,21 +145,36 @@ export class EventComponent implements OnInit, AfterViewInit {
     public selectPlannerType(type:any){
     if(type==2){
       this.event.addControl("standardIds", new FormControl('', [Validators.required]));
-      // console.log(this.event);
       console.log(type);
     }
-    else{
+    else if(type!=2){
       this.event.removeControl("standardIds");
       this.standard = [];
     }
+    else if(type==3 ||type==4){
+      this.event.removeControl("startTime");            
+      this.event.removeControl("endTime");      
+    }
+    else if((type!=3) ||(type!=4)){
+      this.event.addControl("startTime", new FormControl('', [Validators.required]));
+      this.event.addControl("endTime", new FormControl('', [Validators.required]));      
+    }
+
   }
 
+  public checkPlannerType(type:any){
+    if(type==2){
+      this.editEvent.addControl("standardIds", new FormControl('', [Validators.required]));
+      console.log(type);
+    }
+  }
     public getEvents(){  
       this.eventService.GetEvents(this.eventMonth).subscribe((res) => {  
         if(res.status===204){
           this.emptyEvent=true;
         }
         else{ 
+          console.log(res);
       this.newEvents=res;
       _('#calendar').fullCalendar('removeEvents');
       _('#calendar').fullCalendar('addEventSource', this.newEvents);
@@ -202,7 +188,6 @@ public endTime:any;
   public getEventById(id){
     this.eventService.GetEventById(id).subscribe((res)=>{
       this.eventsInfo=res;
-      console.log(this.eventsInfo);
       $('#fullCalModal').modal('show');         
     this.startTime = moment_(this.eventsInfo.start).format('HH-MM-SS-A');
      this.endTime = moment_(this.eventsInfo.end).format('HH-MM-SS-A');
@@ -218,7 +203,8 @@ public endTime:any;
       console.log("error");
     })
   }
-      public getStandardId() {
+  
+  public getStandardId() {
     this.eventService.getStandards().subscribe((res) => {
       this.standard = res;
       console.log(this.standard);
@@ -228,30 +214,41 @@ public endTime:any;
 
   public postEvent(){
     this.eventService.postEvent(this.event.value).subscribe((res)=>{
-      $('#modal-success').modal('show');   
+      this.message="You have successfully added an event";
+      $('#modal-success').modal();  
+      // $('#message').html(this.eventsInfo.eventTitle);       
       this.getEvents();
     },(err)=>{
       console.log(this.event.value);
     })
+      // _('#calendar').fullCalendar('refetchEvents');        
   }
 
   public deleteEvent(){
+    // console.log("first");
     this.eventService.deleteEvent(this.eventsInfo.id).subscribe((res)=>{
+      this.message="You have successfully deleted the event";
+      $('#modal-success').modal('show');             
       this.getEvents();
-      
-    },(err)=>{})
+      // console.log("avbnk");
+    },(err)=>{
+// console.log("third");
+    })
+      // _('#calendar').fullCalendar('refetchEvents');    
     
   }
 
   public updateEvent(){
     this.eventService.updateEvent(this.eventsInfo.id,this.editEvent.value).subscribe((res)=>{
       this.newEvents=res;
-    },(err)=>{})
-    console.log(this.editEvent.value);
+      this.message="You have successfully updated the event";
+      $('#modal-success').modal('show');         
+      this.getEvents();
+    },(err)=>{});
   }
 
 
-    public selectStandards(e:any){
+public selectStandards(e:any){
     this.stdIds = [];
     e.forEach((element:any) => {
       this.stdIds.push(element.id);
@@ -259,23 +256,39 @@ public endTime:any;
     this.event.controls['standardIds'].patchValue(this.stdIds);
     console.log(this.stdIds);
   }
+public standardId:any;
+  public editStandards(e:any){
+    console.log(this.editEvent.controls['standardIds'].value);
+    this.standardId = [];
+    e.forEach((element:any) => {
+      this.standardId.push(element.id);
+    });
+    this.editEvent.controls['standardIds'].patchValue(this.standardId);
+    console.log(this.standardId);
+  }
+
   public currentDate:any;
 
   public onDueDate(e:any){
     this.currentDate=e.target.value;
     if(new Date(e.target.value) < new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())){
-      alert("Please choose an upcoming date from the calendar.");
+      this.message="Please choose an upcoming date from the calendar";
+      $('#modal-success').modal('show');               
+      // alert("Please choose an upcoming date from the calendar.");
       this.event.controls['startDate'].patchValue(this.start);
       this.event.controls['endDate'].patchValue(this.start);
       console.log(this.start);
       console.log(this.event.value);
     }
+
   }
 
   public checkDate(e:any){
-    if(new Date(e.target.value)<new Date(this.event.controls['startdate'].value))
+    if(new Date(e.target.value)<new Date(this.event.controls['startDate'].value))
       {
-      alert("Please choose a date after start date");
+      this.message="Please choose a date after start date";
+      $('#modal-success').modal('show'); 
+      // alert("Please choose a date after start date");
       this.event.controls['endDate'].patchValue(this.start);
       }
     
@@ -283,9 +296,10 @@ public endTime:any;
 
 
 public onStartDate(e:any){
-    // this.currentDate=e.target.value;
     if(new Date(e.target.value) < new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())){
-      alert("Please choose an upcoming date from the calendar.");
+      this.message="Please choose an upcoming date from the calendar";
+      $('#modal-success').modal('show'); 
+      // alert("Please choose an upcoming date from the calendar.");
       this.editEvent.controls['startDate'].patchValue(this.selectedEvent.startDate);
       this.editEvent.controls['endDate'].patchValue(this.selectedEvent.startDate);
       console.log(this.selectedEvent.startDate);
@@ -297,10 +311,22 @@ public onStartDate(e:any){
     console.log(this.editEvent.controls['startDate'].value);
     if(new Date(e.target.value)<new Date(this.editEvent.controls['startDate'].value))
       {
-      alert("Please choose a date after start date");
+      this.message="Please choose a date after start date";
+      $('#modal-success').modal('show'); 
+      // alert("Please choose a date after start date");
       this.editEvent.controls['endDate'].patchValue(this.selectedEvent.startDate);
       }
     
   }
+
+public resetForm(){
+      this.editEvent.patchValue({ "title": this.selectedEvent.title });
+      this.editEvent.patchValue({ "startdate": this.selectedEvent.startDate });
+      this.editEvent.patchValue({ "endDate": this.selectedEvent.endDate });
+      this.editEvent.patchValue({ "startTime": this.selectedEvent.startTime });
+      this.editEvent.patchValue({ "endTime": this.selectedEvent.endTime });
+      this.editEvent.patchValue({ "description": this.selectedEvent.description });
+      this.editEvent.patchValue({ "location": this.selectedEvent.location });
+}
 }
 
