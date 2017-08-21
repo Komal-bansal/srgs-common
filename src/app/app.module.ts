@@ -1,12 +1,12 @@
-import { NgModule }      from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { rootRouterConfig } from './app.routes';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import {CalendarComponent} from "./angular2-fullcalendar/src/calendar/calendar";
+import { CalendarComponent } from "./angular2-fullcalendar/src/calendar/calendar";
 
-import { AppComponent }  from './app.component';
+import { AppComponent } from './app.component';
 import { MainComponent } from './component/main/main.component';
 import { LoginComponent } from './component/login/login.component';
 import { ForgotPassword } from './component/login/forgot.password';
@@ -21,11 +21,11 @@ import { PassedHomework } from './component/homework/passed/homework';
 import { GoogleChart } from './customComponent/chart.directive';
 import { CustomLoader } from './customComponent/loader.component';
 import { AccountComponent } from './component/account/account.component';
-import {AppreciationComponent} from './component/appreciation/appreciation.component';
-import {ForMeComponent} from './component/appreciation/for-me/forme';
-import {ByMeComponent} from './component/appreciation/by-me/byme';
-import {AddEmployeeComponent} from './component/addEmployee/addEmployee.component';
-import {AddAppreciation} from './component/appreciation/add/add';
+import { AppreciationComponent } from './component/appreciation/appreciation.component';
+import { ForMeComponent } from './component/appreciation/for-me/forme';
+import { ByMeComponent } from './component/appreciation/by-me/byme';
+import { AddEmployeeComponent } from './component/addEmployee/addEmployee.component';
+import { AddAppreciation } from './component/appreciation/add/add';
 import { PollComponent } from './component/poll/poll.component';
 import { AddPollComponent } from './component/poll/add/add';
 import { CurrentPollComponent } from './component/poll/current/poll';
@@ -36,14 +36,21 @@ import { CurrentSurveyComponent } from './component/survey/current/survey';
 import { ClosedSurveyComponent } from './component/survey/closed/survey';
 import { ViewSurveyComponent } from './component/survey/view/survey';
 import { StudentRatingComponent } from './component/studentRating/studentRating.component';
-// import {MessageComponent} from './component/message/message.component';
+import { MessageComponent } from './component/message/message.component';
 // import {NewMessageComponent} from './component/message/new/new';
 // import {ViewMessageComponent} from './component/message/view/view';
-import {EventComponent} from './component/event/event.component';
-import {SuggestionComponent} from './component/suggestion/suggestion.component';
-import {SuggestionForMe} from './component/suggestion/for-me/forme';
-import {SuggestionForStudent} from './component/suggestion/for-student/forstudent';
-import {SuggestionAddComponent} from './component/suggestion/add/add';
+import { EventComponent } from './component/event/event.component';
+import { SuggestionComponent } from './component/suggestion/suggestion.component';
+import { SuggestionForMe } from './component/suggestion/for-me/forme';
+import { SuggestionForStudent } from './component/suggestion/for-student/forstudent';
+import { SuggestionAddComponent } from './component/suggestion/add/add';
+// import { TimetableComponent} from './component/timetable/timetable.component'
+import { ErrorComponent } from './component/error/error.component';
+import { Error404Component } from './component/error/error404';
+import { AddStudentComponent } from './component/addStudent/addStudent.component';
+import { ExistingStudentComponent } from './component/addStudent/existingStudent/existingStudent.component';
+import { NewStudentComponent } from './component/addStudent/newStudent/newStudent.component';
+import { TimetableComponent } from './component/timetable/timetable.component';
 
 /*Providers */
 import { LoggedInGuard } from './component/login/login.gaurd';
@@ -55,15 +62,17 @@ import { ComplaintService } from './providers/complaint.service';
 import { HomeworkService } from './providers/homework.service';
 import { ChartService } from './providers/chart.service';
 import { CircularService } from './providers/circular.service';
-import {XHRBackend, RequestOptions} from '@angular/http';
-import {AdminService} from './providers/admin.service';
-import {ValidationService} from './providers/formValidation.service';
-import { AppreciationService} from './providers/appreciation.service';
+import { XHRBackend, RequestOptions } from '@angular/http';
+import { AdminService } from './providers/admin.service';
+import { ValidationService } from './providers/formValidation.service';
+import { AppreciationService } from './providers/appreciation.service';
 import { PollService } from './providers/poll.service';
-import {EventService} from './providers/event.service';
+import { EventService } from './providers/event.service';
 import { StudentRatingService } from './providers/studentRating.service';
 import { SurveyService } from './providers/survey.service';
-import {SuggestionService} from './providers/suggestion.service';
+import { SuggestionService } from './providers/suggestion.service';
+import { MessageService } from './providers/message.service';
+
 
 
 @NgModule({
@@ -116,6 +125,13 @@ import {SuggestionService} from './providers/suggestion.service';
     SuggestionForMe,
     SuggestionForStudent,
     SuggestionAddComponent,
+    MessageComponent,
+    ErrorComponent,
+    Error404Component,
+    AddStudentComponent,
+    NewStudentComponent,
+    ExistingStudentComponent,
+    TimetableComponent,
   ],
   providers: [
     LoggedInGuard,
@@ -136,13 +152,14 @@ import {SuggestionService} from './providers/suggestion.service';
     StudentRatingService,
     SurveyService,
     SuggestionService,
-  {
+    MessageService,
+    {
       provide: CustomHttpService,
       useFactory: (backend: XHRBackend, defaultOptions: RequestOptions) => {
         return new CustomHttpService(backend, defaultOptions);
       },
       deps: [XHRBackend, RequestOptions]
-  }],
-  bootstrap: [ AppComponent ]
+    }],
+  bootstrap: [AppComponent]
 })
 export class AppModule { }

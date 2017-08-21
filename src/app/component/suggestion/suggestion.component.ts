@@ -7,9 +7,16 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 })
 export class SuggestionComponent{
   public suggestionStatus:any;
-  constructor(private route: ActivatedRoute){
-    this.route.params.subscribe(param => {
-      // console.log("asddf df",this.suggestionStatus);
-    });
+  public status: string = "";
+  public url:string ="";
+  public tab:boolean = false;
+  constructor(private route: ActivatedRoute,private router:Router){
+    
+    this.url = this.router.url;
+    if(this.url == "/suggestion/for-me" || this.url == "/suggestion/for-student")
+      this.tab = true;
+    else 
+      this.tab = false;
+    // this.router.navigate(["/suggestion/for-me"]);
   }
 }

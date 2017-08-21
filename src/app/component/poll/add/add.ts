@@ -31,8 +31,7 @@ export class AddPollComponent implements OnInit {
   ngOnInit() {
     this.getPollInfo();
     this.initForm();
-    this.getStandards();
-     $.noConflict(); 
+    this.getStandards(); 
   }
 
   public initForm() {
@@ -53,7 +52,6 @@ export class AddPollComponent implements OnInit {
       this.standards = res;
     },
       err => {
-        console.log("standardError", err);
       })
   }
 
@@ -64,7 +62,6 @@ export class AddPollComponent implements OnInit {
       this.loader = false;
     },
       err => {
-        console.log("Err", err);
         this.loader = false;
       })
 
@@ -121,7 +118,7 @@ export class AddPollComponent implements OnInit {
       this.initForm();
     },
       err => {
-        console.log("err", err);
+        // console.log("err", err);
         this.loader = false;
       })
   }

@@ -1,11 +1,13 @@
 import { Component,OnInit } from '@angular/core';
 import { StudentRatingService } from '../../providers/studentRating.service';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 // import * as moment_ from 'moment';
 
 
 
 declare let $: any;
+
 
 @Component({
   selector: 'student-rating',
@@ -16,12 +18,11 @@ declare let $: any;
 export class StudentRatingComponent implements OnInit{
 
   constructor(public srs: StudentRatingService,
-    public fb: FormBuilder,
+    public fb: FormBuilder, public router:Router,
   ) { }
 
   ngOnInit(){
      this.getStudents();
-     $.noConflict(); 
   }
 
   public students: any[];
@@ -51,8 +52,8 @@ export class StudentRatingComponent implements OnInit{
       this.loader = false;
     },
       err => {
-        console.log("err", err);
         this.loader = false;
+         this.router.navigate(['/error']);
       })
   }
 
@@ -72,11 +73,10 @@ export class StudentRatingComponent implements OnInit{
       this.respStuCopy = this.respStu;
       this.initForm();
       this.loader1 = false;
-      console.log(this.respStu);
     },
       err => {
-        console.log("err", err);
         this.loader1 = false;
+        this.router.navigate(['/error']);
       });
   }
 
@@ -125,11 +125,10 @@ export class StudentRatingComponent implements OnInit{
     this.srs.saveStudentRating(this.ratingForm.value, this.respStu.isEmpty).subscribe(res => {
       $('#submitModal').modal('show');
       this.selectedStudent = null;
-      console.log(this.selectedStudent);
     },
       err => {
-        console.log("er", err);
         this.selectedStudent = null;
+        this.router.navigate(['/error']);
       })
   }
 

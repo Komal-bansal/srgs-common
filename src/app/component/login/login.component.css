@@ -38,10 +38,11 @@ body :-ms-input-placeholder {
   font-weight: 300;
 }
 .login-wrapper {
-  background: #50a3a2;
+  /* background: #50a3a2; */
   /*background: -webkit-linear-gradient(top left, #ea212e 0%, #d8b1fe 100%);*/
   /*background: linear-gradient(to bottom, #fff 12%, #ea212e 116%);*/
-  background:linear-gradient(to bottom, #fff -35%, #443d9c 100%);
+  /* background:linear-gradient(to bottom, #fff -35%, #ea212e 100%); */
+      background: linear-gradient(to bottom, #fff -35%, #005198 100%);
   position: fixed;
   top: 0px;
   left: 0;

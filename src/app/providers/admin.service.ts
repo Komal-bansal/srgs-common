@@ -10,72 +10,147 @@ import { Configuration } from './app.constant';
 
 @Injectable()
 export class AdminService {
+  public id:any;
   private baseUrl: string = "";
 
   constructor(private http: CustomHttpService,
-               public htttp: Http,
-               private con: Configuration,
-               ) {
-    // this.baseUrl = this.config.getUrl();
+    public htttp: Http,
+    private con: Configuration,
+  ) {
+    this.baseUrl = this.con.baseUrl;
+    this.id=localStorage.getItem('id');
   }
 
   getSubjects() {
-    return this.http.get("https://cornerstone.ind-cloud.everdata.com" + "/subject")
+    return this.http.get(this.baseUrl + "subject")
       .map(this.extractData)
       .catch(this.handleError);
   }
 
   getStandards() {
-    return this.http.get("https://cornerstone.ind-cloud.everdata.com" + "/standard")
+    return this.http.get(this.baseUrl + "admin/" +this.id +"/homework/standard")
       .map(this.extractData)
       .catch(this.handleError);
   }
 
-  getParents() {
-    return this.http.get("https://cornerstone.ind-cloud.everdata.com/admin/parent")
+  // getParents() {
+  //   return this.http.get("https://cornerstone.ind-cloud.everdata.com/admin/parent")
+  //     .map(this.extractData)
+  //     .catch(this.handleError);
+  // }
+
+  getStudents(stdId:any) {
+    return this.http.get(this.baseUrl + "admin/student-by-standard/" +stdId)
       .map(this.extractData)
       .catch(this.handleError);
   }
 
   addEmployee(data: any) {
-    return this.http.post("https://cornerstone.ind-cloud.everdata.com/admin/employee", data)
-      .map(this.extractData)
-      .catch(this.handleError);
-  }
-  addStudent(data: any) {
-    return this.http.post("https://cornerstone.ind-cloud.everdata.com/admin/parent", data)
-      .map(this.extractData)
-      .catch(this.handleError);
-  }
-  addStudentWithExistingUser(data: any) {
-    return this.http.post("https://cornerstone.ind-cloud.everdata.com/admin/students", data)
-      .map(this.extractData)
-      .catch(this.handleError);
-  }
-  getStudentsByParentId(id: any) {
-    return this.http.get("https://cornerstone.ind-cloud.everdata.com/admin/parent/" + id + "/student")
+    return this.http.post(this.baseUrl + "admin/employee", data)
       .map(this.extractData)
       .catch(this.handleError);
   }
 
-  deleteStudent(id: any) {
-    return this.http.delete("https://cornerstone.ind-cloud.everdata.com/admin/student/" + id)
+  addStudent(data: any) {
+    var option = new RequestOptions({
+      headers: new Headers({
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+      })
+    });
+    return this.http.post(this.baseUrl + "admin/student", data, option)
       .map(this.extractData)
       .catch(this.handleError);
+  }
+
+  public getAllStudents(stdId:any){
+    return this.http.get(this.baseUrl + "admin/student/" + stdId + "/parent-sibling")
+    .map(this.extractData)
+    .catch(this.handleError);
+
+  }
+
+  public uploadParentImage(id: any, data: any, ) {
+    var option = new RequestOptions({
+      headers: new Headers({
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+      })
+    });
+
+    return this.htttp.post(this.con.baseUrl + "admin/parent/" + id + "/picture", data, option)
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
+  public uploadStudentImage(id: any, data: any, ) {
+    var option = new RequestOptions({
+      headers: new Headers({
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+      })
+    });
+
+    return this.htttp.post(this.con.baseUrl + "admin/student/" + id + "/picture", data, option)
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
+ public uploadImage(data: any, id:any) {
+    var option = new RequestOptions({
+      headers: new Headers({
+        'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
+      })
+    });
+    return this.htttp.post(this.con.baseUrl + "management/" + id + "/picture", data, option)
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
+
+  public addSibling(id: any, data: any) {
+    return this.http.post(this.baseUrl + "admin/student/" + id + "/sibling", data)
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
+  public addParent(id: any, data: any) {
+    return this.http.post(this.baseUrl + "admin/student/" + id + "/parent", data)
+      .map(this.extractData)
+      .catch(this.handleError);
+  }
+
+  getStudentDetails(id: any) {
+    return this.http.get(this.baseUrl + "admin/student/" + id)
+      .map(this.extractData)
+      .catch(this.handleError);
+
   }
 
   updateStudent(id: any, object: any) {
-    return this.http.put("https://cornerstone.ind-cloud.everdata.com/admin/student/" + id, object)
+    return this.http.put(this.baseUrl + "admin/student/" + id, object)
       .map(this.extractData)
       .catch(this.handleError);
   }
 
+
   updateParent(id: any, object: any) {
-    delete object['id'];
-    return this.http.put("https://cornerstone.ind-cloud.everdata.com/admin/parent/" + id, object)
+    return this.http.put(this.baseUrl + "admin/parent/" + id, object)
       .map(this.extractData)
       .catch(this.handleError);
   }
+
+
+  // addStudentWithExistingUser(data: any) {
+  //   return this.http.post("https://cornerstone.ind-cloud.everdata.com/admin/students", data)
+  //     .map(this.extractData)
+  //     .catch(this.handleError);
+  // }
+
+  // deleteStudent(id: any) {
+  //   return this.http.delete("https://cornerstone.ind-cloud.everdata.com/admin/student/" + id)
+  //     .map(this.extractData)
+  //     .catch(this.handleError);
+  // }
+
+
 
   private extractData(res: Response) {
     if (res.status === 204) { return res; }
@@ -94,17 +169,6 @@ export class AdminService {
       errMsg = error.message ? error.message : error.toString();
     }
     return Observable.throw(errMsg);
-  }
-
-  public uploadImage(data: any, id:any) {
-    var option = new RequestOptions({
-      headers: new Headers({
-        'Authorization': 'Bearer ' + localStorage.getItem('access_token'),
-      })
-    });
-    return this.htttp.post(this.con.baseUrl + "management/" + id + "/picture", data, option)
-      .map(this.extractData)
-      .catch(this.handleError);
   }
 
 }

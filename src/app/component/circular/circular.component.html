@@ -11,49 +11,62 @@
   <div class="panel-body">
      <div class="add-button">
       <button type="button" class="btn btn-success btn-circle" [routerLink]="['/add-circular']">
-  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-</button>
+      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+      </button>
     </div> 
-    <div style="text-align: center" *ngIf="EmptyCirculars"><b>No Circular added to View</b></div>
-
-    <div class="row text-center">
-      <loader [condition]="loader"></loader>
-    </div>
-  <div style="margin-top: 2%;padding-top: 1%;">
-    <div class="container card" *ngFor="let circular of circulars">
-      <div class="row">
-        <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(circular)" data-toggle="modal" data-target="#myModal-card"></span>
-      </div>
-      <!--<div class="row">
-        <div class="col-sm-6" *ngIf="!complaintStatus">
-          <span [style.background]="c.statusColor" class="badge">{{c.statusName}}</span>
+    <br>
+  <div  style="margin-top: 2%;padding-top: 1%;">
+    <div *ngIf="!EmptyCirculars">
+      <div class="container card" *ngFor="let circular of circulars">
+        <div class="row">
+          <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(circular)" data-toggle="modal" data-target="#myModal-card"></span>
         </div>
-        <div class="col-sm-6">{{c.priorityName}}</div>
-      </div>-->
-      <div class="row">
-        <img class="image" [attr.src]="fileUrl + circular.employeePicUrl">
-      </div>
-      <div class="row name">{{circular.employeeName}}</div>
-      <div class="row class"><label class="heading">For</label>
-        <div class="class">{{circular.standards}}</div>
-        <span *ngIf="!circular.standards">School</span>
-      </div>
-      <hr class="style-line">
-      <div class="row title">{{circular.title}}</div>
-      <!--<div class="row">
-        <div class="col-sm-6 edit" *ngIf="!(complaintStatus == 4 || complaintStatus == 5)">
-          <a [ngClass]="{'disabled-click' : c.statusId == 4}" (click)="selectComplaint(c,in)" data-toggle="modal" data-target="#myModal"
-              class="action"><i class="glyphicon glyphicon-pencil"></i>
-          </a>
+        <!--<div class="row">
+          <div class="col-sm-6" *ngIf="!complaintStatus">
+            <span [style.background]="c.statusColor" class="badge">{{c.statusName}}</span>
+          </div>
+          <div class="col-sm-6">{{c.priorityName}}</div>
+        </div>-->
+        <div class="row">
+          <!-- <img class="image" [attr.src]="fileUrl + circular.employeePicUrl"> -->
+              <div class="download-image" *ngIf="circular.fileTimestamp">
+                <span  *ngIf="circular.fileTimestamp">
+                <img class="modal-image" [attr.src]="fileUrl + circular.fileTimestamp">
+                </span>
+                    <div class="edit-image"><a [attr.href]="fileUrl + circular.fileTimestamp" [download]="custom"><i class="fa fa-download fa-lg"></i></a></div>
+              </div>
+              <span>
+                <img class="modal-image" *ngIf="!circular.fileTimestamp" src="./app/img/preview.png" alt="No Preview Avalable">
+              </span>.
         </div>
-        <div class="col-sm-6 comment">
-          <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
-          </a>
+        <div class="row name">{{circular.employeeName}}</div>
+        <div class="row class"><label class="heading">For</label>
+          <div class="class">{{circular.standards}}</div>
+          <span *ngIf="!circular.standards">School</span>
         </div>
-      </div>-->
+        <hr class="style-line">
+        <div class="row title">{{circular.title}}</div>
+        <div class="row description">{{circular.description}}</div>
+        <!--<div class="row">
+          <div class="col-sm-6 edit" *ngIf="!(complaintStatus == 4 || complaintStatus == 5)">
+            <a [ngClass]="{'disabled-click' : c.statusId == 4}" (click)="selectComplaint(c,in)" data-toggle="modal" data-target="#myModal"
+                class="action"><i class="glyphicon glyphicon-pencil"></i>
+            </a>
+          </div>
+          <div class="col-sm-6 comment">
+            <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
+            </a>
+          </div>
+        </div>-->
+      </div>
     </div>
   </div>
     <!--end cards-->
+    <div class="row"style="text-align: center" *ngIf="(EmptyCirculars)&&(!loader)&&(currentPage==1)" ><b>No Circulars are added to the view.</b></div>
+    <div class="row "style="text-align: center" *ngIf="(EmptyCirculars)&&(!loader)&&(currentPage!=1)" ><b>No more Circulars are added to the view.</b></div>
+      <div class="row text-center">
+        <loader [condition]="loader"></loader>
+      </div>
   </div>
 
 
@@ -67,13 +80,14 @@
         <li class="page-item" [ngClass]="{'disabled': EmptyCirculars}"><a class="page-link" (click)="nextCircular()">Next</a></li>
       </ul>
     </nav>-->
-    <button (click)="previousCircular()" class="btn btn-primary nav-btn right" [disabled]="currentPage === 1">Previous</button>
-    <button (click)="nextCircular()" class="btn right btn-primary nav-btn" [disabled]="EmptyCirculars || noMore">Next</button>
+    <!--<button (click)="previousCircular()" class="btn btn-primary nav-btn right" [disabled]="currentPage === 1">Previous</button>
+    <button (click)="nextCircular()" class="btn right btn-danger nav-btn" [disabled]="EmptyCirculars || noMore">Next</button>-->
+    <button (click)="nextCircular()" class="btn btn-primary" [disabled]="EmptyCirculars || noMore">Load More</button>
   </div>
 </div>
 
 <div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-custom" role="document">
     <div class="modal-content" *ngIf="selectedCircular">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -81,19 +95,32 @@
       </div>
       <div class="modal-body card-modal">
         <div class="row modal-heading">
-          <img class="modal-image" [attr.src]="fileUrl + selectedCircular.employeePicUrl" style="margin-top:10px;">
+          <!-- <img class="modal-image" [attr.src]="fileUrl + selectedCircular.employeePicUrl" style="margin-top:10px;"> -->
+            <div class="download-image-modal" *ngIf="selectedCircular.fileTimestamp">
+              <span  >
+               <img class="modal-image" [attr.src]="fileUrl + selectedCircular.fileTimestamp">
+              </span>
+              		<div class="edit-image-modal"><a [attr.href]="fileUrl + selectedCircular.fileTimestamp" [download]="custom"><i class="fa fa-download fa-lg"></i></a></div>
+            </div>
+            <span>
+              <img class="modal-image" *ngIf="!selectedCircular.fileTimestamp" src="./app/img/preview.png" alt="No Preview Avalable">
+            </span>
         </div>
         <div class="row modal-name">{{selectedCircular.employeeName}}
           <div class="modal-class" *ngIf="selectedCircular.standards"><label>For : </label><span>{{selectedCircular.standards}}</span><span *ngIf="!selectedCircular.standards"></span></div>
         </div>
-        <div class="row modal-description">{{selectedCircular.description}}</div>
+        <div class="row modal-description">
+          <span>{{selectedCircular.description}}</span>
+        </div>
         <hr class="style-line">
         <div class="row">
-          <div class="col-sm-6"><label class="heading">Created At</label>
-            <div class="result">{{selectedCircular.createdAt | date: "shortDate"}}</div>
+          <div class="col-sm-2 col-xs-2"><i class="glyphicon glyphicon-calendar calendar-custom pull-right"></i></div>
+          <div class="col-sm-5 col-xs-5">
+            <label class="heading">Created At</label>
+            <div class="result">{{selectedCircular.createdAt | date}}</div>
           </div>
-          <div class="col-sm-6"><label class="heading">Start date</label>
-            <div class="result">{{selectedCircular.start | date: "shortDate"}}</div>
+          <div class="col-sm-5 col-xs-5"><label class="heading">Start date</label>
+            <div class="result">{{selectedCircular.start | date}}</div>
           </div>
         </div>
       </div>

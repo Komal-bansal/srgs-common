@@ -1,57 +1,26 @@
 .studentList 
 {
-max-height: 200px;
-overflow:hidden;
- overflow-y:scroll;
+    width: 95%;
+    max-height: 200px;
+    overflow:hidden;
+    overflow-y:scroll;
  }
 
 .custom{
   height: 55px;
 }
 
-.foc :after, .foc:focus{
+/*.foc :after, .foc:focus{
   content: "abc";
-}
-/*.star-rating{
-	font-size: 0;
-}
-.star-rating__wrap{
-	display: inline-block;
-	font-size: 1rem;
-}
-.star-rating__wrap:after{
-	content: "";
-	display: table;
-	clear: both;
-}
-.star-rating__ico{
-	float: right;
-	padding-left: 2px;
-	cursor: pointer;
-	color: #FFB300;
-}
-.star-rating__ico:last-child{
-	padding-left: 0;
-}
-.star-rating__input{
-	display: none;
-}
-.star-rating__ico:hover:before,
-.star-rating__ico:hover ~ .star-rating__ico:before,
-.star-rating__input:checked ~ .star-rating__ico:before
-{
-	content: "\f005";
 }*/
+
 .rating {
     float:left;
 }
 
-/* :not(:checked) is a filter, so that browsers that don’t support :checked don’t 
-   follow these rules. Every browser that supports :checked also supports :not(), so
-   it doesn’t make the test unnecessarily selective */
 .rating:not(:checked) > input {
     position:absolute;
-    top:-9999px;
+    /*top:-9999px;*/
     clip:rect(0,0,0,0);
 }
 
@@ -98,7 +67,7 @@ overflow:hidden;
     left:2px;
 }
 .custom-panel-heading{
-    background: #adada2 !important;
+    background: #3d4154 !important;
 }
 @media screen and (max-width: 450px){
 .rating:not(:checked) > label{
@@ -108,3 +77,9 @@ overflow:hidden;
     display: inline-flex;
 }
 } 
+.table-cell{
+    padding: 8px 8px 0px 8px;
+}
+th{
+    padding-bottom: 15px;
+}

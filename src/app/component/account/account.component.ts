@@ -16,16 +16,16 @@ declare let $: any;
 export class AccountComponent implements OnInit {
     public details: any;
     public uploadPicForm: FormGroup;
-    public name: string = "";
+    public name: any = "";
     public nickName: any;
     public picUrl: any;
     public role: any;
     public email: any;
-    public url: string = "";
+    public url: any = "";
     public newPicTimestamp: any;
     public imgFile: any;
-    public loader:boolean = false;
-   
+    public loader: boolean = false;
+
     constructor(public lg: LoggedInGuard,
         public cs: CommonService,
         public au: AuthService,
@@ -38,15 +38,19 @@ export class AccountComponent implements OnInit {
 
     ngOnInit() {
         this.loadAccountDetails(this.details);
-        this.uploadPicForm = new FormGroup({
-            imgFile: new FormControl("", [Validators.required]),
-
-        })
+       this.initForm();
 
     }
 
+    public initForm(){
+         this.uploadPicForm = new FormGroup({
+            imgFile: new FormControl("", [Validators.required]),
+
+        })
+    }
+
     public loadAccountDetails(details: any) {
-        
+
         this.name = this.lg.getData('name');
         this.nickName = this.lg.getData('nickName');
         this.role = this.lg.getData('role');
@@ -55,20 +59,31 @@ export class AccountComponent implements OnInit {
 
     }
 
-      public getFile(event: any) {
-        this.imgFile = event.srcElement.files[0];
+     getFile(event: any) {
+    var blob = event.srcElement.files[0];
+    if(blob.type=="image/png" || blob.type=="image/jpeg" || blob.type=="image/jpg"){
+      this.imgFile = event.srcElement.files[0];
     }
+    else{
+       $('#errorModal').modal('show');
+      this.initForm();
+    }
+  }
 
     public submitAccountDetails(details: any) {
-         this.loader = true;
-
+        this.loader = true;
         let formData = new FormData();
         formData.append('file', this.imgFile);
         this.au.uploadImage(formData).subscribe((res: any) => {
             localStorage.setItem('picUrl', localStorage.getItem('fileUrl') + "/" + res.fileTimestamp);
             $('#myModal').modal('hide');
-             this.loader = false;
-        })
+            this.uploadPicForm.reset();
+            this.loader = false;
+        },
+            err => {
+                this.loader = false;
+                this.router.navigate(['/error']);
+            })
 
     }
 }

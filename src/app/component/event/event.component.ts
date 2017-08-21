@@ -29,10 +29,17 @@ export class EventComponent implements OnInit, AfterViewInit {
   public editEvent:FormGroup;
   public start:any;
   public end:any;
-  public stdIds:any[];
+  public stdIds:any[]=[];
   public selectedEvent:any;
   public message:any;
-
+  public loader:boolean=true;
+  public empId:any;
+  public id:any;
+  public disable:any;
+public standardId:any[]=[];
+  
+  // public startT:any;
+  // public endT:any;
   constructor(
      
     private eventService: EventService,
@@ -46,9 +53,8 @@ export class EventComponent implements OnInit, AfterViewInit {
   }
 
     ngOnInit() {   
+    this.id = localStorage.getItem("id");
     this.event=this.initForm(); 
-    // this.editEvent=this.editForm(); 
-    console.log(this.event);
   
   }
 
@@ -72,11 +78,14 @@ export class EventComponent implements OnInit, AfterViewInit {
           ],
 
         eventClick:(event, jsEvent, view)=> {
-          this.selectedEvent=event;                    
+          this.selectedEvent=event;   
+          this.empId=event.employeeId; 
+          if(this.empId==this.id){
+            this.disable=true;
+          }
           this.editEvent=this.editForm();
           this.event=this.initForm(); 
-          this.getEventById(event.id); 
-          this.checkPlannerType(event.plannerTypeId);                   
+          this.getEventById(event.id);
           $('#fullCalModal').modal();         
         },
 
@@ -87,10 +96,11 @@ export class EventComponent implements OnInit, AfterViewInit {
           return false;
           }
         else{
+          this.event.reset;
           this.start=moment_(start).format('YYYY-MM-DD');
-          var tomorrow = new Date(this.start);
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          this.end=moment_(tomorrow).format('YYYY-MM-DD');  
+          // var tomorrow = new Date(this.start);
+          // tomorrow.setDate(tomorrow.getDate() + 1);
+          this.end=moment_(start).format('YYYY-MM-DD');  
           this.event=this.initForm();            
           $('#fullCalView').modal();    
         }
@@ -119,11 +129,8 @@ export class EventComponent implements OnInit, AfterViewInit {
       plannerTypeId:new FormControl([], [Validators.required]),
       startDate:new FormControl(this.start,[Validators.required]),
       endDate:new FormControl(this.end,[Validators.required]),
-      // startTime:new FormControl('',[Validators.required]),
-      // endTime:new FormControl('',[Validators.required]),
       location:new FormControl(''),
       description:new FormControl(''),
-      // standardId:new FormControl('')
      })
 
   }
@@ -136,7 +143,6 @@ export class EventComponent implements OnInit, AfterViewInit {
       endTime:new FormControl(this.selectedEvent.endTime),
       location:new FormControl(this.selectedEvent.location),
       description:new FormControl(this.selectedEvent.description),
-      // standardId:new FormControl('')
     })
     }
 
@@ -145,36 +151,68 @@ export class EventComponent implements OnInit, AfterViewInit {
     public selectPlannerType(type:any){
     if(type==2){
       this.event.addControl("standardIds", new FormControl('', [Validators.required]));
-      console.log(type);
     }
     else if(type!=2){
       this.event.removeControl("standardIds");
-      this.standard = [];
+      // this.standard = [];
     }
-    else if(type==3 ||type==4){
+    if(type==3 ||type==4){
       this.event.removeControl("startTime");            
       this.event.removeControl("endTime");      
     }
     else if((type!=3) ||(type!=4)){
       this.event.addControl("startTime", new FormControl('', [Validators.required]));
-      this.event.addControl("endTime", new FormControl('', [Validators.required]));      
+      this.event.addControl("endTime", new FormControl('', [Validators.required])); 
     }
 
   }
+  public startTime:any;
+  public endTime:any;
 
-  public checkPlannerType(type:any){
-    if(type==2){
-      this.editEvent.addControl("standardIds", new FormControl('', [Validators.required]));
-      console.log(type);
-    }
+public startT(e:any){
+  this.startTime=e;
+  this.event.controls['startTime'].patchValue(e);
+  if((this.event.controls['startDate'].value)==(this.event.controls['endDate'].value)){
+  if(this.endTime<this.startTime){
+      this.message="Please choose start time less than end time";
+      $('#modal-success').modal('show'); 
+  this.event.controls['startTime'].patchValue("");  
+      this.event.controls['endTime'].patchValue("");
+      $("input[type=time]").val("");
+      this.startTime=null;
+      this.endTime=null;
   }
+  }
+
+}
+
+public endT(e:any){
+  this.endTime=e;
+  this.event.controls['endTime'].patchValue(e);  
+  if((this.event.controls['startDate'].value)==(this.event.controls['endDate'].value)){  
+    if(this.endTime<this.startTime){
+      this.message="Please choose end time greater than start time";
+      $('#modal-success').modal('show'); 
+      // this.event.controls['startTime'].patchValue("")    
+      $("input[type=time]").val("");
+         this.event.controls['startTime'].patchValue("");  
+      this.event.controls['endTime'].patchValue("");     
+      this.startTime=null;
+      this.endTime=null;
+    } 
+  }
+ 
+// this.endTime=null;
+}
+
     public getEvents(){  
       this.eventService.GetEvents(this.eventMonth).subscribe((res) => {  
         if(res.status===204){
           this.emptyEvent=true;
+          this.loader=false;
         }
         else{ 
-          console.log(res);
+          this.loader=false;
       this.newEvents=res;
       _('#calendar').fullCalendar('removeEvents');
       _('#calendar').fullCalendar('addEventSource', this.newEvents);
@@ -183,8 +221,8 @@ export class EventComponent implements OnInit, AfterViewInit {
     }, (err) => {
     });
   }
-public startTime:any;
-public endTime:any;
+// public startTi:any;
+// public endTi:any;
   public getEventById(id){
     this.eventService.GetEventById(id).subscribe((res)=>{
       this.eventsInfo=res;
@@ -198,16 +236,14 @@ public endTime:any;
   public getPlanner(){
     this.eventService.GetPlanner().subscribe((res)=>{
       this.planner=res;
-      console.log(res);
+      this.loader=false;
     },(err)=>{
-      console.log("error");
     })
   }
   
   public getStandardId() {
     this.eventService.getStandards().subscribe((res) => {
       this.standard = res;
-      console.log(this.standard);
     }, (err) => {
     });
   }
@@ -219,22 +255,16 @@ public endTime:any;
       // $('#message').html(this.eventsInfo.eventTitle);       
       this.getEvents();
     },(err)=>{
-      console.log(this.event.value);
     })
-      // _('#calendar').fullCalendar('refetchEvents');        
   }
 
   public deleteEvent(){
-    // console.log("first");
     this.eventService.deleteEvent(this.eventsInfo.id).subscribe((res)=>{
       this.message="You have successfully deleted the event";
       $('#modal-success').modal('show');             
       this.getEvents();
-      // console.log("avbnk");
     },(err)=>{
-// console.log("third");
     })
-      // _('#calendar').fullCalendar('refetchEvents');    
     
   }
 
@@ -248,23 +278,18 @@ public endTime:any;
   }
 
 
-public selectStandards(e:any){
-    this.stdIds = [];
-    e.forEach((element:any) => {
-      this.stdIds.push(element.id);
-    });
+public selectStandards(a:any,e:any){
+    if(e==true){
+      this.stdIds.push(a.id);
+    }
+    else if(e==false){
+      this.stdIds.forEach((element:any, index:any)=>{
+         if (element==a.id){
+          this.stdIds.splice(index,1);
+        }
+      })
+    }
     this.event.controls['standardIds'].patchValue(this.stdIds);
-    console.log(this.stdIds);
-  }
-public standardId:any;
-  public editStandards(e:any){
-    console.log(this.editEvent.controls['standardIds'].value);
-    this.standardId = [];
-    e.forEach((element:any) => {
-      this.standardId.push(element.id);
-    });
-    this.editEvent.controls['standardIds'].patchValue(this.standardId);
-    console.log(this.standardId);
   }
 
   public currentDate:any;
@@ -274,12 +299,17 @@ public standardId:any;
     if(new Date(e.target.value) < new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())){
       this.message="Please choose an upcoming date from the calendar";
       $('#modal-success').modal('show');               
-      // alert("Please choose an upcoming date from the calendar.");
       this.event.controls['startDate'].patchValue(this.start);
       this.event.controls['endDate'].patchValue(this.start);
-      console.log(this.start);
-      console.log(this.event.value);
     }
+      
+    if(new Date(e.target.value)> new Date(this.event.controls['endDate'].value)){
+      this.message="Please choose date before end date from the calendar";
+      $('#modal-success').modal('show');               
+      this.event.controls['startDate'].patchValue(this.start);
+    }
+    this.startT(this.startTime);
+    this.endT(this.endTime);
 
   }
 
@@ -288,37 +318,77 @@ public standardId:any;
       {
       this.message="Please choose a date after start date";
       $('#modal-success').modal('show'); 
-      // alert("Please choose a date after start date");
       this.event.controls['endDate'].patchValue(this.start);
       }
-    
+    this.startT(this.startTime);
+    this.endT(this.endTime);
   }
+
 
 
 public onStartDate(e:any){
     if(new Date(e.target.value) < new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())){
       this.message="Please choose an upcoming date from the calendar";
       $('#modal-success').modal('show'); 
-      // alert("Please choose an upcoming date from the calendar.");
       this.editEvent.controls['startDate'].patchValue(this.selectedEvent.startDate);
       this.editEvent.controls['endDate'].patchValue(this.selectedEvent.startDate);
-      console.log(this.selectedEvent.startDate);
-      console.log(this.event.value);
+    }
+    if(new Date(e.target.value)> new Date(this.editEvent.controls['endDate'].value)){
+      this.message="Please choose date before end date from the calendar";
+      $('#modal-success').modal('show');               
+      this.editEvent.controls['startDate'].patchValue(this.selectedEvent.startDate);
+    this.checkStart(this.startTime);
+    this.checkEnd(this.endTime);  
     }
   }
 
   public check(e:any){
-    console.log(this.editEvent.controls['startDate'].value);
     if(new Date(e.target.value)<new Date(this.editEvent.controls['startDate'].value))
       {
       this.message="Please choose a date after start date";
       $('#modal-success').modal('show'); 
-      // alert("Please choose a date after start date");
       this.editEvent.controls['endDate'].patchValue(this.selectedEvent.startDate);
       }
-    
+    this.checkStart(this.startTime);
+    this.checkEnd(this.endTime);
   }
 
+  public checkStart(e:any){
+    
+    this.startTime=e;
+
+  if((this.editEvent.controls['startDate'].value)==(this.editEvent.controls['endDate'].value)){
+  if(this.endTime<this.startTime){
+      this.message="Please choose start time less than end time";
+      $('#modal-success').modal('show'); 
+      this.editEvent.controls['startTime'].patchValue("");  
+      this.editEvent.controls['endTime'].patchValue("");
+      $("input[type=time]").val("");
+      this.startTime=null;
+      this.endTime=null;
+  }
+  }
+
+  }
+
+  public checkEnd(e:any){
+  this.endTime=e;
+    // this.editEvent.controls['endTime'].patchValue(e);
+
+  if((this.editEvent.controls['startDate'].value)==(this.editEvent.controls['endDate'].value)){  
+    if(this.endTime<this.startTime){
+      this.message="Please choose end time greater than start time";
+      $('#modal-success').modal('show'); 
+      this.event.controls['startTime'].patchValue("")    
+      this.editEvent.controls['startTime'].patchValue("");  
+      this.editEvent.controls['endTime'].patchValue("");   
+      $("input[type=time]").val("");
+        this.startTime=null;
+        this.endTime=null;
+    } 
+  }
+
+  }
 public resetForm(){
       this.editEvent.patchValue({ "title": this.selectedEvent.title });
       this.editEvent.patchValue({ "startdate": this.selectedEvent.startDate });

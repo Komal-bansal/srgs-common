@@ -1,0 +1,18 @@
+table,th,tr,td{
+    border: 1px solid grey;
+}
+
+table{
+    width:90%;
+    margin: 5%;
+}
+
+td{
+    padding: 2px;
+    margin:2px;
+}
+
+.standard{
+    width: 80%;
+    margin: 10px 10%
+}

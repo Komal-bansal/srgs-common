@@ -24,7 +24,7 @@ public postAppreciation(data:any){
 }
 
   public getStandards() {
-    return this.http.get(this.serveUrl + '/appreciation/for-student/standard')
+    return this.http.get(this.serveUrl + '/homework/standard')
                     .map(this.extractData)
                     .catch(this.handleError);
   }

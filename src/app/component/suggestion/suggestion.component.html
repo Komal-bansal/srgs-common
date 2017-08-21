@@ -4,11 +4,14 @@
     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
   </button>
   </h1> -->
-
-  <ul class="nav nav-tabs">
-    <li routerLinkActive="active"><a [routerLink]="['/suggestion/for-me']" >For Staff</a></li>
-    <li routerLinkActive="active"><a [routerLink]="['/suggestion/for-student']" >For Student</a></li>
+<!--<ul class="nav nav-tabs" *ngIf="status != 'All'">
+  <li> {{status}} </li>
+</ul>-->
+  <ul class="nav nav-tabs" *ngIf="tab">
+    <li routerLinkActive="active"><a [routerLink]="['/suggestion/for-me']" >For Us</a></li>
+    <li routerLinkActive="active"><a [routerLink]="['/suggestion/for-student']" >By Us</a></li>
   </ul>
+
   <div class="tab-content">
     <router-outlet></router-outlet>
   </div>

@@ -6,9 +6,12 @@
   </button>
   </div>
 
-  <div>
-    <loader [condition]="loader">
-    </loader>
+  <div class="row text-center">
+    <loader [condition]="loader"></loader>
+  </div>
+
+  <div *ngIf="((!surveyInfo)&&(!loader))">
+    Surveys cannot be added at the moment. Try again later.
   </div>
 
   <form [formGroup]="surveyForm" (submit)="submitSurvey()" *ngIf="surveyInfo">
@@ -43,12 +46,15 @@
     </select>
       </div>
 
+      <div *ngIf="standards">
       <div class="form-group" *ngIf="surveyForm.value.surveyTypeId == 2">
         <label for="standards">Standards</label>
         <select class="form-control" id="standardIds" [(ngModel)]="selectedStandard" [ngModelOptions]="{standalone: true}" (ngModelChange)="onStandards($event)"
           multiple required>
+          <option *ngIf="!standards" [value]="null" selected>No standards are added </option>
       <option *ngFor="let s of standards" [value]="s.id">{{s.name}}</option>
     </select>
+      </div>
       </div>
 
       <div class="form-group">
@@ -73,7 +79,6 @@
           <div class="form-group col-sm-4 col-xs-6">
             <label for="surveyType" class="question">Question Type</label>
             <select class="form-control" id="surveyType" formControlName="type">
-
               <!--(ngModelChange)="onQuestionType($event,surveyForm.controls.surveyQuestions.controls[i])"-->
                 <option *ngFor="let a of surveyInfo.surveyQuestionType" [value]="a.id"> {{a.name}}</option>
             </select>
@@ -85,7 +90,7 @@
           </div>
 
           <div class="form-group col-sm-2 col-xs-6" style=" margin-top: 23px;">
-            <button type="button" class="btn btn-primary active" title="Delete Question" (click)="removeQuestions(surveyForm,i)">
+            <button type="button" class="btn btn-primary active" title="Delete Question" (click)="removeQuestions(surveyForm,i)" [disabled]="surveyForm.controls.surveyQuestions.length<=1">
               <span class="glyphicon glyphicon-trash" ></span>
              </button>
           </div>
@@ -100,7 +105,7 @@
               </div>
 
               <div class="col-xs-2" style="margin-top:23px;">
-                <button type="button" class="btn btn-primary active" title="Delete Options" (click)="removeOptions(surveyForm,i,ii)">
+                <button type="button" class="btn btn-primary active" title="Delete Options" (click)="removeOptions(surveyForm,i,ii)" [disabled]="surveyForm.controls.surveyQuestions.controls[i].controls.choices.length<=2">
                     <span class="glyphicon glyphicon-remove"></span>
                 </button>
               </div>
@@ -116,7 +121,7 @@
               Minimum 2 options are required.
             </div>
           </div>
-<!--
+          <!--
           <div class="alert alert-warning col-xs-10" *ngIf="surveyForm.value.surveyQuestions[i].type==3">
             No options for text-type questions.
           </div>-->
@@ -136,7 +141,7 @@
     </div>
 
     <div class="panel-footer">
-      <button type="submit" class="btn btn-success" [disabled]="(surveyForm.invalid)">Submit</button>
+      <button type="submit" class="btn btn-success" [disabled]="surveyForm.invalid">Submit</button>
       <button type="button" class="btn btn-primary" [disabled]="surveyForm.controls.surveyQuestions.length==surveyInfo.questionLimit"
         (click)="addQuestions(surveyForm)">Add Questions</button>
     </div>

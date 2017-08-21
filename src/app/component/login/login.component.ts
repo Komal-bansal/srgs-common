@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
   styleUrls:['./login.component.css']
 })
 export class LoginComponent{
+  public loader:boolean=false;
   loginForm: FormGroup;
   error:boolean = false;
   constructor(public formBuilder: FormBuilder,
@@ -24,7 +25,9 @@ export class LoginComponent{
     });
   }
   onSubmit(){
+    this.loader=true;
     this.appService.verifyUser(this.loginForm.value).subscribe((res) => {
+      this.loader=false;
       this.verifySuccessfully(res);
     }, (err) => {
       this.verifyFailed(err);
@@ -38,13 +41,14 @@ export class LoginComponent{
 
   public verifyFailed(err:any) {
     this.error = true;
+    this.router.navigate(['/error']);
   }
 
   public getUserInfo() {
     this.appService.getUserInfo().subscribe((res) => {
       this.loggedInSuccesfully(res);
     }, (err) => {
-
+       this.router.navigate(['/error']);
     });
   }
 

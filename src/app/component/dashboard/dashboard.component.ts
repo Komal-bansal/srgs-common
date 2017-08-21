@@ -16,6 +16,7 @@ export class DashboardComponent {
   public suggestionByStatusChartOptions: any;
   public loader: boolean = false;
   public loader1: boolean = false;
+  public loader2: boolean = false;
   public responseByStatus: any;
   public responseByCategoryAndStatus: any;
   public responseSuggestionByStatus: any;
@@ -23,22 +24,44 @@ export class DashboardComponent {
   constructor(public cs: ChartService, private router: Router, private zone: NgZone) {
     this.loader = true;
     this.loader1 = true;
+    this.loader2 = true;
     cs.getComplaintByCategoryAndStatus().subscribe((response) => {
+      if(response.status === 204){
+        this.loader=false;
+        this.responseByCategoryAndStatus = 0;
+        return;
+      }
       this.responseByCategoryAndStatus = response
       this.chartByCategoryAndStatus();
+    },
+    err =>{
+      this.router.navigate(['/error']);
     });
     
     cs.getComplaintByStatus().subscribe((response) => {
-      this.responseByStatus = response
+      if(response.status === 204){
+        this.loader1=false;
+        this.responseByStatus = 0;
+        return;
+      }
+      this.responseByStatus = response;
       this.chartByStatus();
      
+    },
+    err =>{
+      this.router.navigate(['/error']);
     });
     
     // cs.getSuggestionByStatus().subscribe((res) => {
+    //   if(res.status === 204){
+    //      this.responseSuggestionByStatus =0;
+    //     return;
+    //   }
     //   this.responseSuggestionByStatus = res;
     //   this.chartBySuggestionStatus();
+    
     // }, (err) => {
-    //   console.log(err);
+    //   this.router.navigate(['/error']);
     // });
   }
 
@@ -96,6 +119,7 @@ export class DashboardComponent {
     
     this.chartByStatus();
     this.chartByCategoryAndStatus();
+     this.chartBySuggestionStatus();
     
 }
 
@@ -176,6 +200,7 @@ export class DashboardComponent {
       chartArea: { left: '10%', height: "40%", width: "40%", bottom: '10%', right: '10%', top: '5%' },
       pieHole: 0.4
     }
+    this.loader2 = false;
   }
 
 }

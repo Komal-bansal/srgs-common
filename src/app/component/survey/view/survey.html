@@ -5,21 +5,28 @@
   </button>
   </div>
   <div class="panel-body">
-    <div style="width:100%;background-color:#B2DFDB;margin-bottom:10px;padding:0.5px;border-radius:5px;">
+    <div class="row text-center">
+      <loader [condition]="loader"></loader>
+    </div>
+    <div *ngIf="emptySurvey">
+      No information to display.
+    </div>
+    <div *ngIf="selectedSurvey">
+    <div  class="heading">
       <h4>&nbsp;Details</h4>
     </div>
     <ul class="list-group">
       <li class="list-group-item"><label>Description:</label> {{selectedSurvey.description}}</li>
       <li class="list-group-item"><label>Survey By: </label> {{selectedSurvey.employeeName}}</li>
-      <li class="list-group-item"><label>Expired At: </label> {{selectedSurvey.expiredAt | date: "dd/MM/yyyy"}}</li>
+      <li class="list-group-item"><label>Expired At: </label> {{selectedSurvey.expiredAt | date}}</li>
       <li class="list-group-item" *ngIf="selectedSurvey.typeId==1"><label>Audience:</label> {{selectedSurvey.typeName}}</li>
       <li class="list-group-item" *ngIf="selectedSurvey.typeId==2"><label>Audience: </label><span style="margin: auto 2px;" *ngFor="let a of selectedSurvey.standards">{{a}}</span></li>
     </ul>
 
-    <div style="width:100%;background-color:#B2DFDB;margin:auto 0;padding:0.5px;border-radius:5px;">
+    <div  class="heading">
       <h4>&nbsp;Results</h4>
     </div>
-    <div class="" *ngFor="let s of selectedSurvey.surveyQuestions, let i=index" style="background-color:#f2f7f6;margin-top:20px;">
+    <div class="" *ngFor="let s of selectedSurvey.surveyQuestions, let i=index" style="background-color:#f2f7f6;margin-top:20px;padding: 0 20px;">
         <div class="row">
           <div class="col-sm-6 col-xs-6" >
             <div class="question"><h4>{{i+1}}.&nbsp;{{s.questionText}}</h4></div>
@@ -56,6 +63,7 @@
     </div>
 
   </div>
+</div>
   <div class="panel-footer">
     <button type="button" class="btn btn-primary" (click)="_location.back()">Go Back</button>
   </div>

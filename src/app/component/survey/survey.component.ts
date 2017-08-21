@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { SurveyService } from '../../providers/survey.service';
-
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
   selector: 'survey',
@@ -9,5 +9,8 @@ import { SurveyService } from '../../providers/survey.service';
 })
 
 export class SurveyComponent {
-  
+      constructor(private router:Router){
+         this.router.navigate(["/survey/current-survey"]);
+    }
+    
 }

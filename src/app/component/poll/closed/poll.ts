@@ -1,7 +1,8 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@angular/forms';
 import { CommonService } from '../../../providers/common.service';
 import { PollService } from '../../../providers/poll.service';
+import { Router } from '@angular/router';
 
 
 declare let $: any;
@@ -12,39 +13,43 @@ declare let $: any;
   styleUrls: ['./poll.css'],
 })
 
-export class ClosedPollComponent  implements OnInit{
+export class ClosedPollComponent implements OnInit {
 
-public noMore: boolean = false;
-public emptyPolls:boolean = false;
-public polls: any[];
-public currentPage=1;
-public loader:boolean = false;
+  public noMore: boolean = false;
+  public emptyPolls: boolean = false;
+  public polls: any[];
+  public currentPage = 1;
+  public loader: boolean = false;
 
-  constructor(public ps: PollService){
+  constructor(public ps: PollService, public router: Router) {
   }
 
-  ngOnInit(){
-        this.getClosedPolls();
+  ngOnInit() {
+    this.getClosedPolls();
   }
 
-  public getClosedPolls(){
+  public getClosedPolls() {
     this.loader = true;
-    this.ps.getClosedPolls(this.currentPage).subscribe(res=>{
-      if(res.status==204){
+    this.ps.getClosedPolls(this.currentPage).subscribe(res => {
+      if (res.status == 204) {
         this.polls = [];
         this.emptyPolls = true;
         this.loader = false;
         return;
       }
-      this.polls = res;
-      this.loader = false;
-      if(this.polls.length < 6) this.noMore = true;
+        this.loader = false;
+      this.emptyPolls = false;
+      if (this.currentPage == 1)
+        this.polls = res;
+      else
+        this.polls = this.polls.concat(res);
+      if (res.length < 6) this.noMore = true;
       else this.noMore = false;
     },
-    err =>{
-      console.log("error",err);
-       this.loader = false;
-    })
+      err => {
+        this.loader = false;
+        this.router.navigate(['/error']);
+      })
   }
 
   // public changeDate(obj: any) {
@@ -56,14 +61,14 @@ public loader:boolean = false;
   //   return date;
   // }
 
-    public previousPoll() {
+  public previousPoll() {
     delete this.polls;
     this.currentPage -= 1;
     this.getClosedPolls();
   }
 
   public nextPoll() {
-    delete this.polls;
+    // delete this.polls;
     this.currentPage += 1;
     this.getClosedPolls();
   }

@@ -1,272 +1,114 @@
 <div class="panel panel-default">
-<div class="panel-body">
-<div class="add-button">
-  <button type="button" class="btn btn-success btn-circle" [routerLink]="['/add-poll']">
+
+
+  <div class="panel-body">
+    <div class="add-button">
+      <button type="button" class="btn btn-success btn-circle" [routerLink]="['/add-poll']">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
   </button>
-</div>
-<br>
-<div>
-<div class="row text-center">
-  <loader [condition]="loader"></loader>
-</div>
-
-<div class="panel panel-default" *ngIf="emptyPolls">
-  No Polls added to the view.
-</div>
-
-<div *ngIf="!emptyPolls">
-   <div style="margin-top: 2%;padding-top: 1%;">
-  <div *ngFor="let p of polls" class="panel panel-default">
-    <div class="panel-heading custom-panel-heading">
-      {{p.question}}
     </div>
-    <div class="panel-body" style="padding: auto 0;">
-      <div class="flot-chart" style="padding:auto 0;">
-        <div class="col-lg-6">
-          <ul class="" style="list-style-type:none;margin:0;padding:0;" *ngFor="let o of p.options">
-            <li class="pollChoice">{{o.name}}
-              <div class="progress pollProgress">
-                <span class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" [attr.aria-valuenow]="o.percent"
-                  aria-valuemin="0" aria-valuemax="100" [style.width]="(o.percent/100)*100 + '%'">
-                       <span> {{o.percent}}% </span>
-                </span>
+    <br>
+
+    <div *ngIf="!emptyPolls" style="margin-top: 2%;padding-top: 1%;">
+      <div class="panel panel-default" *ngFor="let p of polls">
+        <div class="panel-heading custom-panel-heading">
+          {{p.question}}
+        </div>
+        <div class="panel-body" style="padding: auto 0;">
+          <div class="flot-chart" style="padding:auto 0;">
+            <div class="row">
+              <div class="col-lg-6">
+                <ul class="" style="list-style-type:none;margin:0;padding:0;" *ngFor="let o of p.options">
+                  <li class="pollChoice">{{o.name}}
+                    <div class="progress pollProgress">
+                      <span class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" [attr.aria-valuenow]="o.percent"
+                        aria-valuemin="0" aria-valuemax="100" [style.width]="(o.percent/100)*100 + '%'">
+                       <span style="margin:auto;"> {{o.percent}}% </span>
+                      </span>
+                    </div>
+                  </li>
+                </ul>
               </div>
-            </li>
-          </ul>
-        </div>
-        <div class="col-lg-6">
-          <ul class="" style="list-style-type:none;margin:0;padding:0;">
-            <li *ngIf="p.employeeName">Created By: {{p.employeeName}} </li>
-            <li *ngIf="p.typeId==1">Audience: {{p.typeName}} </li>
-            <li *ngIf="p.typeId==2">Audience:
-              <ul *ngFor="let s of p.standards">
-                <li>{{s.name}} </li>
-              </ul>
-            </li>
-            <li>Question Type: {{p.optionTypeName}} </li>
-            <li>Count: {{p.count}}</li>
-            <li>Created At: {{p.createdAt | date: "dd/MM/yy"}}</li>
-            <li>Due Date: {{p.expiredAt | date: "dd/MM/yy"}}</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+              <div class="col-lg-6">
+                <div class="pole-info">
+                  <ul class="" style="list-style-type:none;margin:0;padding:0;">
+                    <li *ngIf="p.employeeName" class="pole-info-list">
+                      <div class="col-sm-2">
+                        <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10">
+                        <label>Created By:</label> <span class=" ">{{p.employeeName}}</span>
+                      </div>
+                    </li>
+                    <li *ngIf="p.typeId==1" class="pole-info-list">
+                      <div class="col-sm-2">
+                        <i class="fa fa-users" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10">
+                        <label>Audience:</label> <span class=" ">{{p.typeName}}</span>
+                      </div>
+                    </li>
+                    <li *ngIf="p.typeId==2" class="pole-info-list">
+                      <div class="col-sm-2">
+                        <i class="fa fa-users" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10" style="margin-bottom:15px">
+                        <label>Audience:</label>
+                        <span class=" ">
+                <ul *ngFor="let s of p.standards" >
+                  <li>{{s.name}} </li>
+                </ul>
+              </span>
+                      </div>
+                    </li>
+                    <li class="pole-info-list">
+                      <div class="col-sm-2">
+                        <i class="fa fa-question-circle" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10">
+                        <label class="">Question Type:</label>
+                        <span class=" ">{{p.optionTypeName}}</span>
+                      </div>
+                    </li>
+                    <li class="pole-info-list">
+                      <div class="col-sm-2">
+                        <i class="fa fa-sort-numeric-asc" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-10">
+                        <label class="">Count: </label> <span class=" ">{{p.count}}</span>
+                      </div>
+                    </li>
+                    <li class="pole-info-list">
+                      <div class="col-sm-2">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                      </div>
+                      <div class="col-sm-5">
+                        <label class="">Created At: </label>
+                        <div class=" ">{{p.createdAt | date}}</div>
+                      </div>
+                      <div class="col-sm-5">
+                        <label class="">Due Date:</label>
+                        <div class=""> {{p.expiredAt | date}}</div>
 
-  </div>
-   </div>
-</div>
-
-<div class="panel-footer">
-  <button type="button" (click)="previousPoll()" [disabled]="currentPage === 1" class="btn btn-primary">Previous</button>
-  <button type="button" (click)="nextPoll()" [disabled]="(!polls) || noMore" class="btn btn-primary">Next</button>
-</div>
-
-<!--standards - id,name
-count
-createdAt
-expiredAt
-id
-optionId
-optionTypeId
-optionTypeName
-options
-id, name, percent
-question
-typeId
-typeName-->
-
-
-<!--<div class="tab pane">
-  <div class="panel panel-default">
-
-    <div class="panel-body" id="accordion">
-
-      <div style="text-align: center" *ngIf="EmptyPolls"><b>No Polls</b>
-      </div>
-
-
-      <div class="pollCard col-sm-3 col-xs-4 " *ngFor="let p of polls">
-        <span class="glyphicon glyphicon-resize-full expand" data-toggle="modal" data-target="#pollModal" style="margin-bottom:10px;"
-          (click)="selectModal()"></span>
-
-        <div class="pollContainer">
-          <h4 class="pollQuestion"><b>{{p.question}}</b></h4>
-         
-
-
-         <div class="flot-chart-content" *ngIf="p.options" GoogleChart id="complaint_chart_by_status" [chartData]="p.pie_ChartData" chartType="PieChart">
-          </div>
-
-
-        </div>
-      </div>
-
-    </div>
-
-    <div class="panel-footer">
-      <button type="button" class="btn btn-primary">Previous</button>
-      <button type="button" class="btn btn-primary">Next</button>
-    </div>
-  </div>
-</div>
-
-<div id="pollModal" class="modal fade" role="dialog" *ngIf="selectedPoll">
-  <div class="modal-dialog">
-
-    
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">{{selectedPoll.question}}</h4>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-sm-6">
-            Audience: {{selectedPoll.typeId}}
-          </div>
-          <div class="col-sm-6" style="float:right;">
-            By: {{selectedPoll.employeeName}}
-          </div>
-        </div>
-        <hr class="style-line">
-        <div class="row">
-          <div class="col-sm-6">
-            Graph:
-          </div>
-          <div class="col-sm-6">
-            <ul style="list-style-type:none;margin:0;padding:0;" *ngFor="let o of selectedPoll.options">
-              <li class="pollChoice">{{o.name}}
-                <div class="progress pollProgress">
-                  <span class="progress-bar progress-bar-success progress-bar-striped" role="progressbar" [attr.aria-valuenow]="o.percent"
-                    aria-valuemin="0" aria-valuemax="100" [style.width]="(o.percent/100)*100 + '%'">
-                       <span class="sr-only"> {{o.percent}}% </span>
-                  </span>
+                      </div>
+                    </li>
+                  </ul>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
-        <hr class="style-line">
-        <div class="row">
-          <div class="col-sm-6">
-            count
-          </div>
-          <div class="col-sm-6">
-            optionTypeName
-          </div>
-        </div>
-        <hr class="style-line">
-        <div class="row">
-          <div class="col-sm-6">
-            Created At:
-          </div>
-          <div class="col-sm-6" style="float:right;">
-            Expired At:
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>
-
+    <div class="row text-center">
+      <loader [condition]="loader"></loader>
+    </div>
+    <div class="row col-lg-12" style="text-align: center" *ngIf="(emptyPolls)&&(!loader)&&(currentPage==1)"><b>No Polls are added to the view.</b></div>
+    <div class="row col-lg-12" style="text-align: center" *ngIf="(emptyPolls)&&(!loader)&&(currentPage!=1)"><b>No more Polls are added to the view.</b></div>
   </div>
-</div>
 
-
-
-
-<div class="tab-pane">
-  <div class="panel panel-default">
-
-    <div class="panel-body" id="accordion">
-
-      <div style="text-align: center" *ngIf="EmptyPolls"><b>No Polls</b>
-      </div>
-
-      <div class="container card" *ngFor="let p of polls; let i=index;">
-        <div class="row">
-          <span class="glyphicon glyphicon-resize-full expand" style="margin-bottom:10px;"
-            (click)="selectPoll(p)" data-toggle="modal" data-target="#pollModal"></span>
-        </div>
-        <div class="row class">
-          <span class="title">{{p.question}}</span>
-        </div>
-        <hr class="style-line">
-        <div class="row title" style="text-align:center"><label>For: </label>
-          <span class="class" *ngIf="p.typeId==1">School</span>
-          <span class="class" *ngIf="p.typeId==2">
-        Class
-        <span *ngFor="let s of standards">
-        <span *ngIf="p.standardIds==s.id">Name</span>
-          </span>
-          </span>
-        </div>
-        <div class="row">
-          <label class="Due Date :"></label>
-          <span class="badge" style="background-color:gray">Due Date: {{p.expiredAt}}</span>
-        </div>
-      </div>
-
-    </div>
-
-
-    <div class="panel-footer">
-      <button type="button" class="btn btn-primary">Previous</button>
-      <button type="button" class="btn btn-primary">Next</button>
-    </div>
+  <div class="panel-footer">
+    <!--<button type="button" (click)="previousPoll()" [disabled]="currentPage === 1" class="btn btn-primary">Previous</button>-->
+    <button type="button" (click)="nextPoll()" [disabled]="emptyPolls || noMore" class="btn btn-primary">Load More</button>
   </div>
-</div>
-
-<div class="modal fade" *ngIf="selectedPoll" id="pollModal" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title" id="gridSystemModalLabel">{{selectedPoll.question}}</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div class="modal-body card-modal">
-        <div class="row">
-        <div class="modal-heading modal-image">
-           <img class="image" src="https://cdn.pixabay.com/photo/2017/01/06/19/15/soap-bubble-1958650_960_720.jpg" >
-          </div>
-        </div>
-        <div class="row">
-          <div class="modal-name">
-          {{selectedPoll.employeeName}}
-          </div>
-        </div>
-        <div class="row">
-          <div class="modal-class">
-            <span *ngIf="selectedPoll.typeId==1">School</span>
-          <span *ngIf="selectedPoll.typeId==2">
-            Class
-          </span>
-          </div>
-        </div>
-        </div>
-    
-      <div class="row modal-description">Choices:
-        <div *ngFor="let o of selectedPoll.options">
-          {{o.name}}
-          <br>
-        </div>
-      </div>
-      <hr class="style-line">
-      <div class="row modal-date">
-        <div class="col-sm-6"><label class="heading">Created At</label>
-          <div class="result">{{selectedPoll.createdAt}}</div>
-        </div>
-        <div class="col-sm-6"><label class="heading">Due date</label>
-          <div class="result">{{selectedPoll.expiredAt}}</div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>-->
-</div>
 </div>

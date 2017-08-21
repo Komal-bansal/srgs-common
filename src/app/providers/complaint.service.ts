@@ -29,26 +29,26 @@ export class ComplaintService {
   }
 
   getComplaintCommentById(url:any, complaintId:any) {
-    return this.http.get(this.baseUrl + "/complaint" + "/" + complaintId + "/comment")
+    // return this.http.get(this.baseUrl + "/complaint" + "/" + complaintId + "/comment")
+    return this.http.get(this.baseUrl + "/"+ url + "/" + complaintId + "/comment") 
       .map(this.extractData)
       .catch(this.handleError);
   }
 
-  postComplaintComment(complaintId:any, comment:any) {
-    console.log("1", this.baseUrl);
-    return this.http.post(this.baseUrl + "/complaint/" + complaintId + "/comment", comment)
+  postComplaintComment(complaintId:any, comment:any,url:any) {
+    return this.http.post(this.baseUrl + "/" + url +"/"+ complaintId + "/comment", comment)
       .map(this.extractData)
       .catch(this.handleError);
   }
 
-  updateComplaint(complaintId:any, complaint:any) {
-    return this.http.put(this.baseUrl + "/complaint/" + complaintId, complaint)
+  updateComplaint(complaintId:any, complaint:any,url:any) {
+    return this.http.put(this.baseUrl + "/" + url +"/"+ complaintId, complaint)
       .map(this.extractData)
       .catch(this.handleError);
   }
 
-  closeComplaint(complaintId:any, complaint:any) {
-    return this.http.put(this.baseUrl + "/complaint/" + complaintId + "/close", complaint)
+  closeComplaint(complaintId:any, complaint:any,url:any) {
+    return this.http.put(this.baseUrl + "/" + url +"/"+ complaintId + "/close", complaint)
       .map(this.extractData)
       .catch(this.handleError);
   }
@@ -66,7 +66,6 @@ export class ComplaintService {
   }
 
   showToast(msg:any) {
-    console.log(msg);
   }
 
   getUserId() {

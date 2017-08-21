@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
 selector:'poll',
@@ -7,5 +8,9 @@ styleUrls:['./poll.component.css'],
 })
 
 export class PollComponent {
+    constructor(private router:Router){
+         this.router.navigate(["/poll/current-poll"]);
+    }
 
 }
+

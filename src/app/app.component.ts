@@ -9,6 +9,7 @@ import { MainComponent } from './component/main/main.component';
 })
 export class AppComponent {
   constructor(){
+         $.noConflict(); 
 
   }
 }

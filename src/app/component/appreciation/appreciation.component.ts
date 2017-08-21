@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+import {Router } from '@angular/router';
+
 
 @Component({
   selector: 'appreciation',
@@ -6,5 +8,8 @@ import {Component} from '@angular/core';
   styleUrls:['./appreciation.component.css']
 })
 export class AppreciationComponent{
-  
+     constructor(private router:Router){
+         this.router.navigate(["/appreciation/for-me"]);
+    }
+     
 }

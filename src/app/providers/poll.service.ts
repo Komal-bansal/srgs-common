@@ -14,6 +14,7 @@ import { CustomHttpService } from './default.header.service';
 export class PollService {
 
   public serverUrl: string;
+  public baseUrl:string;
 
   constructor(private http: CustomHttpService,
     private htttp: Http,
@@ -23,12 +24,13 @@ export class PollService {
 
   getUrl() {
     this.serverUrl = this.con.Server;
+    // this.baseUrl = this.con.baseUrl;
   }
 
- getStandards() {
-    return this.http.get("https://cornerstone.ind-cloud.everdata.com" + "/standard")
-      .map(this.extractData)
-      .catch(this.handleError);
+  public getStandards() {
+    return this.http.get(this.serverUrl + '/homework/standard')
+                    .map(this.extractData)
+                    .catch(this.handleError);
   }
 
   public getPolls(pageNo: any) {

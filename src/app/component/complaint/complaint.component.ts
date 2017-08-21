@@ -18,29 +18,34 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
   public priorities: any;
   public comments: any;
   public commentForm: FormGroup;
-  public EmptyComments: any;
+  public EmptyComments: boolean = false;
   public complaintStatus: any;
   public complaintCategory: any;
   public complaintsCOPY: any;
-  public EmptyComplaints: boolean = false;
+  public EmptyComplaints: boolean = true;
   public loader: boolean = false;
   public loader1: boolean = false;
+  public loaderComment: boolean = false;
   public currentPage = 1;
   public emptySearchResult: boolean = false;
+  public urlForComment: any;
   public complaint = {
     title: ""
-  } 
+  }
   public fileUrl: string;
-  
+
   public url: string = "";
   public status: string = "";
+  public count: any = 0;
   constructor(public cs: ComplaintService,
     public router: Router,
     public route: ActivatedRoute, ) {
     this.url = this.router.url;
+
     this.route.params.subscribe(param => {
       if (param['statusId']) this.complaintStatus = param['statusId'];
       if (param['categoryId']) this.complaintCategory = param['categoryId'];
+      this.urlForComment = (this.router.url).split('/')[1];
     });
     switch (this.complaintStatus) {
       case '1': this.status = "New"; break;
@@ -53,8 +58,8 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit() { 
-    this.fileUrl = localStorage.getItem("fileUrl") + "/";    
+  ngOnInit() {
+    this.fileUrl = localStorage.getItem("fileUrl") + "/";
     this.fetchComplaints();
     this.getEditInfo();
     this.loadForm();
@@ -69,16 +74,26 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
 
   public getEditInfo() {
     this.cs.editInfo().subscribe(response => {
+
       this.employees = response.employees;
       this.priorities = response.priorities;
     },
       error => {
         this.employees = [];
         this.priorities = [];
+        this.router.navigate(['/error']);
       })
   }
 
   ngAfterViewInit() {
+    
+    //loading on scroll
+//     $(window).scroll(function () { 
+//    if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+//       // alert('end of page');
+//       this.nextComplaint();
+//    }
+// });
     $('.panel.panel-chat').hide();
     $(".panel.panel-chat > .panel-heading > .chatMinimize").click(function () {
       if ($(this).parent().parent().hasClass('mini')) {
@@ -111,21 +126,24 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
   public fetchComplaints() {
     this.loader = true;
     this.cs.getComplaint(this.url, this.currentPage).subscribe((res) => {
-      console.log(res);
+
       this.onSuccess(res);
     }, (err) => {
       this.onError(err);
     });
   }
-  public noMore: boolean = false;
+  public noMore: boolean = true;
+
   public onSuccess(res: any) {
     this.loader = false;
     if (res.status !== 204) {
-      this.complaints = res;
-      if (this.complaints.length < 10) this.noMore = true;
-      else this.noMore = false;
-      this.complaintsCOPY = res;
       this.EmptyComplaints = false;
+      if (this.currentPage == 1)
+        this.complaints = res;
+      else
+        this.complaints = this.complaints.concat(res);
+      if (res.length < 12) this.noMore = true;
+      else this.noMore = false;
     } else {
       this.EmptyComplaints = true;
     }
@@ -133,43 +151,51 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
 
   public onError(err: any) {
     this.complaints = [];
+    this.router.navigate(['/error']);
   }
 
   public selectedComplaint: any;
   public selectedIndex: any;
+
   public selectComplaint(complaint: any, index: any) {
     this.selectedComplaint = complaint;
     this.selectedIndex = index;
     this.loadFormValue();
+
   }
 
-  public seletToExpand(c:any){
+  public seletToExpand(c: any, i: any) {
     this.selectedComplaint = c;
+    this.selectedIndex = i;
   }
 
   public updateComplaint() {
     if (this.editForm.value['statusId'])
       this.editForm.value['statusId'] = 3;
-    else
-     { this.loader1 = true;
-      delete this.editForm.value['statusId']; }
+    else {
+      this.loader1 = true;
+      delete this.editForm.value['statusId'];
+    }
     // if(this.editForm.value['assignedTo'] == this.selectedComplaint.assignedEmployeeId)
     //   delete this.editForm.value['assignedTo'];
     // if(this.editForm.value['priorityId'] == this.selectedComplaint.priorityId)
     //   delete this.editForm.value['priorityId'];
-    this.cs.updateComplaint(this.selectedComplaint.id, this.editForm.value).subscribe(response => {
+    this.cs.updateComplaint(this.selectedComplaint.id, this.editForm.value, this.urlForComment).subscribe(response => {
       this.complaints[this.selectedIndex] = response;
+
       this.loader1 = false;
       $('#myModal').modal('hide');
     }, error => {
-    })
+      this.loader = false;
+      this.router.navigate(['/error']);
+    });
   }
 
   public loadForm() {
     this.editForm = new FormGroup({
       assignedTo: new FormControl(''),
       priorityId: new FormControl(''),
-       statusId: new FormControl('')
+      statusId: new FormControl('')
     })
   }
 
@@ -179,11 +205,12 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
   }
 
   public closeComplaint() {
-    this.loader1=true;
-    this.cs.closeComplaint(this.selectedComplaint.id, this.closeForm.value).subscribe(response => {
+    this.loader1 = true;
+    this.cs.closeComplaint(this.selectedComplaint.id, this.closeForm.value, this.urlForComment).subscribe(response => {
       this.complaints[this.selectedIndex] = response;
       $('#myModal3').modal('hide');
     }, error => {
+      this.router.navigate(['/error']);
     });
     this.loader1 = false;
   }
@@ -197,7 +224,7 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
   }
 
   public nextComplaint() {
-    delete this.complaints;
+    // delete this.complaints;
     this.currentPage += 1;
     this.fetchComplaints();
   }
@@ -210,51 +237,62 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
     this.loadFormValue();
   }
 
-  public searchComplaints(ev: any) {
-    let val: any = ev.target.value;
-    if (val && val.trim() != '') {
-      this.loader = true;
-      this.emptySearchResult = false;
-      this.cs.searchComplaints(this.currentPage, { "search": val }).subscribe((res: any) => {
-        this.loader = false;
-        this.complaints = res;
-        if (res.status == 204) {
-          this.complaints = [];
-          this.loader = false;
-          this.emptySearchResult = true;
-        }
-      },
-        (error: any) => {
-          this.loader = false;
-          
-        })
-
-
-
-    }
-    else {
-      this.emptySearchResult = false;
-      this.complaints = this.complaintsCOPY;
-    }
-
-  }
-
   // public searchComplaints(ev: any) {
-  //   this.loadComplaints();
-  //   let val = ev.target.value;
+  //   let val: any = ev.target.value;
   //   if (val && val.trim() != '') {
-  //     this.complaints = this.complaintsCOPY.filter((item) => {
-  //       return (item.title.toLowerCase().indexOf(val.toLowerCase()) > -1);
-  //     });
-  //  }
+  //     this.loader = true;
+  //     this.emptySearchResult = false;
+
+  //     this.cs.searchComplaints(this.currentPage, { "search": val }).subscribe((res: any) => {
+  //       if (res.status == 204) {
+  //         this.complaints = [];
+  //         this.loader = false;
+  //         this.emptySearchResult = true;
+  //         return;
+  //       }
+  //       this.loader = false;
+  //     },
+  //       (error: any) => {
+  //         this.loader = false;
+  //       })
+  //   }
+  //   else {
+  //     this.emptySearchResult = false;
+  //     this.complaints = this.complaintsCOPY;
+  //   }
+
   // }
 
   public complaintIdOfCommentModel: any;
   public complaintTitleOfCommentModel: any;
-  public closedOn: boolean = false;
+  public closed: boolean = false;
   currentUser = this.cs.getUserId();
+
   getComplaintCommentById(complaint: any) {
-    if (complaint.closedOn || complaint.statusId == 6) this.closedOn = true;
+    this.comments=null;
+    this.loaderComment = true;
+    if (complaint == undefined)
+      complaint = this.selectedComplaint;
+    this.cs.getComplaintCommentById(this.urlForComment, complaint.id).subscribe((res) => {
+      if (res.status === 204) {
+        this.EmptyComments = true;
+        this.comments = [];
+        this.count = 0;
+        this.loaderComment = false;
+        return;
+      }
+      this.EmptyComments = false;
+      this.comments = res;
+      this.count = this.comments.length;
+      this.loaderComment = false;
+    }, (err) => {
+      delete this.comments;
+      this.loaderComment = false;
+      this.router.navigate(['/error']);
+    });
+    if (complaint.closedOn || complaint.statusId == 6)
+    { this.closed = true; }
+    else { this.closed = false; }
     this.complaintIdOfCommentModel = complaint.id;
 
     this.complaints.forEach((element: any) => {
@@ -262,31 +300,41 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
         this.complaintTitleOfCommentModel = element.title;
     });
 
-    this.cs.getComplaintCommentById(this.url, complaint.id).subscribe((res) => {
-      if (res.status === 204) {
-        this.EmptyComments = true;
-        this.loader1=false;
-      } else {
-        this.EmptyComments = false;
-        this.comments = res;
-        
-      }
-    }, (err) => {
-      delete this.comments;
-      this.cs.showToast("Internal server error.. Try again later");
-    });
   }
+  // getComplaintCommentById(complaint: any) {
+  //   if (complaint.closed || complaint.statusId == 6) this.closed = true;
+  //   this.complaintIdOfCommentModel = complaint.id;
 
+  //   this.complaints.forEach((element: any) => {
+  //     if (element['id'] == complaint.id)
+  //       this.complaintTitleOfCommentModel = element.title;
+  //   });
+
+  //   this.cs.getComplaintCommentById(this.url, complaint.id).subscribe((res) => {
+  //     if (res.status === 204) {
+  //       this.EmptyComments = true;
+  //     } else {
+  //       this.EmptyComments = false;
+  //       this.comments = res;
+
+  //     }
+  //   }, (err) => {
+  //     delete this.comments;
+  //     this.cs.showToast("Internal server error.. Try again later");
+  //   });
+  // }
   public submitComment() {
+    this.EmptyComments = false;
     if (this.commentForm.value['comment'])
-      this.cs.postComplaintComment(this.complaintIdOfCommentModel, this.commentForm.value).subscribe((res) => {
+      this.cs.postComplaintComment(this.complaintIdOfCommentModel, this.commentForm.value, this.urlForComment).subscribe((res) => {
         this.commentForm.value['employeeId'] = this.currentUser;
         this.commentForm.value['createdAt'] = new Date();
+        this.commentForm.value['employeePicUrl'] = localStorage.getItem('picTimestamp')
         this.comments.push(this.commentForm.value);
-       
+
         this.commentForm.reset();
       }, (err) => {
-        this.cs.showToast("Internal server error.. Try again later");
+        this.router.navigate(['/error']);
       });
   }
 

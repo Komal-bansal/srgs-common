@@ -11,7 +11,7 @@
       <loader [condition]="submitProgress"></loader>
     </div>
     <div class="form-group">
-      <label for="standardId">Select Year</label>
+      <label for="standardId">Select Standard</label>
       <select class="form-control" id="standardId" name="standardId" formControlName="standardId" (ngModelChange)="getSubjects($event); ">
       <option *ngFor="let a of standards" [value]="a.id"> {{a.name}}</option>
     </select>
@@ -19,20 +19,22 @@
       <div [hidden]="homework.controls.standardId.valid || homework.controls.standardId.untouched" class="alert alert-warning">This field is required</div>
       </div>      
     </div>
-    <div class="form-group" *ngIf="homework.value.standardId">
+    <div class="form-group" *ngIf="homework.value.standardId" >
       <label for="subjectId">Select Subject</label>
       <select class="form-control" id="subjectId" name="subjectId" formControlName="subjectId">
+      <option *ngIf="emptySubjects" disabled>No Subjects are added. Try again later.</option>
       <option *ngFor="let bx of subjects" [value]="bx.subjectId">{{bx.subjectName}}</option>
     </select>
     <div>
-      <div [hidden]="homework.controls.subjectId.valid || homework.controls.subjectId.untouched " class="alert alert-warning">This field is required</div>
+      <div [hidden]="homework.controls.subjectId.valid || homework.controls.subjectId.untouched" class="alert alert-warning">This field is required</div>
     </div>
     </div>
     <div class="form-group">
       <label for="description">Description</label>
+      <span class="badge">{{2500 - homework.value.description.length}}</span>
       <textarea class="form-control" id="exampleTextarea" name="description" maxlength="2500" formControlName="description" rows="3"></textarea>
       <div [hidden]="homework.controls.description.untouched  ||homework.controls.description.valid ||homework.controls.description.prestine" class="alert alert-warning">This field is required</div>
-      <span class="badge">{{2500 - homework.value.description.length}}</span>
+
     </div>
     <div class="row">
       <div class="col-sm-12 col-lg-6">
@@ -43,9 +45,9 @@
       </div>
       <div class="col-sm-12 col-lg-6">
     <div class="form-group">
-      <label>Attachment</label>
+      <label>Attachment</label> &nbsp;&nbsp;<span class="small">(Optional)</span>
         <!--<label for="exampleInputFile" class="exampleInputFile">Choose a file...<span class="glyphicon glyphicon-circle-arrow-up custom"></span></label>-->
-        <input type="file" class="form-control-file" formControlName="file" id="exampleInputFile" aria-describedby="fileHelp" (change)="getFile($event)">
+        <input type="file" accept="image/*" class="form-control-file" formControlName="file" id="exampleInputFile" aria-describedby="fileHelp" (change)="getFile($event)" accept="image/*">
       </div>
       </div>
     </div>
@@ -70,6 +72,25 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" [routerLink]="['/homework/current-homework']">Close</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal" >Add More</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">File Type Error</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Kindly upload an image file.
+      </div>
+      <div class="modal-footer">
       </div>
     </div>
   </div>

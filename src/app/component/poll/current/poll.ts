@@ -1,7 +1,8 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@angular/forms';
 import { CommonService } from '../../../providers/common.service';
 import { PollService } from '../../../providers/poll.service';
+import { Router } from '@angular/router';
 
 declare let $: any;
 
@@ -13,37 +14,40 @@ declare let $: any;
 
 export class CurrentPollComponent implements OnInit {
 
-  public polls:any[] = [];
+  public polls: any[] = [];
   public date: any;
-  public currentPage=1;
-  public noMore:boolean = false;
+  public currentPage = 1;
+  public noMore: boolean = true;
   public loader: boolean = false;
-  public emptyPolls:boolean = false;
-  constructor(public ps: PollService) {
+  public emptyPolls: boolean = true;
+  constructor(public ps: PollService, public router: Router) {
   }
-  ngOnInit(){
-      this.getPolls();
+  ngOnInit() {
+    this.getPolls();
   }
 
   public getPolls() {
-     this.loader = true;
+    this.loader = true;
     this.ps.getPolls(this.currentPage).subscribe((res) => {
-     
+
       if (res.status == 204) {
         this.polls = [];
         this.loader = false;
-        this.emptyPolls = true;        
+        this.emptyPolls = true;
         return;
       }
-      this.polls = res;
-      this.loader = false;
-      console.log("polls",res);
-      if(this.polls.length < 6) this.noMore = true;
+        this.loader = false;
+       this.emptyPolls = false;
+      if (this.currentPage == 1)
+        this.polls = res;
+      else
+        this.polls = this.polls.concat(res);
+      if (res.length < 6) this.noMore = true;
       else this.noMore = false;
     },
       err => {
-        console.log("err", err);
-         this.loader = false;
+        this.loader = false;
+        this.router.navigate(['/error']);
       });
   }
 
@@ -56,7 +60,7 @@ export class CurrentPollComponent implements OnInit {
   //   return date;
   // }
 
-   public previousPoll() {
+  public previousPoll() {
     delete this.polls;
     this.currentPage -= 1;
     this.getPolls();

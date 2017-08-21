@@ -4,12 +4,15 @@
 		<img class="main-logo" src="app/img/srgs.png">
 		<h2 class="head-name">Shri Ram Global School</h2>		
 		<form class="form" [formGroup]="loginForm" (submit)="onSubmit()">
+			<div *ngIf="loader && !error">
+				<span class="fa fa-spinner fa-spin" style="font-size:70px;position:absolute;top:20%;color:white"></span>
+			</div>
 			<input type="text" name='username' id='username' formControlName="username" class="user" placeholder="username"/>
 			<input type='password' name='password' id='password' formControlName="password" class="pass" placeholder="password"/>
 			<input type="submit" class="btn" value="Sign in" [disabled]="loginForm.invalid"/>
 			<div class="loader" *ngIf="loginStart"></div>
 			<div *ngIf="error">
-				<p style="color:red">Username or password invalid.</p>
+				<p style="color:white">Username or password invalid.</p>
 			</div>
 		</form>
 	</div>

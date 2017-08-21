@@ -1,4 +1,5 @@
 <div class="calendar-custom">
+<loader [condition]="loader" style="position:absolute;top:50%;left:50%"></loader>    
     <angular2-fullcalendar [options]="calendarOptions" id="calendar"></angular2-fullcalendar>
 </div> 
 <div id="fullCalModal" class="modal fade" >
@@ -92,8 +93,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-toggle="modal" data-dismiss="modal" data-target="#modal-edit">Edit</button>
-                <button type="button" class="btn btn-default" data-toggle="modal" data-dismiss="modal" data-target="#modal-delete" (click)="deleteEvent()">Delete</button>              
+                <button type="button" class="btn btn-default" data-toggle="modal" data-dismiss="modal" data-target="#modal-edit" [disabled]="!disable">Edit</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-dismiss="modal" data-target="#modal-delete" (click)="deleteEvent()" [disabled]="!disable">Delete</button>              
                 <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
             </div>
         </div>
@@ -129,13 +130,21 @@
                         </div>  
                     </div>
                      <div class="form-group" *ngIf="event.value.plannerTypeId==2">
-                        <label for="standard">Standard Id</label>
+                        <!-- <label for="standard">Standard Id</label>
                          <select class="form-control" id="standard" name="standardId"[(ngModel)]="standards" (ngModelChange)="selectStandards($event)" [ngModelOptions]="{standalone: true}" multiple>
                             <option *ngFor="let s of standard" [ngValue]="s">{{s.name}}</option>
-                        </select> 
-                          <!-- <div [hidden]="event.controls.title.untouched || event.controls.title.valid" class="alert alert-warning">
-                            This field is required
-                        </div>   -->
+                        </select>  -->
+                        <label for="standardIds">Select Standard</label>
+                        <button type="button" class="form-control" *ngIf="standard != null" (click)="dropdown ? dropdown = false : dropdown = true;"></button>
+                        <button type="button" class="form-control" *ngIf="standard == null">No Standards are added to the View. Try again later.</button>
+                        <ul class="list" id="standardIds" *ngIf="dropdown">
+                            <li style="    margin-left: -34px;     /* text-indent: -18px; */ " *ngFor="let a of standard">
+                            <label>
+                            <input type="checkbox" class="checkbox" [ngModel]="a.checked" (ngModelChange)="selectStandards(a,$event)" [ngModelOptions]="{standalone: true}" [value]="a.id">
+                            {{a.name}}
+                            </label>
+                        </li>
+                        </ul>
                     </div>
                      <div class="form-group">
                         <label for="startDate">Start Date</label>
@@ -150,14 +159,14 @@
                     <div *ngIf="((event.value.plannerTypeId==1) || (event.value.plannerTypeId==2) ||(event.value.plannerTypeId==5) ||(event.value.plannerTypeId==6))">
                         <div class="form-group">
                             <label for="startTime">Start Time</label>
-                            <input type="time" class="form-control glyphicon glyphicon-time" id="startTime" name="startTime" [(ngModel)]="startT" [ngModelOptions]="{standalone: true}" >                                                
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="startTime" name="startTime" [(ngModel)]="start" (ngModelChange)="startT($event)" [ngModelOptions]="{standalone: true}" >                                                
                            <!-- <div [hidden]="(event.controls.startTime.valid) || (event.controls.startTime.untouched) " class="alert alert-warning">This field is required</div>                                                    -->
                         </div>
                             <!-- <div>valid:{{event.controls.startTime.valid}} pristine:{{event.controls.startTime.pristine}}</div> -->
                         
                         <div class="form-group">
                             <label for="startTime">End Time</label>
-                            <input type="time" class="form-control glyphicon glyphicon-time" id="endTime" name="endTime" [(ngModel)]="endT" [ngModelOptions]="{standalone: true}"  >                                                
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="endTime" name="endTime" [(ngModel)]="end" (ngModelChange)="endT($event)" [ngModelOptions]="{standalone: true}">                                                
                            <!-- <div [hidden]="(event.controls.endTime.valid) || (event.controls.endTime.untouched)" class="alert alert-warning">This field is required</div>                                                                                -->
                         </div> 
                     </div>  
@@ -185,23 +194,6 @@
         </div>
     </div>
 </div>
-
-<div id="modal-success" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
-            </div>
-            <div id="modalBody" class="modal-body">
-                <h4 class="messsage">{{message}}</h4>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>  
-
 <div id="modal-edit" class="modal fade" *ngIf="selectedEvent">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -218,15 +210,20 @@
                             <!-- This field is required -->
                         <!-- </div> -->
                         </div>
-                      <div class="form-group" *ngIf="selectedEvent.plannerTypeId==2">
-                        <label for="standard">Standard Id</label>
-                         <select class="form-control" id="standard" name="standardId"[(ngModel)]="standards" (ngModelChange)="editStandards($event)" [ngModelOptions]="{standalone: true}" multiple>
-                            <option *ngFor="let s of standard" [ngValue]="s">{{s.name}}</option>
-                        </select>  
-                         <!-- <div [hidden]="event.controls.title.untouched || event.controls.title.prestine || event.controls.title.valid" class="alert alert-warning">
-                            This field is required
-                        </div>  -->
-                    </div>
+                      <!-- <div class="form-group" *ngIf="selectedEvent.plannerTypeId==2">
+
+                        <label for="standardIds">Select Standard</label>
+                        <button type="button" class="form-control" *ngIf="standard != null" (click)="dropdown ? dropdown = false : dropdown = true;"></button>
+                        <button type="button" class="form-control" *ngIf="standard == null">No Standards are added to the View. Try again later.</button>
+                        <ul class="list" id="standardIds" *ngIf="dropdown">
+                            <li style="    margin-left: -34px;     /* text-indent: -18px; */ " *ngFor="let a of standard">
+                            <label>
+                            <input type="checkbox" class="checkbox" [ngModel]="a.checked" (ngModelChange)="editStandards(a,$event)" [ngModelOptions]="{standalone: true}" [value]="a.id">
+                            {{a.name}}
+                            </label>
+                        </li>
+                        </ul>
+                    </div> -->
                      <div class="form-group">
                         <label for="startDate">Start Date</label>
                         <input class="form-control glyphicon glyphicon-calendar" type="date" id="startDate" name="startDate" formControlName="startDate" (change)="onStartDate($event)" >                                                
@@ -241,12 +238,12 @@
                     <div *ngIf="((selectedEvent.plannerTypeId==1) || (selectedEvent.plannerTypeId==2) ||(selectedEvent.plannerTypeId==5) ||(selectedEvent.plannerTypeId==6))">
                         <div class="form-group">
                             <label for="startTime">Start Time</label>
-                            <input type="time" class="form-control glyphicon glyphicon-time" id="startTime" name="startTime" formControlName="startTime"   >                                                
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="startTime" name="startTime" formControlName="startTime" (ngModelChange)="checkStart($event)"   >                                                
                            <!-- <div [hidden]="(event.controls.startTime.valid) || (event.controls.startTime.untouched) || (event.controls.startTime.pristine)">This field is required</div>                                                    -->
                         </div>
                         <div class="form-group">
                             <label for="startTime">End Time</label>
-                            <input type="time" class="form-control glyphicon glyphicon-time" id="endTime" name="endTime" formControlName="endTime"  >                                                
+                            <input type="time" class="form-control glyphicon glyphicon-time" id="endTime" name="endTime" formControlName="endTime" (ngModelChange)="checkEnd($event)" >                                                
                            <!-- <div [hidden]="(event.controls.startTime.valid) || (event.controls.startTime.untouched) || (event.controls.startTime.pristine)">This field is required</div>                                                                                -->
                         </div> 
                     </div>  
@@ -275,37 +272,19 @@
         </div>
     </div>
 </div> 
-
-
-
-<div id="modal-unselect" class="modal fade">
+<div id="modal-success" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
             </div>
             <div id="modalBody" class="modal-body">
-                <h5>Please choose an upcoming date</h5>
+                <span class="messsage">{{message}}</span>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-</div> 
+</div>  
 
-<div id="modal-edit-success" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span> <span class="sr-only">close</span></button>
-            </div>
-            <div id="modalBody" class="modal-body">
-                <h5>You have successfully updated the event</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div> 

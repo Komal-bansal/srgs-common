@@ -9,3 +9,7 @@
 .custom-icon{
   display: inline-block;
 }
+.standardLoad{
+  position: absolute;
+  top: 27%;
+}

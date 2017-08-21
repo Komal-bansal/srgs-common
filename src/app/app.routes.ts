@@ -18,7 +18,7 @@ import { ByMeComponent } from './component/appreciation/by-me/byme';
 import { AddEmployeeComponent } from './component/addEmployee/addEmployee.component';
 import { AddAppreciation } from './component/appreciation/add/add';
 import { LoggedInGuard } from './component/login/login.gaurd';
-// import {MessageComponent} from './component/message/message.component';
+import { MessageComponent } from './component/message/message.component';
 // import {NewMessageComponent} from './component/message/new/new';
 // import {ViewMessageComponent} from './component/message/view/view';
 import { EventComponent } from './component/event/event.component';
@@ -36,6 +36,13 @@ import { SuggestionComponent } from './component/suggestion/suggestion.component
 import { SuggestionForMe } from './component/suggestion/for-me/forme';
 import { SuggestionForStudent } from './component/suggestion/for-student/forstudent';
 import { SuggestionAddComponent } from './component/suggestion/add/add';
+import { ErrorComponent } from './component/error/error.component';
+import { Error404Component } from './component/error/error404';
+import { AddStudentComponent } from './component/addStudent/addStudent.component';
+import { ExistingStudentComponent } from './component/addStudent/existingStudent/existingStudent.component';
+import { NewStudentComponent } from './component/addStudent/newStudent/newStudent.component';
+import { TimetableComponent } from './component/timetable/timetable.component';
+
 
 export const rootRouterConfig: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -62,6 +69,14 @@ export const rootRouterConfig: Routes = [
       { path: 'account', component: AccountComponent },
       { path: 'add-employee', component: AddEmployeeComponent, canActivate: [LoggedInGuard] },
       {
+        path: 'add-student', component: AddStudentComponent, canActivate: [LoggedInGuard],
+        children: [
+          { path: 'new-student', component: NewStudentComponent, canActivate: [LoggedInGuard] },
+          { path: 'existing-student', component: ExistingStudentComponent, canActivate: [LoggedInGuard] },
+
+        ]
+      },
+      {
         path: 'appreciation', component: AppreciationComponent, canActivate: [LoggedInGuard],
         children: [
           { path: 'for-me', component: ForMeComponent, canActivate: [LoggedInGuard] },
@@ -77,14 +92,7 @@ export const rootRouterConfig: Routes = [
         ]
       },
       { path: 'add-poll', component: AddPollComponent, canActivate: [LoggedInGuard] },
-      // { path: 'messaging', component: MessageComponent, canActivate: [LoggedInGuard], 
-      //   children:[
-      //     { path: 'new-message', component: NewMessageComponent, canActivate: [LoggedInGuard] },
-      //     { path: 'view-message', component: ViewMessageComponent, canActivate: [LoggedInGuard] },
-
-
-      //   ]
-      // },
+      { path: 'conversation', component: MessageComponent, canActivate: [LoggedInGuard], },
       { path: 'event', component: EventComponent, canActivate: [LoggedInGuard] },
       {
         path: 'survey', component: SurveyComponent, canActivate: [LoggedInGuard],
@@ -121,7 +129,10 @@ export const rootRouterConfig: Routes = [
         ]
       },
       { path: 'suggestion-add', component: SuggestionAddComponent, canActivate: [LoggedInGuard] },
-
+      { path: 'timetable', component: TimetableComponent, canActivate: [LoggedInGuard] },      
     ]
   },
+  { path: 'error', component: ErrorComponent, canActivate: [LoggedInGuard] },
+  { path: 'error404', component: Error404Component, canActivate: [LoggedInGuard] },
+  { path: '**', redirectTo: '/error404', canActivate: [LoggedInGuard] },
 ];

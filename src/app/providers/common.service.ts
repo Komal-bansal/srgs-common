@@ -35,7 +35,7 @@ export class CommonService {
 
   getStandards() {
     this.getUrl();
-    return this.http.get(this.surveyUrl + "/standard")
+    return this.http.get(this.surveyUrl + "homework/standard")
                     .map(this.extractData)
                     .catch(this.handleError);
   }
@@ -69,11 +69,11 @@ export class CommonService {
   }
 
   public storeData(field_name:any, data:any) {
-    localStorage.setItem(field_name, JSON.stringify(data));
+    localStorage.setItem(field_name, data);
   }
 
   public getData(field_name:any) {
-    let data = JSON.parse(localStorage.getItem(field_name));
+    let data = localStorage.getItem(field_name);
     if (data) {
       return data;
     }

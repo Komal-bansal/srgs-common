@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { SuggestionService } from '../../../providers/suggestion.service';
 import { CommonService } from '../../../providers/common.service';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
+
  @Component({
   selector:'suggestion-add',
   templateUrl:'./add.html',
@@ -16,10 +18,14 @@ import { Location } from '@angular/common';
   public stan:any;
   standards:any = [];
   public standardId:any;
+  public emptyStandards:boolean =  false;
+  public emptyStudents: boolean = false;
   students:any=[];
   // subjects:any = [];
   constructor(  private suggestionService:SuggestionService,
                 private commonService:CommonService,
+                private _location: Location,
+                public router: Router,
                 ){
   
                   // this.getStudents(a);
@@ -31,6 +37,7 @@ import { Location } from '@angular/common';
   }
 
     public initForm() {
+      this.standardId = null;
     this.suggestion = new FormGroup({
       description: new FormControl('', [Validators.required,Validators.maxLength(2500)]),
       studentId: new FormControl('', [Validators.required]),
@@ -47,31 +54,36 @@ import { Location } from '@angular/common';
       this.initForm();
       // $('#circularModal').modal('show');
     }, (err) => {
-
+       this.router.navigate(['/error']);
     });
     }
   public getStandards() {
     // this.nl.showLoader();
     this.suggestionService.getStandards().subscribe((res) => {
+      if(res.status===204){
+        this.emptyStandards = true;
+        return;
+      }
+      this.emptyStandards=false;
       this.standards = res;
-      console.log(this.standards.standardId);
+
     }, (err) => {
+       this.router.navigate(['/error']);
     });
   }
 
-   
-   selectStandards(stan:any){
-     this.standardId=stan;
-     console.log(this.standardId);
-    this.getStudents();
- }
-
-   public getStudents() {
+   public getStudents(standardId:any) {
     // this.nl.showLoader();
-    this.suggestionService.getStudents(this.standardId).subscribe((res) => {
+    this.suggestion.controls["studentId"].reset();
+    this.suggestionService.getStudents(standardId).subscribe((res) => {
+      if(res.status === 204){
+        this.emptyStudents = true;
+        return;
+      }
+      this.emptyStudents = false;;
       this.students = res;
-      console.log(this.students);
     }, (err) => {
+       this.router.navigate(['/error']);
     });
   }
  }

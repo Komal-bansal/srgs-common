@@ -16,13 +16,14 @@
     margin-top:10%;
     padding: 2%;
     text-align: center;
-    font-size: 15px;
+    font-size: 100%;
     box-shadow: 0px 8px 11px #7b7a7a, -2px 4px 5px #a59797, 10px 8px 15px #989898;
 }
 .profile-picture{
     width: 150px;
+    height:150px;
     border-radius: 100%;
-    margin-top: -10%;
+    margin-top: -50%;
     border: 3px solid white;
     box-shadow: 0px 9px 16px grey;
     display: block;
@@ -70,3 +71,8 @@ hr.style-line {
     margin-bottom: 5%;
 }
 
+@media(max-width:408px){
+    .profile,.name{
+        font-size: 80%;
+    }
+}

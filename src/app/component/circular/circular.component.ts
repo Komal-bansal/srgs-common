@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { CircularService } from '../../providers/circular.service';
+import { Router } from '@angular/router';
 @Component({
   selector:'circular',
   templateUrl:'./circular.component.html',
@@ -12,12 +13,14 @@ export class CircularComponent implements OnInit {
   public allCirculars:any;
   private currentPage = 1;
   public circulars:any;
-  private EmptyCirculars: boolean = false;
+  private EmptyCirculars: boolean = true;
   public loader:boolean = false;
   public fileUrl: string;
   public selectedCircular:any;
+   public noMore:boolean = true;
 
-  constructor(private circularService: CircularService) {
+  constructor(private circularService: CircularService,
+                public router: Router) {
     
   }
 
@@ -29,27 +32,31 @@ export class CircularComponent implements OnInit {
   private getCirculars() {
     this.loader = true;
     this.circularService.GetCirculars(this.currentPage).subscribe((res) => {
-      console.log(res);
       this.onSuccess(res);
     }, (err) => {
       this.onError(err);
     });
   }
-  public noMore:boolean;
+ 
   private onSuccess(data:any) {
     this.loader = false;
-    if (data.status === 204) {      
+    if (data.status === 204) {  
+      this.circulars = [];    
       this.EmptyCirculars = true;
+      return;
     } else {
-      this.circulars = data;
-      if(this.circulars.length < 10) this.noMore = true;
+      if(this.currentPage==1)this.circulars=data
+      else
+      this.circulars = this.circulars.concat(data);
+      if(data.length < 12) this.noMore = true;
       else this.noMore = false;
       this.EmptyCirculars = false;
     }
   }
 
   private onError(err:any) {
-
+     this.loader = false;
+      this.router.navigate(['/error']);
   }
 
   previousCircular(){
@@ -59,7 +66,7 @@ export class CircularComponent implements OnInit {
   }
 
   nextCircular(){
-    delete this.circulars;
+    // delete this.circulars;
     this.currentPage += 1;
     this.getCirculars();
   }

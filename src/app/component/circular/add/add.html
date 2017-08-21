@@ -2,12 +2,15 @@
   <!-- Default panel contents -->
   <div class="panel-heading">
     Create Circular
-  <button type="button" class="close pull-right" aria-label="Close" (click)="_location.back();">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="_location.back();">
     <span aria-hidden="true">&times; </span>
-  </button>    
+  </button>
   </div>
   <!-- Table -->
   <div class="panel-body">
+    <!-- <div class="row text-center">
+      <loader [condition]="loader"></loader>
+    </div> -->
     <form name="circular" [formGroup]="circular" (ngSubmit)="circularSubmit()" novalidate>
       <div class="form-group">
         <label for="title">Enter Title</label>
@@ -24,8 +27,10 @@
         <span class="badge">
            <span>{{2000 - circular.value.description.length}}</span>
         </span>
-        <textarea class="form-control" id="exampleTextarea" name="description" maxlength="2000" formControlName="description" rows="3" placeholder="Add Description"></textarea>
-        <div [hidden]="circular.controls.description.untouched || circular.controls.description.prestine || circular.controls.description.valid" class="alert alert-warning">
+        <textarea class="form-control" id="exampleTextarea" name="description" maxlength="2000" formControlName="description" rows="3"
+          placeholder="Add Description"></textarea>
+        <div [hidden]="circular.controls.description.untouched || circular.controls.description.prestine || circular.controls.description.valid"
+          class="alert alert-warning">
           This field is required
         </div>
       </div>
@@ -33,46 +38,69 @@
         <div class="col-lg-6 col-sm-12">
           <div class="form-group">
             <label for="date">Due Date</label>
-            <input class="form-control glyphicon glyphicon-calendar" type="date" max="2019-10-31" (change)="onDueDate($event)" displayFormat="DD MMM YYYY" name="date" formControlName="date" id="date">
+            <input class="form-control glyphicon glyphicon-calendar" type="date" max="2019-10-31" (change)="onDueDate($event)" displayFormat="DD MMM YYYY"
+              name="date" formControlName="date" id="date">
           </div>
         </div>
         <div class="col-lg-6 col-sm-12">
           <div class="form-group">
             <label for="circularTypeId">Audience</label>
+            <div class="row text-center">
+                  <loader [condition]="submitProgress" class="standardLoad"></loader>
+            </div>
             <select class="form-control" id="circularTypeId" name="circularTypeId" formControlName="circularTypeId" (ngModelChange)="onCircularType($event)">
               <option *ngFor="let bx of circularType" [value]="bx.id">{{bx.name}}</option>
             </select>
             <div>
               <div [hidden]="circular.controls.circularTypeId.valid || circular.controls.circularTypeId.untouched" class="alert alert-warning">This field is required</div>
             </div>
-          </div>   
-        </div>     
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class=" col-sm-12 col-lg-12">
+          <div class=" form-group" *ngIf="circular.value.circularTypeId == 2 ">
+            <label for="standardIds">Select Standard</label>
+                <div class="row text-center">
+                  <loader [condition]="submitProgress" class="standardLoad"></loader>
+                </div>
+            <button type="button" class="form-control" *ngIf="standards != null" (click)="dropdown ? dropdown = false : dropdown = true;"></button>
+            <button type="button" class="form-control" *ngIf="standards == null">No Standards are added to the View. Try again later.</button>
+            <!-- <span *ngIf="standards != null" class="glyphicon glyphicon-triangle-bottom" style="margin-left: -4%;
+              font-size: 11px;
+              padding: 0;
+              vertical-align: super;"></span> -->
+
+            <ul class="list" id="standardIds" *ngIf="dropdown">
+              <li style="    margin-left: -34px;     /* text-indent: -18px; */ " *ngFor="let a of standards">
+                <label>
+                  <input type="checkbox" class="checkbox" [ngModel]="a.checked" (ngModelChange)="selectStandards(a,$event)" [ngModelOptions]="{standalone: true}" [value]="a.id">
+                  {{a.name}}
+                </label>
+              </li>
+            </ul>
+            <div>
+              <!--<div [hidden]="circular.controls.standard.valid || circular.controls.standard.untouched" class="alert alert-warning">This field is required</div>-->
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="row">
 
-             <div class="col-lg-6">
-    <div class="form-group">
-      <div>Attachment</div>
-        <input type="file" class="form-control-file" formControlName="file" id="exampleInputFile" aria-describedby="fileHelp" (change)="getFile($event)" >
-        <!--<small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>-->
+        <div class="col-lg-6">
+          <div class="form-group">
+            <div>Attachment<span class="small">(Optional)</span></div>
+            <input type="file" accept="images/*" class="form-control-file" formControlName="file" id="exampleInputFile" aria-describedby="fileHelp"
+              (change)="getFile($event)" accept="image/*">
+            <!--<small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for the above input. It's a bit lighter and easily wraps to a new line.</small>-->
+          </div>
+        </div>
       </div>
-      </div>
-      </div>
-      <div class="form-group" *ngIf="circular.value.circularTypeId == 2 ">
-        <label for="standardIds">Select Class</label>
-        <select class="form-control" id="standardIds" name="standardIds" [(ngModel)]="standard" (ngModelChange)="selectStandards($event)" [ngModelOptions]="{standalone: true}" multiple>
-          <option *ngFor="let a of standards" [ngValue]="a"> {{a.name}}</option>
-        </select>
-        <div>
-          <!--<div [hidden]="circular.controls.standard.valid || circular.controls.standard.untouched" class="alert alert-warning">This field is required</div>-->
-        </div> 
-      </div>
+
       <button type="submit" class="btn btn-success" [disabled]="!circular.valid">Submit</button>
     </form>
-    <div class="row text-center">
-      <loader [condition]="submitProgress"></loader>
-    </div>
   </div>
 </div>
 <div class="modal fade" id="circularModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -89,7 +117,26 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal" [routerLink]="['/circular']">Close</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" >Add More</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Add More</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">File Type Error</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Kindly upload an image file.
+      </div>
+      <div class="modal-footer">
       </div>
     </div>
   </div>
