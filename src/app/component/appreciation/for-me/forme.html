@@ -36,9 +36,7 @@
           <span>{{c.createdAt|date}}</span>
         </div>
       </div> -->
-          <div class="row text-center">
-            <loader [condition]="loader"></loader>
-          </div>
+
           <div class="row col-lg-12" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage==1)"><b>No Appreciations are added to the view.</b></div>
           <div class="row col-lg-12" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage!=1)"><b>No more Appreciations are added to the view.</b></div>
         </div>

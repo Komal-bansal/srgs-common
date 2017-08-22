@@ -5,12 +5,13 @@
         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
       </button>
     </div>
+    <br>
     <div class="row text-center">
       <loader [condition]="loader"></loader>
     </div>
    <br>
-    <div style="text-align: center" *ngIf="(emptySurveys)&&(!loader)"><b>No Survey is added to the View</b></div>
-    <div style="margin-top: 2%;padding-top: 1%;" *ngIf="!emptySurveys">
+    <div style="margin-top: 2%;padding-top: 1%;"> 
+    <div  *ngIf="!emptySurveys">
       <div class="container card" *ngFor="let s of surveys; let i = index;">
         <div class="row">
 
@@ -28,7 +29,9 @@
         <div class="row name" style="text-align:center;"><span class="glyphicon glyphicon-calendar"></span>{{s.expiredAt | date}}</div>
       </div>
     </div>
-
+    </div>
+    <div style="text-align: center" *ngIf="(emptySurveys)&&(!loader)"><b>No Survey is added to the View</b></div>
+  
   </div>
 
   <div class="panel-footer">

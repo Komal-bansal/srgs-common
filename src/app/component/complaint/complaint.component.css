@@ -288,7 +288,7 @@ h1{
 .comments{
     overflow-y: scroll;
 }
-loader{
+.loader{
     position: absolute;
     top: 50%;
 }
