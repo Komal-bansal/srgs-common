@@ -110,8 +110,9 @@
 
     </div>
     <div class="panel-footer">
-      <button (click)="previousComplaint()" class="btn right btn-danger" [disabled]="currentPage === 1">Previous</button>
-      <button (click)="nextComplaint()" class="btn right btn-danger" [disabled]="EmptyComplaints || noMore">Next</button>
+      <!-- <button (click)="previousComplaint()" class="btn right btn-danger" [disabled]="currentPage === 1">Previous</button> -->
+      <!-- <button (click)="nextComplaint()" class="btn right btn-danger" [disabled]="EmptyComplaints || noMore">Next</button> -->
+       <div class="text-center"><button (click)="nextComplaint()" class="btn right btn-primary" [disabled]="EmptyComplaints || noMore">Load More</button>  </div>     
     </div>
   </div>
 </div>

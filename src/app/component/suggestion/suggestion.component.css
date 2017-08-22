@@ -24,3 +24,8 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.standardLoad{
+  position: absolute;
+  top: 27%;
+}

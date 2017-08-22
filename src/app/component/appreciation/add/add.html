@@ -13,8 +13,8 @@
       <div class="form-group">
         <label for="standardId">Select Standard</label>
           <div class="row text-center">
-      <loader [condition]="loader" class="standardLoad"></loader>
-    </div> 
+            <loader [condition]="loader" class="standardLoad"></loader>
+          </div> 
           <select class="form-control" id="standardId" name="standardId"(ngModelChange)="getStudents($event)" [(ngModel)]="standardId"
           [ngModelOptions]="{standalone: true}" >
           <option disabled *ngIf="emptyStandards">No standards are added. Try again later</option> 

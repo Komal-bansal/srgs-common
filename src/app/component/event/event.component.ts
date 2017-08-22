@@ -234,6 +234,7 @@ public endT(e:any){
   }
 
   public getPlanner(){
+    this.loader=true;
     this.eventService.GetPlanner().subscribe((res)=>{
       this.planner=res;
       this.loader=false;

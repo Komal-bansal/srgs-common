@@ -31,7 +31,8 @@ export class MessageComponent implements AfterViewInit, OnInit {
   public selectedIndex: number; //for styling selected nav element
   public selectedOldRecipient: any[]; // Message Array
   public emptyOldMessages: boolean = false;
-
+  public modalMessage:any;
+  public heading:any;
   public emptySearchResult: boolean = false;
   public loader: boolean = true;
   public loader1:boolean=true;
@@ -84,6 +85,7 @@ export class MessageComponent implements AfterViewInit, OnInit {
       }
       this.emptyOldRecipient = false;
       this.oldMessageRecipients = res;
+      this.loader1=false;
       this.oldMessageRecipientsCOPY = this.oldMessageRecipients
       // console.log("msg", this.oldMessageRecipients);
       this.selectOldRecipient(this.oldMessageRecipients[0], 0);
@@ -135,7 +137,9 @@ export class MessageComponent implements AfterViewInit, OnInit {
       if (res.status == 204) {
         this.selectedOldRecipient = [];
         this.emptyOldMessages = true;
-        $("#noMessageModal").modal('show');
+        this.heading="No more messages";
+        this.modalMessage="No more messages";
+        $("#modal-success").modal('show');
         this.currentMessagePage -= 1;
         this.getSelectedMessage(this.selectedId);
         this.loader = false;
@@ -220,7 +224,9 @@ export class MessageComponent implements AfterViewInit, OnInit {
       this.file = event.srcElement.files[0];
     }
     else{
-       $('#errorModal').modal('show');
+      this.heading="Invalid input";
+      this.modalMessage="Please choose an image to upload";
+       $('#modal-success').modal('show');
       // this.newMessageForm.controls['file'].reset();      
     }
     reader.onload = function (e: any) {
@@ -365,6 +371,8 @@ export class MessageComponent implements AfterViewInit, OnInit {
     // console.log(temp);
     this.ms.newConversation(temp).subscribe(res => {
       this.getMessages();
+      this.heading="Message sent";
+      this.modalMessage="This message has been sent";
       $("#submitModal").modal('show');
       this.initnewMessageForm();
     },

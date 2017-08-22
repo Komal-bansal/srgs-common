@@ -121,6 +121,7 @@
                         </div>
                     
                     <div class="form-group">
+                        <!-- <loader [condition]="loader"></loader> -->
                         <label for="planner">Planner-type</label>
                         <select class="form-control" id="planner" name="planner" formControlName="plannerTypeId" (ngModelChange)="selectPlannerType($event)">
                             <option *ngFor="let p of planner" [value]="p.id">{{p.name}}</option>

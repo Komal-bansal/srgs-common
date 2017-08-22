@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
  @Component({
   selector:'suggestion-add',
   templateUrl:'./add.html',
-  // styleUrls:''
+  styleUrls:['./../suggestion.component.css'],
  })
  export class SuggestionAddComponent{
 
@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
   public emptyStandards:boolean =  false;
   public emptyStudents: boolean = false;
   students:any=[];
+  public loader:any;
   // subjects:any = [];
   constructor(  private suggestionService:SuggestionService,
                 private commonService:CommonService,
@@ -59,11 +60,14 @@ import { Router } from '@angular/router';
     }
   public getStandards() {
     // this.nl.showLoader();
+    this.loader=false;
     this.suggestionService.getStandards().subscribe((res) => {
       if(res.status===204){
         this.emptyStandards = true;
+        this.loader=true;
         return;
       }
+      this.loader=true;
       this.emptyStandards=false;
       this.standards = res;
 

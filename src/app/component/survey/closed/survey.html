@@ -32,8 +32,8 @@
   </div>
 
   <div class="panel-footer">
-    <button (click)="previousSurvey()" [disabled]="currentPage === 1" type="button" class="btn btn-primary">Previous</button>
-    <button (click)="nextSurvey()" type="button" [disabled]="emptySurveys || noMore" class="btn btn-primary">Next</button>
+    <!-- <button (click)="previousSurvey()" [disabled]="currentPage === 1" type="button" class="btn btn-primary">Previous</button> -->
+    <div class="text-center"><button (click)="nextSurvey()" type="button" [disabled]="emptySurveys || noMore" class="btn btn-primary">Load More</button></div>
   </div>
 </div>
 

@@ -359,3 +359,8 @@ outline: none;
 .arrow{
     border-style: none;
 }
+
+.standardLoad{
+  position: absolute;
+  top: 27%;
+}

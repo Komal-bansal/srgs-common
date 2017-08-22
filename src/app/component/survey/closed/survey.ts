@@ -43,14 +43,14 @@ export class ClosedSurveyComponent implements OnInit {
       })
   }
 
-  public previousSurvey() {
-    delete this.surveys;
-    this.currentPage -= 1;
-    this.getSurveys();
-  }
+  // public previousSurvey() {
+  //   delete this.surveys;
+  //   this.currentPage -= 1;
+  //   this.getSurveys();
+  // }
 
   public nextSurvey() {
-    delete this.surveys;
+    // delete this.surveys;
     this.currentPage += 1;
     this.getSurveys();
   }
