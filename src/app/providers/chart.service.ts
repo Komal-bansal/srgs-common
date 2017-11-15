@@ -17,19 +17,19 @@ export class ChartService {
   }
 
   public getComplaintByStatus() {
-    return this.http.get(this.baseUrl + "/complaint/status")
+    return this.http.get(this.con.Server + "/complaint/status")
     .map(this.extractData)
     .catch(this.handleError);
   }
 
   public getComplaintByCategoryAndStatus() {
-    return this.http.get(this.baseUrl + "/complaint/category-status")
+    return this.http.get(this.con.Server + "/complaint/category-status")
     .map(this.extractData)
     .catch(this.handleError);
   }  
 
   public getSuggestionByStatus() {
-    return this.http.get(this.baseUrl + "/suggestion/status")
+    return this.http.get(this.con.Server + "/suggestion/status")
       .map(this.extractData)
       .catch(this.handleError);
   }  

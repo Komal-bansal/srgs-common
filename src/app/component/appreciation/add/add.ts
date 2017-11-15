@@ -25,7 +25,7 @@ export class AddAppreciation {
   public emptyStudents: boolean = true;
   public emptyStandards: boolean = true;
   public loader:boolean = false;
-
+  public studentLoader:boolean=false;
   constructor(private appreciationService: AppreciationService,
     private commonService: CommonService,
     public router: Router,
@@ -48,13 +48,12 @@ export class AddAppreciation {
     });
   }
   submitAppreciation() {
-    // this.loader = true;
+    this.submitProgress=true;
     this.appreciationService.postAppreciation(this.appreciation.value).subscribe((res) => {
-        this.loader = false;
+      this.submitProgress=false;        
       this.initForm();
       $('#appreciationModal').modal('show');
     }, (err) => {
-      this.loader = false;
       this.router.navigate(['/error']);
 
     });
@@ -73,19 +72,21 @@ export class AddAppreciation {
       this.emptyStandards = false;
       this.loader = false;
     }, (err) => {
-      this.loader = false;
       this.router.navigate(['/error']);
     });
   }
 
   public getStudents(standard:any) {
+    this.studentLoader=true;
     this.appreciation.controls["studentId"].reset();
     this.appreciationService.getStudents(standard).subscribe((res) => {
       if(res.status===204){
         this.students = [];
         this.emptyStudents = true;
+        this.studentLoader=false;
         return;
       }
+      this.studentLoader=false;
       this.emptyStudents = false;
       this.students = res;
     }, (err) => {

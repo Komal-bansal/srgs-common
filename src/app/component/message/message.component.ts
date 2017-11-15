@@ -31,8 +31,7 @@ export class MessageComponent implements AfterViewInit, OnInit {
   public selectedIndex: number; //for styling selected nav element
   public selectedOldRecipient: any[]; // Message Array
   public emptyOldMessages: boolean = false;
-  public modalMessage:any;
-  public heading:any;
+
   public emptySearchResult: boolean = false;
   public loader: boolean = true;
   public loader1:boolean=true;
@@ -51,8 +50,13 @@ export class MessageComponent implements AfterViewInit, OnInit {
   public standard: any;
   public selectedStudent: any;
   public newMsg:any;
-  constructor(public ms: MessageService, public cs: CommonService,public router:Router) {
 
+  public standardLoader:boolean=false;
+  public studentLoader:boolean=false;
+  public categoryLoder:boolean=false;
+  public submitProgress:boolean=false;
+  constructor(public ms: MessageService, public cs: CommonService,public router:Router) {
+     
   }
 
   ngOnInit() {
@@ -83,11 +87,10 @@ export class MessageComponent implements AfterViewInit, OnInit {
         this.loader1 = false;
         return;
       }
+      this.loader1=false;
       this.emptyOldRecipient = false;
       this.oldMessageRecipients = res;
-      this.loader1=false;
       this.oldMessageRecipientsCOPY = this.oldMessageRecipients
-      // console.log("msg", this.oldMessageRecipients);
       this.selectOldRecipient(this.oldMessageRecipients[0], 0);
       if (this.oldMessageRecipients.length < 12) {
         this.noMore = true;
@@ -123,7 +126,6 @@ export class MessageComponent implements AfterViewInit, OnInit {
       this.closed = true;
     else
       this.closed = false;
-    // console.log("this.recipientName", this.recipientName)
     this.getSelectedMessage(this.selectedId);
   }
 
@@ -131,32 +133,22 @@ export class MessageComponent implements AfterViewInit, OnInit {
     this.loader = true;    
     var oldMessages: any[];
     oldMessages = this.selectedOldRecipient;
-    // console.log("selected Id", id);
-    // console.log("currentPage", this.currentMessagePage);
     this.ms.getMessage(id, this.currentMessagePage).subscribe(res => {
       if (res.status == 204) {
         this.selectedOldRecipient = [];
         this.emptyOldMessages = true;
-        this.heading="No more messages";
-        this.modalMessage="No more messages";
-        $("#modal-success").modal('show');
+        $("#noMessageModal").modal('show');
         this.currentMessagePage -= 1;
         this.getSelectedMessage(this.selectedId);
         this.loader = false;
         return;
       }
-      // console.log("message", res);
       this.selectedOldRecipient = res;
       this.emptyOldMessages = false;
       // For Old Messages
       if (this.selectedOldRecipient.length < 6 && this.currentMessagePage != 1) {
         this.noMoreMessages = true;
-        // console.log("less than 5", oldMessages);
-        // console.log('df',this.selectedOldRecipient);
-
         this.selectedOldRecipient = oldMessages.concat(this.selectedOldRecipient);
-
-        // console.log(this.selectedOldRecipient);
       }
 
       if (this.selectedOldRecipient.length < 12) {
@@ -174,7 +166,6 @@ export class MessageComponent implements AfterViewInit, OnInit {
       err => {
         this.loader = false;
         this.errPage();
-        // console.log("err", err);
       })
   }
 
@@ -208,6 +199,7 @@ export class MessageComponent implements AfterViewInit, OnInit {
     if (val && val.trim() != '') {
       this.emptySearchResult = false;
       this.oldMessageRecipients = this.oldMessageRecipientsCOPY.filter((item: any) => {
+        console.log(item);
         return (item.title.toLowerCase().indexOf(val.toLowerCase()) > -1);
       })
       if (this.oldMessageRecipients.length === 0)
@@ -224,12 +216,12 @@ export class MessageComponent implements AfterViewInit, OnInit {
       this.file = event.srcElement.files[0];
     }
     else{
-      this.heading="Invalid input";
-      this.modalMessage="Please choose an image to upload";
-       $('#modal-success').modal('show');
+       $('#errorModal').modal('show');
       // this.newMessageForm.controls['file'].reset();      
     }
     reader.onload = function (e: any) {
+             $('#getFileModal').modal('show');   //file upload modal   
+
       $('#img33')
         .attr('src', e.target.result)
     };
@@ -247,36 +239,33 @@ export class MessageComponent implements AfterViewInit, OnInit {
 
 
   submitMessageForm() {
-    this.loader = true;
+    this.submitProgress = true;
     this.ms.conversationComment(this.selectedId, this.messageForm.value).subscribe(res => {
-      // console.log("form Value", this.messageForm.value);
       this.currentMessagePage = 1;
       this.messageForm.value['employeeName'] = this.currentUser;
       this.messageForm.value['createdAt'] = new Date();
       this.messageForm.value['employeePicTimestamp'] = localStorage.getItem("picTimestamp");
       this.selectedOldRecipient.unshift(this.messageForm.value);
       this.initForm();
-      this.loader = false;
+      this.submitProgress = false;
     },
       er => {
         this.errPage();
-        // console.log("Er", er);
       })
 
   }
 
   public submitFormWithPicture() {
-    this.loader = true;
+    this.submitProgress = true;
     let formData = new FormData();
     formData.append('file', this.file);
     this.ms.conversationCommentWithPicture(this.selectedId, formData).subscribe(res => {
       this.currentMessagePage = 1;
       this.getSelectedMessage(this.selectedId);
       this.file = null;
-      this.loader = false;
+      this.submitProgress = false;
     }, er => {
       this.errPage();
-      // console.log("Er", er);
     })
 
   }
@@ -284,14 +273,12 @@ export class MessageComponent implements AfterViewInit, OnInit {
   public closeConversation() {
     this.loader = true;
     this.ms.closeConversation(this.selectedId).subscribe(res => {
-      // console.log("close");
       this.closed = true;
       this.oldMessageRecipients[this.selectedIndex].isClosed = true;
 
     },
       err => {
         this.errPage();
-        // console.log("err", err);
       })
     this.loader = false;
   }
@@ -322,63 +309,57 @@ export class MessageComponent implements AfterViewInit, OnInit {
   }
 
   public getStandards() {
-    this.loader = true;
+    this.standardLoader = true;
     this.ms.getStandards().subscribe(res => {
       if (res.status === 204) {
         this.standardsArray = null;
-        this.loader = false;
-        return;
+        this.standardLoader = false;
+            return;
       }
+    this.standardLoader = false;          
       this.standardsArray = res;
     },
       err => {
         this.errPage();
-        // console.log("err", err);
       })
-    this.loader = false;
   }
 
   public onStandard(ev: any) {
-    this.loader = true;
+    this.studentLoader = true;
+      this.categoryLoder=true;    
     this.ms.getMessageCategory(ev).subscribe(res => {
       if (res.status === 204) {
+        this.categoryLoder=false; 
+        this.studentLoader = false;             
         this.categories = null;
         this.students = null;
-        this.loader = false;
         return;
       }
-      // console.log(res);
       this.students = res.students;
       this.categories = res.categories;
-      this.loader = false;
+      this.categoryLoder=false;
+      this.studentLoader = false;
     },
       err => {
         this.errPage();
-        // console.log("Err", err)
       })
-    this.loader = false;
   }
 
   public submitNewMessage() {
     this.loader = true;
-    // console.log("f", this.selectedStudent)
     var temp = {
       againstParentId: this.selectedStudent.parentId,
       againstStudentId: this.selectedStudent.id,
     }
       ;
     temp = Object.assign(temp, this.newMessageForm.value)
-    // console.log(temp);
     this.ms.newConversation(temp).subscribe(res => {
       this.getMessages();
-      this.heading="Message sent";
-      this.modalMessage="This message has been sent";
       $("#submitModal").modal('show');
       this.initnewMessageForm();
     },
       err => {
         this.errPage();
-        // console.log("Err", err);
       })
     this.loader = false;
   }

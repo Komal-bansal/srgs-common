@@ -24,6 +24,8 @@ export class AddCircular implements OnInit, AfterViewInit {
   public file: any;
   public loader: boolean = false;
   public submitProgress: boolean = false;
+  public standardLoader:boolean=false;
+  public audienceLoader:boolean=false;
   constructor(private circserv: CircularService,
     private commonService: CommonService,
     private _location: Location,
@@ -67,16 +69,18 @@ export class AddCircular implements OnInit, AfterViewInit {
 
   public getStandards() {
 
-    this.loader = true;
+    this.standardLoader = true;
     this.circserv.getStandards().subscribe((res) => {
       if (res.status === 204) {
+        this.standardLoader=false;
         this.standards = null;
         this.loader = false;
         return;
       }
       this.standards = res;
       this.commonService.storeData("standards", res);
-      this.loader = false;
+      this.standardLoader = false;
+      
     }, (err) => {
       this.loader = false;
       this.router.navigate(['/error']);
@@ -97,7 +101,9 @@ export class AddCircular implements OnInit, AfterViewInit {
 
   public getCircularInfo() {
     this.loader = true;
+    this.audienceLoader=true;
     this.commonService.getCircularInfo().subscribe((res) => {
+      this.audienceLoader=false;
       this.buildCircularData(res);
       this.commonService.storeData("circularInfo", res);
       this.loader = false;
@@ -136,7 +142,7 @@ export class AddCircular implements OnInit, AfterViewInit {
     formData.append('date', this.circular.value['date']);
     formData.append('file', this.file);
     this.onSubmit(formData);
-    this.submitProgress = false;
+    // this.submitProgress = false;
   }
   stdIds: any = [];
   standard: any;
@@ -156,7 +162,7 @@ export class AddCircular implements OnInit, AfterViewInit {
   }
 
   public onSubmit(formData: any) {
-    this.loader = true;
+    this.submitProgress = true;
     this.circserv.PostCircular(formData).subscribe((data) => {
       this.submitProgress = false;
       this.circular = this.initForm();

@@ -1,5 +1,7 @@
 import {Component} from '@angular/core';
 
+import { LoaderStop } from "../../providers/loaderstop.service"; 
+
 @Component({
   selector:'error404',
   templateUrl:'./error404.html',
@@ -7,6 +9,8 @@ import {Component} from '@angular/core';
 })
 
 export class Error404Component{
-
+	constructor(private ls : LoaderStop){
+		ls.setLoader(false);
+	}
 
 }

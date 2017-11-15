@@ -10,15 +10,14 @@
   <!-- Table -->
   <div class="panel-body">
      <div class="add-button">
-      <button type="button" class="btn btn-success btn-circle" [routerLink]="['/add-circular']">
-      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+      <button type="button" class="btn btn-success btn-circle" [routerLink]="['/circular/add-circular']">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
       </button>
-    </div> 
+    </div>
     <br>
     <div class="row text-center">
-        <loader [condition]="loader"></loader>
-    </div>
-      
+       <loader [condition]="loader"></loader>
+     </div> 
   <div  style="margin-top: 2%;padding-top: 1%;">
     <div *ngIf="!EmptyCirculars">
       <div class="container card" *ngFor="let circular of circulars">
@@ -68,6 +67,7 @@
     <!--end cards-->
     <div class="row"style="text-align: center" *ngIf="(EmptyCirculars)&&(!loader)&&(currentPage==1)" ><b>No Circulars are added to the view.</b></div>
     <div class="row "style="text-align: center" *ngIf="(EmptyCirculars)&&(!loader)&&(currentPage!=1)" ><b>No more Circulars are added to the view.</b></div>
+
   </div>
 
 
@@ -88,7 +88,7 @@
 </div>
 
 <div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-  <div class="modal-dialog modal-custom" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content" *ngIf="selectedCircular">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -111,7 +111,7 @@
           <div class="modal-class" *ngIf="selectedCircular.standards"><label>For : </label><span>{{selectedCircular.standards}}</span><span *ngIf="!selectedCircular.standards"></span></div>
         </div>
         <div class="row modal-description">
-          <span>{{selectedCircular.description}}</span>
+          <span class="white-space">{{selectedCircular.description}}</span>
         </div>
         <hr class="style-line">
         <div class="row">

@@ -4,18 +4,16 @@
     <div class="panel-body" id="accordion">
 
       <div class="add-button">
-        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/add-appreciation']">
+        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/appreciation/add-appreciation']">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button>
       </div>
       <br>
-        <div class="text-center">
-          <loader [condition]="loader"></loader>
-        </div>
-      <!--
-      <div style="text-align: center" *ngIf="((EmptyComplaints) &&(!loader))"><b>No Appreciation is added to the View</b></div> -->
-      <div style="margin-top: 2%;padding-top: 1%;" >
-          <div *ngIf="!EmptyComplaints">
+      <div class="text-center">
+         <loader [condition]="loader"></loader>
+      </div>
+      <div style="margin-top: 2%;padding-top: 1%;">
+          <div  *ngIf="!EmptyComplaints">
             <div class="card" *ngFor="let c of complaints; let i = index;">
               <div class="row">
                 <span class="glyphicon glyphicon-resize-full expand" data-toggle="modal" (click)="seletToExpand(c)" data-target="#myModal-card"
@@ -46,10 +44,11 @@
                 <span>{{c.createdAt|date}}</span>
               </div>
             </div> -->
+              
             </div>
           </div>
-      </div>
-          <div class="row" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage==1)"><b>No Appreciations are added to the view.</b></div>
+        </div>
+        <div class="row" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage==1)"><b>No Appreciations are added to the view.</b></div>
           <div class="row" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage!=1)"><b>No more Appreciations are added to the view.</b></div>
         </div>
 
@@ -71,7 +70,7 @@
 </div>
 
 <div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-  <div class="modal-dialog modal-custom" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content" *ngIf="selectedComplaint">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -92,7 +91,7 @@
           </div>
           <div class="row">
             <div class="modal-description">
-              <span> {{selectedComplaint.description}}</span>
+              <span class="white-space"> {{selectedComplaint.description}}</span>
             </div>
           </div>
           <hr class="style-line">

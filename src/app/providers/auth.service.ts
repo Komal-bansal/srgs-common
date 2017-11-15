@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { Http,Response, RequestOptions, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { CommonService } from './common.service';
-
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
-
 import { Configuration } from './app.constant';
 import { CustomHttpService } from './default.header.service';
 
@@ -14,12 +12,12 @@ import { CustomHttpService } from './default.header.service';
 export class AuthService {
 
   constructor(private http: CustomHttpService,
-    public htttp:Http,
+    public htttp: Http,
     public commonService: CommonService,
     private con: Configuration) {
     this.serverUrl = con.url;
   }
-
+  userId : any = localStorage.getItem("id");
   serverUrl: string;
   public login: any = false;
   headers: any;
@@ -65,7 +63,7 @@ export class AuthService {
   }
 
   resetPassword(data: any) {
-    return this.http.put(this.serverUrl + "/management/" + this.con.userId + "/password", data)
+    return this.http.put(this.serverUrl + "/management/" + this.userId + "/password", data)
       .map(this.extractData)
       .catch(this.handleError);
   }
@@ -97,6 +95,13 @@ export class AuthService {
     .catch(this.handleError);
   }
 
+  public resetImage(){
+    
+    return this.htttp.delete(this.con.baseUrl +"management/" + this.con.getUserId() +"/picture")
+    .map(this.extractData)
+    .catch(this.handleError)
+  }
+
   private extractData(res: Response) {
     let body = res.json();
     return body || {};
@@ -105,7 +110,4 @@ export class AuthService {
   private handleError(error: Response | any) {
     return Observable.throw(error.status);
   }
-
-
-
 }

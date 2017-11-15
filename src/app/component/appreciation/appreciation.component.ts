@@ -9,7 +9,8 @@ import {Router } from '@angular/router';
 })
 export class AppreciationComponent{
      constructor(private router:Router){
-         this.router.navigate(["/appreciation/for-me"]);
+        
+      // this.router.navigate(["/appreciation/for-me"]);
     }
      
 }

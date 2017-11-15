@@ -1,6 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { ChartService } from '../../providers/chart.service';
+import { ChartService } from "../../providers/chart.service";
+import { LoaderStop } from "../../providers/loaderstop.service";
 
 @Component({
   selector: 'dashboard',
@@ -17,15 +18,16 @@ export class DashboardComponent {
   public loader: boolean = false;
   public loader1: boolean = false;
   public loader2: boolean = false;
-  public responseByStatus: any;
-  public responseByCategoryAndStatus: any;
-  public responseSuggestionByStatus: any;
+  public responseByStatus: any=[];
+  public responseByCategoryAndStatus: any=[];
+  public responseSuggestionByStatus: any=[];
 
-  constructor(public cs: ChartService, private router: Router, private zone: NgZone) {
+  constructor(public cs: ChartService, private router: Router, private ls : LoaderStop, private zone: NgZone) {
+     this.ls.setLoader(false);
     this.loader = true;
     this.loader1 = true;
     this.loader2 = true;
-    cs.getComplaintByCategoryAndStatus().subscribe((response) => {
+    cs.getComplaintByCategoryAndStatus().subscribe((response:any) => {
       if(response.status === 204){
         this.loader=false;
         this.responseByCategoryAndStatus = 0;
@@ -34,11 +36,11 @@ export class DashboardComponent {
       this.responseByCategoryAndStatus = response
       this.chartByCategoryAndStatus();
     },
-    err =>{
+    (err:any) =>{
       this.router.navigate(['/error']);
     });
     
-    cs.getComplaintByStatus().subscribe((response) => {
+    cs.getComplaintByStatus().subscribe((response:any) => {
       if(response.status === 204){
         this.loader1=false;
         this.responseByStatus = 0;
@@ -48,7 +50,7 @@ export class DashboardComponent {
       this.chartByStatus();
      
     },
-    err =>{
+    (err:any) =>{
       this.router.navigate(['/error']);
     });
     
@@ -119,7 +121,7 @@ export class DashboardComponent {
     
     this.chartByStatus();
     this.chartByCategoryAndStatus();
-     this.chartBySuggestionStatus();
+    this.chartBySuggestionStatus();
     
 }
 

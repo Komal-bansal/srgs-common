@@ -30,7 +30,7 @@
         <div class="col-sm-6" class="badge">{{c.priorityName}}</div>
       </div> -->
         <div class="row">
-          <img class="image" [attr.src]="fileUrl + c.studentPicUrl">
+          <img class="image" [attr.src]="fileUrl + c.studentPicUrl" style="border-radius:50% !important">
         </div>
         <div class="row name">{{c.studentName}}</div>
         <div class="row class">{{c.studentStandardName}}</div>
@@ -52,8 +52,16 @@
       </div>
     </div>
     <!--end cards-->
-    <div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-      <div class="modal-dialog modal-custom" role="document">
+    <div class="row col-lg-12" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage==1)"><b>No Complaints are added to the view.</b></div>
+    <div class="row col-lg-12" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage!=1)"><b>No more Complaints are added to the view.</b></div>
+  </div>
+  <div class="panel-footer">
+    <!--<button (click)="previousComplaint()" [disabled]="currentPage === 1" type="button" class="btn btn-primary">Previous</button>-->
+    <div class="text-center"><button (click)="nextComplaint()" type="button" [disabled]="EmptyComplaints || noMore" class="btn btn-primary">Load More</button></div>
+  </div>
+</div>
+<div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+      <div class="modal-dialog" role="document">
         <div class="modal-content" *ngIf="selectedComplaint">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -89,13 +97,13 @@
               <label class="heading">Priority</label>-->
                 </div>
               </div>
-              <div class="col-sm-4"><img class="modal-image" [attr.src]="fileUrl + selectedComplaint.studentPicUrl"></div>
+              <div class="col-sm-4"><img class="modal-image" [attr.src]="fileUrl + selectedComplaint.studentPicUrl" style="border-radius:50% !important"></div>
             </div>
             <div class="row modal-name">{{selectedComplaint.studentName}}
               <div class="modal-class">{{selectedComplaint.studentStandardName}}</div>
             </div>
             <div class="row modal-description">
-              <div class="row "><label class="heading">Description : </label><span> {{selectedComplaint.description}}</span></div>
+              <div class="row "><label class="heading">Description : </label><span class="white-space"> {{selectedComplaint.description}}</span></div>
               <div class="row" *ngIf="selectedComplaint.rca"><label class="heading">Root Cause : </label><span> {{selectedComplaint.rca}}</span></div>
             </div>
             <hr class="style-line">
@@ -148,17 +156,8 @@
     </div>
     <!-- /.modal -->
 
-    <div class="row col-lg-12" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage==1)"><b>No Complaints are added to the view.</b></div>
-    <div class="row col-lg-12" style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage!=1)"><b>No more Complaints are added to the view.</b></div>
-  </div>
-  <div class="panel-footer">
-    <!--<button (click)="previousComplaint()" [disabled]="currentPage === 1" type="button" class="btn btn-primary">Previous</button>-->
-    <div class="text-center"><button (click)="nextComplaint()" type="button" [disabled]="EmptyComplaints || noMore" class="btn btn-primary">Load More</button></div>
-  </div>
-</div>
-
 <!-- Edit Modal -->
-<div class="modal fade  " id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -172,6 +171,7 @@
           <div class="form-group">
             <label for="sel1">Assigned To:</label>
             <select class="form-control" formControlName="assignedTo">
+              <option disabled="disabled" selected="selected">Select</option>             
               <option *ngFor="let emp of employees" [value]="emp.id">{{emp.name}}</option>
             </select>
           </div>
@@ -200,7 +200,7 @@
 <!--End of Edit-->
 
 <!-- Close Modal -->
-<div class="modal fade  " id="myModal3" role="dialog">
+<div class="modal fade" id="myModal3" role="dialog">
   <div class="modal-dialog">
 
     <!-- Close Modal content-->
@@ -229,7 +229,7 @@
   </div>
 </div>
 
-<div class="modal fad  e" id="myModal4" role="dialog">
+<div class="modal fade" id="myModal4" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -252,9 +252,9 @@
     <div class="clearFix"></div>
   </div>
   <div class="panel-body">
-    <div *ngIf="EmptyComments" style="text-align:center;">No Comments to display</div>
+    <div *ngIf="EmptyComments && !loaderComment" style="text-align:center;">No Comments to display</div>
     <div class="row text-center">
-      <loader [condition]="loaderComment" class="loader"></loader>
+      <loader [condition]="loaderComment"></loader>
     </div>
     <div *ngFor="let c of comments" class="commments">
       <div *ngIf="c.employeeId == currentUser">

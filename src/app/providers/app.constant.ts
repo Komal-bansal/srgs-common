@@ -39,7 +39,6 @@ export class Configuration {
 
   getRole() {
     this.role = localStorage.getItem("role");
-    this.role=this.role.toLowerCase();
     this.getUserId();
     return this.role;
   }

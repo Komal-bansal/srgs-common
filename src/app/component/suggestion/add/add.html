@@ -6,18 +6,21 @@
   </button>
   </div>
     <div class="panel-body">
+      <div class="row text-center">
+        <loader class="centerLoader" [condition]="submitProgress"></loader>
+      </div>
       <form name="suggestion" [formGroup]="suggestion" (ngSubmit)="submitSuggestion()" novalidate>
         
         <div class="form-group">
           <label for="standardId">Select Standard</label>
-          <div class="row text-center">
-            <loader [condition]="loader" class="standardLoad"></loader>
-          </div>
+
         <select class="form-control" id="standardId" name="standardId"(ngModelChange)="getStudents($event)" [(ngModel)]="standardId"
           [ngModelOptions]="{standalone: true}" >
+           <option disabled="disabled" selected="selected">Select standard</option>             
            <option *ngIf="emptyStandards" disabled>Standards are not added. Try again later. </option>
           <option *ngFor="let a of standards" [ngValue]="a.id"> {{a.name}}</option>
         </select>
+        <loader class="dropdownLoader" [condition]="standardLoader"></loader>        
            <!-- <div [hidden]="suggestion.controls.standardId.valid || suggestion.controls.standardId.untouched" class="alert alert-warning">This field is required</div>   -->
         </div>
 
@@ -26,9 +29,11 @@
          <div class="form-group" *ngIf="standardId">       
           <label for="studentId">Student Name</label>
          <select class="form-control" formControlName="studentId" >
+            <option disabled="disabled" selected="selected">Select Student</option>             
              <option *ngIf="emptyStudents" disabled>Students are not added. Try again later. </option>
             <option *ngFor="let s of students" [ngValue]="s.id">{{s.name}}</option>
           </select>
+        <loader class="dropdownLoader" [condition]="studentLoader"></loader>                  
          <div [hidden]="suggestion.controls.studentId.valid || suggestion.controls.studentId.untouched" class="alert alert-warning">This field is required</div>   
         
         </div>

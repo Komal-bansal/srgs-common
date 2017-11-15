@@ -1,0 +1,11 @@
+.glyphicon-calendar:before,.glyphicon-globe:before,.glyphicon-list:before{
+    font-size: 20px !important;
+}
+
+.food-pic{
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: auto;
+    border-radius: 100%;
+}

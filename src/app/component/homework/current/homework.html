@@ -3,7 +3,7 @@
     <!--<div class="panel-heading">Current Homework</div>-->
     <div class="panel-body" id="accordion">
       <div class="add-button">
-        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/homework-add']">
+        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/homework/homework-add']">
           <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button>
       </div>
@@ -11,64 +11,65 @@
       <div class="row text-center">
         <loader [condition]="loader"></loader>
       </div>
-      
-       <!-- <div style="text-align: center" *ngIf="(EmptyHomeworks)&&(!loader)"><b>No Homeworks are added to the view.</b></div> -->
-      <div style="margin-top: 2%;padding-top: 1%;">
-          <div  *ngIf="!EmptyHomeworks">
-            <div class="container card" *ngFor="let a of homeworks; let i = index;">
-              <div class="row">
-                <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(a,i)" data-toggle="modal" data-target="#myModal-card"
-                  style="margin-bottom:10px;"></span>
-              </div>
-              <!--<div class="row">
-            <div class="col-sm-6" *ngIf="!complaintStatus">
-              <span [style.background]="c.statusColor" class="badge">{{c.statusName}}</span>
+      <!-- <div class="row text-center">
+        <loader [condition]="loader"></loader>
+      </div>
+      <br>
+      <div style="text-align: center" *ngIf="(EmptyHomeworks)&&(!loader)"><b>No Homeworks are added to the view.</b></div> -->
+    <div style="margin-top: 2%;padding-top: 1%;">
+      <div  *ngIf="!EmptyHomeworks">
+        <div class="container card" *ngFor="let a of homeworks; let i = index;">
+          <div class="row">
+            <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(a,i)" data-toggle="modal" data-target="#myModal-card"
+              style="margin-bottom:10px;"></span>
+          </div>
+          <!--<div class="row">
+        <div class="col-sm-6" *ngIf="!complaintStatus">
+          <span [style.background]="c.statusColor" class="badge">{{c.statusName}}</span>
+        </div>
+        <div class="col-sm-6">{{c.priorityName}}</div>
+      </div>-->
+          <div class="row">
+            <div class="download-image" *ngIf="a.fileTimestamp">
+              <span>
+               <img class="image" [attr.src]="fileUrl + a.fileTimestamp">
+              </span>
+              <div class="edit-image"><a [attr.href]="fileUrl + a.fileTimestamp"><i class="fa fa-download fa-lg"></i></a></div>
             </div>
-            <div class="col-sm-6">{{c.priorityName}}</div>
-          </div>-->
-              <div class="row">
-                <div class="download-image" *ngIf="a.fileTimestamp">
-                  <span>
-                  <img class="image" [attr.src]="fileUrl + a.fileTimestamp">
-                  </span>
-                  <div class="edit-image"><a [attr.href]="fileUrl + a.fileTimestamp"><i class="fa fa-download fa-lg"></i></a></div>
-                </div>
-                <div>
-                  <span>
-                  <img class="image" *ngIf="!a.fileTimestamp" src="./app/img/preview.png" alt="No Preview Avalable">
-                    <!--<div class="edit-image" style="display:none"><a [attr.href]="fileUrl + a.fileTimestamp"><i class="fa fa-download fa-lg"></i></a></div>-->
-                  </span>
-                </div>
-              </div>
-              <!--<div class="row name">{{circular.employeeName}}</div>-->
-              <div class="row class"><label class="heading">For</label>
-                <span class="class">{{ a.standardName }}</span>
-              </div>
-              <hr class="style-line">
-              <div class="row title" style="text-align:center"><label>Subject:&nbsp;</label><span>{{a.subjectName}}</span></div>
-              <div class="row">
-                <label class="Due Date :"></label>
-                <span class="badge" style="background-color:gray">Due Date: {{a.dueDate|date}}</span>
-              </div>
-              <!--<div class="row">
-            <div class="col-sm-6 edit" *ngIf="!(complaintStatus == 4 || complaintStatus == 5)">
-              <a [ngClass]="{'disabled-click' : c.statusId == 4}" (click)="selectComplaint(c,in)" data-toggle="modal" data-target="#myModal"
-                  class="action"><i class="glyphicon glyphicon-pencil"></i>
-              </a>
-            </div>
-            <div class="col-sm-6 comment">
-              <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
-              </a>
-            </div>
-          </div>-->
+            <div>
+              <span>
+              <img class="image" *ngIf="!a.fileTimestamp" src="./app/img/preview.png" alt="No Preview Avalable">
+              	<!--<div class="edit-image" style="display:none"><a [attr.href]="fileUrl + a.fileTimestamp"><i class="fa fa-download fa-lg"></i></a></div>-->
+              </span>
             </div>
           </div>
+          <!--<div class="row name">{{circular.employeeName}}</div>-->
+          <div class="row class"><label class="heading">For</label>
+            <span class="class">{{ a.standardName }}</span>
+          </div>
+          <hr class="style-line">
+          <div class="row title" style="text-align:center"><label>Subject:&nbsp;</label><span>{{a.subjectName}}</span></div>
+          <div class="row">
+            <label class="Due Date :"></label>
+            <span class="badge" style="background-color:gray">Due Date: {{a.dueDate|date}}</span>
+          </div>
+          <!--<div class="row">
+        <div class="col-sm-6 edit" *ngIf="!(complaintStatus == 4 || complaintStatus == 5)">
+          <a [ngClass]="{'disabled-click' : c.statusId == 4}" (click)="selectComplaint(c,in)" data-toggle="modal" data-target="#myModal"
+              class="action"><i class="glyphicon glyphicon-pencil"></i>
+          </a>
+        </div>
+        <div class="col-sm-6 comment">
+          <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
+          </a>
+        </div>
+      </div>-->
+        </div>
+      </div>
       </div>
       <div class="row " style="text-align: center" *ngIf="(EmptyHomeworks)&&(!loader)&&(currentPage==1)" ><b>No Homeworks are added to the view.</b></div>
       <div class="row "style="text-align: center" *ngIf="(EmptyHomeworks)&&(!loader)&&(currentPage!=1)" ><b>No more Homeworks are added to the view.</b></div> 
-      <!-- <div class="row text-center">
-        <loader [condition]="loader"></loader>
-      </div> -->
+
     </div>
 
     <div class="panel-footer">
@@ -89,7 +90,7 @@
 </div>
 
 <div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-  <div class="modal-dialog modal-custom" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content" *ngIf="selectedHomework">
       <div class="modal-header">
         <h4 class="modal-title" id="gridSystemModalLabel">{{selectedHomework.subjectName}}</h4>
@@ -117,7 +118,7 @@
         </div>
         <div class=" row modal-class" style="font-size:15px;"><label>For : </label><span>{{selectedHomework.standardName}}</span></div>
       </div>
-      <div class="row modal-description">{{selectedHomework.description}}</div>
+      <div class="row modal-description"><span class="white-space">{{selectedHomework.description}}</span></div>
       <hr class="style-line">
       <div class="row modal-date">
         <div class="col-sm-2 col-xs-2"><i class="glyphicon glyphicon-calendar pull-right calendar-custom"></i></div>

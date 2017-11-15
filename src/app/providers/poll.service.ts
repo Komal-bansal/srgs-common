@@ -24,6 +24,7 @@ export class PollService {
 
   getUrl() {
     this.serverUrl = this.con.Server;
+    console.log(this.serverUrl);
     // this.baseUrl = this.con.baseUrl;
   }
 
@@ -60,10 +61,6 @@ export class PollService {
     .map(this.extractData)
     .catch(this.handleError);
   }
-
- 
-
-
 
   public createPoll(data:any){
     return this.htttp.post(this.serverUrl + '/poll', data)

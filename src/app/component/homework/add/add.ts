@@ -10,7 +10,7 @@ declare let $: any;
 @Component({
   selector: 'homework-add',
   templateUrl: './add.html',
-  styleUrls:['./../homework.component.css']
+  // styleUrls:['../homework.component.css']
 
 })
 
@@ -23,12 +23,15 @@ export class HomeworkAddComponent implements OnInit {
   subjects: any = [];
   public emptySubjects: boolean = true;
   public loader: boolean = false;
-
+  public standardLoader:boolean=false;
+  public subjectLoader:boolean=false;
 
   constructor(private homeworkService: HomeworkService,
     private commonService: CommonService,
     private _location: Location,
-    public router: Router) { }
+    public router: Router) {        
+      
+ }
 
 
   ngOnInit() {
@@ -70,42 +73,31 @@ export class HomeworkAddComponent implements OnInit {
   }
 
   getSubjects(a: any) {
-    this.loader = true;
+    this.subjectLoader = true;
     this.subjects = [];
     this.homework.controls["subjectId"].reset();
     this.homeworkService.getSubjects(a).subscribe(res => {
       if (res.status == 204) {
         this.emptySubjects = true;
         this.subjects = [];
-        this.loader = false;
+        this.standardLoader = false;
         return;
       }
       this.emptySubjects = false;
       this.subjects = res;
-      this.loader = false;
+      this.subjectLoader = false;
     }, (err) => {
-      this.loader = false;
       this.router.navigate(['/error']);
     });
   }
 
-  // public getStandards() {
-  //   this.loader = true;
-  //   this.standards = this.commonService.getData("standards");
-  //   if (typeof (this.standards) === 'undefined') {
-  //     this._getStandards();
-  //   }
-  //   this.loader = false;
-  // }
-
   public getStandards() {
-    this.loader = true;
+    this.standardLoader = true;
     this.homeworkService.getStandards().subscribe((res) => {
       this.standards = res;
       this.commonService.storeData("standards", res);
-      this.loader = false;
+      this.standardLoader = false;
     }, (err) => {
-      this.loader = false;
       this.router.navigate(['/error']);
     });
   }
@@ -119,7 +111,7 @@ export class HomeworkAddComponent implements OnInit {
     formData.append('dueDate', this.homework.value['dueDate']);
     formData.append('file', this.file);
     this.saveHomework(formData);
-    this.submitProgress = false;
+    // this.submitProgress = false;
   }
 
   // public presentActionSheet() {
@@ -142,13 +134,13 @@ export class HomeworkAddComponent implements OnInit {
   // }
 
   public saveHomework(formData: any) {
-    this.loader = true;
+    this.submitProgress=true;
     this.homeworkService.PostHomework(formData).subscribe((data) => {
       this.initForm();
-      this.loader = false;
+      this.submitProgress = false;
       $('#homeworkModal').modal('show');
     }, (err) => {
-      this.loader = false;
+      // this.submitProgress = false;
       this.router.navigate(['/error']);
     });
     this.file=null;

@@ -2,6 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { StudentRatingService } from '../../providers/studentRating.service';
 import { FormGroup, FormControl, FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LoaderStop } from '../../providers/loaderstop.service';
 // import * as moment_ from 'moment';
 
 
@@ -18,8 +19,10 @@ declare let $: any;
 export class StudentRatingComponent implements OnInit{
 
   constructor(public srs: StudentRatingService,
-    public fb: FormBuilder, public router:Router,
-  ) { }
+    public fb: FormBuilder, public ls: LoaderStop,  public router:Router,
+  ) { 
+     this.ls.setLoader(false);
+  }
 
   ngOnInit(){
      this.getStudents();
@@ -39,26 +42,24 @@ export class StudentRatingComponent implements OnInit{
   public ratingForm = this.fb.group({});
 
   public getStudents() {
-    this.loader = true;
+    this.loader=true;
     this.srs.getStudents().subscribe(res => {
       if (res.status === 204) {
+        this.loader=false;
         this.students = [];
         this.emptyStudents = true;
         // $('#noDataModal').modal('show');
-        this.loader = false;
       }
+      this.loader=false;
       this.students = res;
       this.studentsCOPY = this.students;
-      this.loader = false;
     },
       err => {
-        this.loader = false;
          this.router.navigate(['/error']);
       })
   }
 
   public selectStudent(stu: any) {
-    this.loader1 = true;
     this.selected = false;
     this.selectedStudent = stu;
     this.selectedStudentCopy =  stu;
@@ -67,7 +68,7 @@ export class StudentRatingComponent implements OnInit{
   }
 
   public getStudentRating(id: any) {
-
+    this.loader1=true
     this.srs.getStudentRating(id).subscribe(res => {
       this.respStu = res;
       this.respStuCopy = this.respStu;
@@ -79,7 +80,16 @@ export class StudentRatingComponent implements OnInit{
         this.router.navigate(['/error']);
       });
   }
+  public updaterating(e:any,x:number,x1:number){
+      for(let i =0 ;i<5; i++){
+      (<HTMLInputElement>document.getElementById("star"+x1+"a"+i+"1")).checked=false;
 
+      }
+      for(let i =0 ;i<=x; i++){
+      (<HTMLInputElement>document.getElementById("star"+x1+"a"+i+"1")).checked=true;      
+      }
+
+  }
   public initForm() {
     this.ratingForm = this.fb.group({
       'studentId': [this.selectedStudent.id],

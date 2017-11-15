@@ -6,7 +6,6 @@ export class LoggedInGuard implements CanActivate {
 
   constructor(private router: Router,
               private con: Configuration) {
-
   }
 
   canActivate() {

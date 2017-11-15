@@ -1,15 +1,15 @@
-import {Component, AfterViewInit,OnInit} from '@angular/core';
-import { MainComponent } from './component/main/main.component';
-
+import { Component } from '@angular/core';
+import { LoaderStop } from './providers/loaderstop.service';
+declare let $: any;
 
 @Component({
   selector: 'my-app',
-  templateUrl:"./app.component.html",
-  styleUrls:["./app.component.css"]
+  templateUrl : './app.component.html',
 })
-export class AppComponent {
-  constructor(){
-         $.noConflict(); 
-
+export class AppComponent  { name = 'Angular';
+  private loaderstop : any;
+  constructor(ls : LoaderStop){
+  	setInterval (()=>{this.loaderstop = ls.getLoader();},10)	
   }
+
 }

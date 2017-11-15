@@ -2,11 +2,7 @@
   <div class="panel panel-default">
     <!--<div class="panel-heading">Current Homework</div>-->
     <div class="panel-body" id="accordion">
-      <div class="add-button">
-        <button type="button" class="btn btn-success btn-circle" [routerLink]="['/homework-add']">
-          <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-        </button>
-      </div>
+      
       <br>
       <div class="row text-center">
         <loader [condition]="loader"></loader>
@@ -56,7 +52,7 @@
     </div>
   </div>
   <div class="row " style="text-align: center" *ngIf="(EmptyHomeworks)&&(!loader)&&(currentPage==1)" ><b>No Homeworks are added to the view.</b></div>
-  <div class="row "style="text-align: center" *ngIf="(EmptyHomeworks)&&(!loader)&&(currentPage!=1)" ><b>No more Homeworks</b></div>
+  <div class="row "style="text-align: center" *ngIf="(EmptyHomeworks)&&(!loader)&&(currentPage!=1)" ><b>No more Homeworks are added to the view.</b></div>
 
     </div>
     
@@ -78,7 +74,7 @@
 </div>
 
 <div class="modal fade" id="myModal-card"tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-  <div class="modal-dialog modal-custom" role="document">
+  <div class="modal-dialog" role="document">
     <div class="modal-content" *ngIf="selectedHomework">
       <div class="modal-header">
         <h4 class="modal-title" id="gridSystemModalLabel">{{selectedHomework.subjectName}}</h4>
@@ -106,7 +102,7 @@
         </div>
         <div class=" row modal-class" style="font-size:15px;"><label>For : </label><span>{{selectedHomework.standardName}}</span></div>
       </div>
-      <div class="row modal-description">{{selectedHomework.description}}</div><hr class="style-line">
+      <div class="row modal-description"><span class="white-space">{{selectedHomework.description}}</span></div><hr class="style-line">
       <div class="row modal-date">
         <div class="col-sm-2 col-xs-2"><i class="glyphicon glyphicon-calendar pull-right calendar-custom"></i></div>
         <div class="col-sm-5 col-xs-5" ><label class="heading">Created At</label><div class="result">{{selectedHomework.createdAt | date}}</div></div>

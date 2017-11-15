@@ -5,7 +5,10 @@
   <div class="col-sm-8 col-xs-8 message-area">
 
     <div class="row text-center">
-      <loader [condition]="loader"></loader>
+      <loader [condition]="loader" class="centerLoader"></loader>
+    </div>
+    <div class="row text-center">
+      <loader [condition]="submitProgress" class="centerLoader"></loader>
     </div>
 
     <div class="row msg-nav">
@@ -76,16 +79,29 @@
 
       <div><button class="btn bottom-load" (click)="loadNewMessages()" [disabled]="currentMessagePage === 1"><span class="glyphicon glyphicon-chevron-down" ></span></button>
         
-        <div class="" *ngIf="file">
+        <!-- <div class="" *ngIf="file">
           <form [formGroup]="pictureForm" (submit)="submitFormWithPicture()" class="picture-form">
             <button type="button" (click)="file=null" class="upload-img">
               <span >&times;</span>
             </button>
             <img src="#" id="img33" alt="efcsc" height="200px" width="200px">
-            <button type="submit" class="upload-img"><span class="glyphicon glyphicon-circle-arrow-up"></span></button>
+            <button type="submit" class="upload-btn"><span class="glyphicon glyphicon-circle-arrow-up"></span></button>
           </form>
 
-        </div>
+        </div> -->
+        <div class="modal fade" id="getFileModal" tabindex="-1" role="dialog" *ngIf="file">
+          <div class="modal-dialog pic-modal" role="document">
+            <div class=" pic-modal-content">
+                <form [formGroup]="pictureForm">
+                    <button type="button" (click)="file=null" class="upload-dismiss" data-dismiss="modal">
+                      <span data-dismiss="modal">&times;</span>
+                    </button>
+                    <img src="#" id="img33" alt="efcsc" height="200px" width="200px">
+                    <button type="button" (click)="submitFormWithPicture() "class="upload-btn" data-dismiss="modal"><span class="glyphicon glyphicon-circle-arrow-up"></span></button>
+                  </form>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
       </div>
 
@@ -120,32 +136,37 @@
     <div class="new-chat-body" *ngIf="(!selectedOldRecipient)&&(!loader)">
       <div class="message-form">
       <form [formGroup]="newMessageForm" *ngIf="newMsg">
-
+        <div class="row text-center">
+          <loader [condition]="submitProgress" class="centerLoader"></loader>
+        </div>
         <div class="form-group">
           <label for="sel1">Select Standard:</label>
-          <div class="text-center">
-            <loader [condition]="loader" class="standardLoad"></loader>
-          </div>
           <select class="form-control" id="sel1" [(ngModel)]="standard" [ngModelOptions]="{standalone: true}" (ngModelChange)="onStandard($event)"> 
-              <option *ngIf="standardsArray == null" disabled>No standards are added. Please try again later</option>
+            <option disabled="disabled" selected="selected">Select standard</option>               
+            <option *ngIf="standardsArray == null" disabled>No standards are added. Please try again later</option>
               <option *ngFor="let s of standardsArray" [value]="s.id">{{s.name}}</option>
             </select>
+            <loader [condition]="standardLoader" class="dropdownLoader"></loader>
         </div>
 
         <div class="form-group" *ngIf="students">
           <label for="sel1">Select Student:</label>
           <select class="form-control" id="sel1" [(ngModel)]="selectedStudent" [ngModelOptions]="{standalone: true}">
-             <option *ngIf="students == null" disabled>No students are added. Please try again later</option>
+            <option disabled="disabled" selected="selected">Select student</option>              
+            <option *ngIf="students == null" disabled>No students are added. Please try again later</option>
               <option *ngFor="let s of students" [ngValue]="s">{{s.name}}</option>
             </select>
+            <loader [condition]="studentLoader" class="dropdownLoader"></loader>
         </div>
 
         <div class="form-group" *ngIf="categories">
           <label for="sel1">Select Category:</label>
           <select class="form-control" formControlName="categoryId" id="sel1">
+            <option disabled="disabled" selected="selected">Select Category</option>             
              <option *ngIf="categories == null" disabled>No categories are added. Please try again later</option>
               <option *ngFor="let s of categories" [value]="s.id">{{s.name}}</option>
             </select>
+            <loader [condition]="categoryLoader" class="dropdownLoader"></loader>            
         </div>
 
         <div class="form-group">
@@ -205,7 +226,7 @@
     <!--List-->
 
     <ul class="list-group msg-list">
-      <li style="margin-top:-20px"><loader [condition]="loader1" ></loader></li>
+      <li style="margin-top:-20px"><loader [condition]="loader1" class="centerLoader" style="left:45%"></loader></li>
       <li class="list-group-item" *ngIf="emptyOldRecipient">No Message have been added yet.</li>
       <li class="list-group-item" *ngIf="emptySearchResult">No Data to display.</li>
       <li [ngClass]="{'list-group-item': true, 'selectednav': (selectedIndex === i) }" *ngFor="let r of oldMessageRecipients,let i = index;"
@@ -252,7 +273,7 @@
   </div>
 </div>
 
-<!-- <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -270,7 +291,7 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
 
 <div class="modal fade" id="closeConfirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -290,7 +311,7 @@
   </div>
 </div>
 
-<!-- <div class="modal fade" id="noMessageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="noMessageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -307,9 +328,9 @@
       </div>
     </div>
   </div>
-</div> -->
+</div>
 
-<!-- <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -326,25 +347,5 @@
       </div>
     </div>
   </div>
-</div> -->
-
-<div class="modal fade" id="modal-success" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span>{{heading}}</span>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <span>{{modalMessage}}}</span>
-      </div>
-      <div class="modal-footer">
-
-      </div>
-    </div>
-  </div>
 </div>
-
   </div>

@@ -1,5 +1,7 @@
 /node_modules/
 /dist/
 /npm-debug.log
-/src/**/*.js
-/src/**/*.map
+/src/app/**/*.js
+/src/app/**/*.map
+/src/main.js
+/src/main.js.map

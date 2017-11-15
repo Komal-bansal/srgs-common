@@ -288,10 +288,15 @@ h1{
 .comments{
     overflow-y: scroll;
 }
-.loader{
+loader{
     position: absolute;
     top: 50%;
 }
 .heading{
     color: #ea212e;
 }
+
+.panel-body{
+    min-height: 150px !important;
+}
+

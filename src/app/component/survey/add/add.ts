@@ -21,6 +21,8 @@ export class AddSurveyComponent implements OnInit {
   public surveyInfo: any;
   public selectedStandard: any;
   public loader: boolean = false;
+  public submitProgress:boolean=false;
+  public standardLoader:boolean=false;
 
   constructor(public cs: CommonService,
     public ss: SurveyService,
@@ -39,17 +41,17 @@ export class AddSurveyComponent implements OnInit {
   }
 
  public getStandards() {
-    this.loader = true;
-    this.cs.getStandards().subscribe(res => {
-       if(res.status == 204){
+  this.standardLoader=true;
+  this.cs.getStandards().subscribe(res => {
+        if(res.status == 204){
+        this.standardLoader=false;         
         this.standards = null;
         return;
       }
+      this.standardLoader=false;               
       this.standards = res;
-      this.loader = false;
     },
       err => {
-         this.loader = false;
          this.router.navigate(['/error']);
       })
   }
@@ -102,7 +104,20 @@ export class AddSurveyComponent implements OnInit {
       this.surveyForm.addControl("standards", new FormControl((''), [Validators.required]));
     }
   }
-
+  stdIds: any = [];
+  selectStandards(a:any,e: any) {
+    if(e==true){
+      this.stdIds.push(a.id);
+    }
+    else if(e==false){
+      this.stdIds.forEach((element:any, index:any)=>{
+         if (element==a.id){
+          this.stdIds.splice(index,1);
+        }
+      })
+    }
+    this.surveyForm.controls['standardIds'].patchValue(this.stdIds);
+  }
   public onStandards(ev: any) {
     var stan = ev;
     this.surveyForm.controls['standards'].patchValue(stan);
@@ -149,14 +164,14 @@ export class AddSurveyComponent implements OnInit {
   }
 
   public submitSurvey() {
-    this.loader = true;
+    this.submitProgress = true;
     this.ss.saveSurvey(this.surveyForm.value).subscribe(res => {
-      this.loader = false;
+      this.submitProgress = false;
       $('#submitModal').modal('show');
       this.initForm();
     },
       err => {
-        this.loader = false;
+        this.submitProgress = false;
         this.router.navigate(['/error']);
       })
   }

@@ -10,6 +10,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 
 export class SurveyComponent {
       constructor(private router:Router){
+         
          this.router.navigate(["/survey/current-survey"]);
     }
     

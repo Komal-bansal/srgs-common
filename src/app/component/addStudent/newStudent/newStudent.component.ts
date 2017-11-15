@@ -15,6 +15,7 @@ declare let $: any;
 export class NewStudentComponent {
 
   public loader: boolean = false;
+  public standardLoader:boolean=false;
 
   //NewStudent
 
@@ -38,10 +39,10 @@ export class NewStudentComponent {
   //New Student Functions
 
   public getStandards() {
-    this.loader = true;
+    this.standardLoader = true;
     this.as.getStandards().subscribe(res => {
       this.standards = res;
-      this.loader = false;
+      this.standardLoader = false;
     },
       err => {
         this.errorPage();
@@ -68,8 +69,7 @@ export class NewStudentComponent {
     return this.fb.group({
       "name": ['', [Validators.required]],
       "nickName": [''],
-      "contactNo": ['', [Validators.required,Validators.maxLength(10),Validators.minLength(10)]],
-      // "contactNo": ['', [Validators.required, Validators.minLength(9),Validators.maxLength(12)]],      
+      "contactNo": ['', [Validators.required, Validators.maxLength(12),Validators.minLength(9)]],
       "email": ['', [ValidationService.emailValidator]],
     });
   }

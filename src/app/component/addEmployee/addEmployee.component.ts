@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl, FormArray } from '@angular/forms';
 import { AdminService } from '../../providers/admin.service';
-import { HomeworkService } from '../../providers/homework.service'
+import { HomeworkService } from '../../providers/homework.service';
 import { ValidationService } from '../../providers/formValidation.service';
 import { AuthService } from '../../providers/auth.service';
 import { Router } from '@angular/router';
@@ -36,6 +36,7 @@ export class AddEmployeeComponent implements OnInit {
     public fb: FormBuilder,
     public router: Router,
     public _location: Location, ) {
+        
       this.fileUrl = localStorage.getItem('fileUrl');
 
   }
@@ -134,6 +135,7 @@ export class AddEmployeeComponent implements OnInit {
 
   // addStandard(e: any) {
   //   const control = <FormArray>e.controls['teacherStandards'];
+  //   control.push(this.inItStandard());
   // }
 
   // removeStandard(form: any, index: any) {

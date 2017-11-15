@@ -139,7 +139,7 @@ tr,td,table
 
 .studentList 
 {
-  width:95%;  
+  width:100%;  
   max-height: 200px;
   overflow:hidden;
   overflow-y:scroll;
@@ -166,9 +166,9 @@ tr,td,table
    /* margin-right: 5%; */
 }
 
-.view-btn{
+/* .view-btn{
   float: right;
-}
+} */
 
 .student-image{
   width: 30px;
@@ -200,4 +200,37 @@ tr,td,table
 } 
 .glyphicon-pencil{
   top:-32px !important;
+}
+
+.fixed{
+  /* position: fixed; */
+}
+/* .table{
+  display: block;
+  height: 100px;
+  overflow-x: auto;
+  overflow-y: auto;
+} */
+
+.searchStu{
+  margin-top:15px !important;
+}
+
+.row{
+  margin:0 !important;
+}
+
+.list-btn{
+  float: right;
+    margin-top: -30px;
+    background: none;
+    border: none;
+}
+
+.pointer{
+  cursor: pointer;
+}
+
+.pointer:hover{
+  background: rgba(48, 51, 66, 0.04);
 }

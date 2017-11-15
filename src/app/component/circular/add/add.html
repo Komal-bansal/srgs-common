@@ -12,6 +12,9 @@
       <loader [condition]="loader"></loader>
     </div> -->
     <form name="circular" [formGroup]="circular" (ngSubmit)="circularSubmit()" novalidate>
+      <div class="row text-center">
+        <loader class="centerLoader" [condition]="submitProgress"></loader>
+      </div>
       <div class="form-group">
         <label for="title">Enter Title</label>
         <span class="badge">
@@ -45,12 +48,11 @@
         <div class="col-lg-6 col-sm-12">
           <div class="form-group">
             <label for="circularTypeId">Audience</label>
-            <div class="row text-center">
-                  <loader [condition]="submitProgress" class="standardLoad"></loader>
-            </div>
             <select class="form-control" id="circularTypeId" name="circularTypeId" formControlName="circularTypeId" (ngModelChange)="onCircularType($event)">
+              <option disabled="disabled" selected="selected">Select Audience</option>
               <option *ngFor="let bx of circularType" [value]="bx.id">{{bx.name}}</option>
             </select>
+            <!-- <loader [condition]="audienceLoader" class="dropdownLoader"></loader> -->
             <div>
               <div [hidden]="circular.controls.circularTypeId.valid || circular.controls.circularTypeId.untouched" class="alert alert-warning">This field is required</div>
             </div>
@@ -62,9 +64,6 @@
         <div class=" col-sm-12 col-lg-12">
           <div class=" form-group" *ngIf="circular.value.circularTypeId == 2 ">
             <label for="standardIds">Select Standard</label>
-                <div class="row text-center">
-                  <loader [condition]="submitProgress" class="standardLoad"></loader>
-                </div>
             <button type="button" class="form-control" *ngIf="standards != null" (click)="dropdown ? dropdown = false : dropdown = true;"></button>
             <button type="button" class="form-control" *ngIf="standards == null">No Standards are added to the View. Try again later.</button>
             <!-- <span *ngIf="standards != null" class="glyphicon glyphicon-triangle-bottom" style="margin-left: -4%;
@@ -80,9 +79,7 @@
                 </label>
               </li>
             </ul>
-            <div>
-              <!--<div [hidden]="circular.controls.standard.valid || circular.controls.standard.untouched" class="alert alert-warning">This field is required</div>-->
-            </div>
+            <loader [condition]="standardLoader" class="dropdownLoader"></loader>
           </div>
         </div>
       </div>

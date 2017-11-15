@@ -20,7 +20,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-top-links navbar-right">
              <!--<li class="brand">Cornerstone</li>-->
-             <li class="logo-list"><img src="./icons/srgs.png" class="logo"></li>
+             <li class="logo-list"><img src="./icons/logo.png" class="logo"></li>
              <li>
                <a class="profile-img-container" (click)="displayProfile=!displayProfile"><img class="profile-img" src="{{log.getData('picUrl')}}" *ngIf="log.getData('picUrl')"></a>
              </li>
@@ -31,7 +31,7 @@
       </div>
     </nav>
 <!-- header end-->
-  <div class="profile-card" [hidden]="displayProfile" tabindex= '1' (blur)="displayProfile=true">
+  <div class="profile-card" id="profile-card" [hidden]="displayProfile" tabindex= '1' (blur)="displayProfile=true">
     <div class="row">
       <div class="col-sm-4 col-xs-4">
         <img class="profile-card-pic" src="{{log.getData('picUrl')}}" *ngIf="log.getData('picUrl')">
@@ -80,10 +80,10 @@
           </div> </a>
         </li>-->
       <li class="sidebar-items" *ngIf="role=='admin'">
-        <a class="section">Main</a>
+       
       </li>
       <li *ngFor="let page of pages; let i=index" class="sidebar-items">
-        <a [routerLink]="['/'+page.url]" routerLinkActive="active" (click)="getSelectedLink(i)">
+        <a [routerLink]="[page.url]" routerLinkActive="active" (click)="getSelectedLink(i)">
           <img class="sidebar-icon" src="{{page.icon}}"> <span class="page-title">{{page.title}}</span>
           <i class="fa fa-chevron-right arrow" aria-hidden="true"></i>
         </a>
@@ -91,30 +91,44 @@
  
      <li class="sidebar-items">
         <a [routerLink]="['/account']" routerLinkActive="active">
-          <img  class="sidebar-icon" src="./icons/profile.png">  Profile
+          <img  class="sidebar-icon" src="./icons/profile.png">  Account
           <i class="fa fa-chevron-right arrow" aria-hidden="true"></i>          
         </a>
       </li>
 
-       <li class="sidebar-items" data-toggle="modal" data-target=".bs-example-modal-sm">
-        <a href="#" routerLinkActive="active">
+        <li class="sidebar-items" routerLinkActive="active" data-toggle="modal" data-target=".bs-example-modal-sm">
+        <a routerLinkActive="active">
           <img class="sidebar-icon" src="http://icons.iconarchive.com/icons/custom-icon-design/flatastic-9/256/Logout-icon.png">          Logout
           <i class="fa fa-chevron-right arrow" aria-hidden="true"></i>          
         </a>
-      </li> 
-      <!-- <hr class="style-line"> -->
+      </li>  
       <li class="sidebar-items" *ngIf="role=='admin'">
         <a class="section">Add</a>
       </li>
+
       <li class="sidebar-items" *ngIf="role=='admin'">
-        <a [routerLink]="['/add-student/new-student']" routerLinkActive="active">
+        <a [routerLink]="['/time-table']" routerLinkActive="active">
+          <img  class="sidebar-icon" src="./icons/calendar.png">  Time Table
+          <i class="fa fa-chevron-right arrow" aria-hidden="true"></i>          
+        </a>
+      </li>
+
+      <li class="sidebar-items" *ngIf="role=='admin'">
+        <a [routerLink]="['/foodmenu']" routerLinkActive="active">
+          <img  class="sidebar-icon" src="./icons/food.png">  Food Menu
+          <i class="fa fa-chevron-right arrow" aria-hidden="true"></i>          
+        </a>
+      </li>
+
+      <li class="sidebar-items" *ngIf="role=='admin'">
+        <a [routerLink]="['/add-student']" routerLinkActive="active">
           <img  class="sidebar-icon" src="./icons/student.png">  Student
           <i class="fa fa-chevron-right arrow" aria-hidden="true"></i>          
         </a>
       </li>
 
 
-       <li class="sidebar-items emp" *ngIf="role=='admin'">
+       <li class="sidebar-items" *ngIf="role=='admin'" style="padding-bottom: 55px;">
         <a [routerLink]="['/add-employee']" routerLinkActive="active">
           <img  class="sidebar-icon" src="./icons/employee.png">  Employee
           <i class="fa fa-chevron-right arrow" aria-hidden="true"></i>          
@@ -132,7 +146,7 @@
   </div>
   <!-- /#page-content-wrapper -->
 </div>
-<div class="modal fade bs-example-modal-sm  " tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-sm" role="document">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal">&times;</button> You will be logged out!

@@ -1,0 +1,131 @@
+<div class="calendar-custom">
+    <angular2-fullcalendar [options]="menuOptions" id="menu"></angular2-fullcalendar>
+    <div class="row text-center">
+        <loader [condition]="loader" class="centerLoader"></loader>    
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="addItemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add a food item</h4>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addItem">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" formControlName="name" placeholder="Enter name of food item here">
+                <div [hidden]="addItem.controls.name.valid || addItem.controls.name.pristine || addItem.controls.name.untouched" class="alert alert-warning" >This field is required</div>
+              </div>
+
+            <div class="form-group">
+                <label for="type">Type</label>
+                <input type="text" class="form-control" id="type" name="type" formControlName="type" placeholder="Enter type of food item here">
+                <div [hidden]="addItem.controls.type.valid || addItem.controls.type.pristine || addItem.controls.type.untouched" class="alert alert-warning" >This field is required</div>
+              </div>
+
+            <div class="form-group">
+                <label for="url">Url</label>
+                <input type="text" class="form-control" id="url" name="url" formControlName="url" placeholder="Enter url of food item here">
+                <div [hidden]="addItem.controls.url.valid || addItem.controls.url.pristine || addItem.controls.url.untouched" class="alert alert-warning" >This field is required</div>
+              </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="postItem()" [disabled]="addItem.invalid" data-dismiss="modal">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addMenuModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Add a food menu</h4>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="addMenu">
+            <div class="form-group">
+                <label for="foodId">Food Item</label>
+                <select formControlName="foodId" name="foodId" id="foodId" class="form-control">
+                  <option disabled="disabled" selected="selected">Select Food item</option>             
+                  <option *ngFor="let item of foodItems" [value]="item.id">{{item.name}}</option>
+                </select>
+                <loader [condition]="itemLoader" class="dropdownLoader"></loader>
+              </div>
+
+            <div class="form-group">
+                <label for="day">Day</label>
+                <input type="date" class="form-control" id="day" name="day" formControlName="day" (change)="onDueDate($event)">
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="postMenu()" data-dismiss="modal" [disabled]="addMenu.invalid">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{heading}}</h4>
+      </div>
+      <div class="modal-body">
+        {{message}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="clickModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" *ngIf="selectedMenu">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{selectedMenu.title}}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div>
+              <img src="{{selectedMenu.foodPicUrl}}" class="food-pic">
+            </div>
+        </div>
+        <hr class="style-line">
+        <div class="row">
+          <div class="col-sm-2">
+            <i class="glyphicon glyphicon-list pull-right"></i>
+          </div>
+          <div class="col-sm-10">
+            <label>Food type</label>
+            <div class="url">{{selectedMenu.foodType}}</div>
+          </div>
+        </div>
+        <hr class="style-line">
+        
+        <div class="row">
+          <div class="col-sm-2">
+            <i class="glyphicon glyphicon-calendar pull-right " ></i>
+          </div>
+          <div class="col-sm-10">
+            <label>Day</label>
+            <div class="day">{{selectedMenu.start| date}}</div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>

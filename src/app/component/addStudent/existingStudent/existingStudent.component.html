@@ -1,56 +1,63 @@
 <div class="existing">
 <div class="panel panel-default">
   <div class="panel-body">
-    <div>
-      <label for="standardId">Standard</label>
-      <div class="row">
-        <div class="col-lg-10 col-sm-8 col-xs-6">
-          <select (change)="onSelectStandard($event.target.value)" class="form-control">
-            <option *ngIf="loader"><loader [condition]="loader"></loader></option>
-            <option disabled="disabled" selected="selected">Select a standard</option>
-            <option *ngFor="let s of standards" [value]="s.id" >{{s.name}}</option>
-          </select>
+    <div class="fixed">
+        <div>
+            <div class="col-sm-12">
+              <button class="btn btn-primary view-btn pull-right" [disabled]="!selectedStandardId" (click)="getStudentsByStd()">View All Students</button>  
+            </div> 
+          <div class="row">
+          <label for="standardId">Standard</label>
+              <select (change)="onSelectStandard($event.target.value)" class="form-control">
+                <option disabled="disabled" selected="selected">Select a standard</option>
+                <option *ngFor="let s of standards" [value]="s.id" >{{s.name}}</option>
+              </select>
+              <loader [condition]="standardLoader" class="dropdownLoader"></loader>
+            </div>         
         </div>
-        <div class="col-lg-2 col-sm-4 col-xs-6">
-          <button class="btn btn-primary view-btn" [disabled]="!selectedStandardId" (click)="getStudentsByStd()">View All Students</button>  
-          <!-- <button id="export">Export</button> -->
-        </div>
-        </div>          
-    </div>
 
-    <div *ngIf="showSearch" style="margin-top:20px;">
-      <span class="badge" *ngIf="students" >Total Students : {{totalStudents}}</span>
-      
-      <label >Student</label>
-      <div>
-          <input class="form-control" *ngIf="selectedStudent==null" type="text" placeholder="Search by Student Name ... " (keyup)="dropdown=false;searchStudents($event)"
-            style="display:inline;width:95%" >
-          <input *ngIf="selectedStudent" class="form-control" type="text" value="{{selectedStudent.name}}" onfocus="this.value= ''"
-            (keyup)="dropdown=false;searchStudents($event)" style="display:inline;width:95%">
-          <button style="background:none;border:none;outline:none;margin-left: -28px;" (click)="dropdown ? dropdown = false : dropdown = true;selected=false"> <span class="glyphicon glyphicon-chevron-down custom-icon" ></span></button>
-
-          <div class="studentList" *ngIf="(selected)">
-            <ul class="list-group">
-              <li class="list-group-item" *ngIf="emptySearchResult && !loader">No Data to Display</li> 
-              <li class=""><div class="row text-center"><loader [condition]="loader" class="loader"></loader></div></li>
-              <span *ngFor="let s of students">
-                      
-                    <li class="list-group-item" (click)="addForm=null;getStudentDetails(s.id)"> {{s.name}} </li> 
-                    </span>
-            </ul>
+        <div *ngIf="showSearch" style="margin-top:20px;">
+        <!-- <div class="form-group row">
+          <div class="col-lg-12">
+            <input class="form-control" type="search" placeholder="Search by complaint title .,. " id="example-search-input" (keyup)="searchStudents($event)">
           </div>
+        </div> -->
 
-          <div class="studentList" *ngIf="(dropdown)">
-            <ul class="list-group">
-              <span *ngFor="let s of studentsCOPY">
-                    <li class="list-group-item" (click)="dropdown=false;addForm=null;getStudentDetails(s.id)"> {{s.name}} </li> 
-              </span>
-            </ul>
+
+          <div class="row searchStu">
+          <label >Student</label>
+          <span class="badge" *ngIf="students" >Total Students : {{totalStudents}}</span>
+          
+              <input class="form-control" *ngIf="selectedStudent==null" type="text" placeholder="Search by Student Name ... " (keyup)="searchStudents($event)">
+              <input *ngIf="selectedStudent" class="form-control" type="text" value="{{selectedStudent.name}}" onfocus="this.value= ''"
+                (keyup)="searchStudents($event)">
+              <loader [condition]="studentLoader" class="dropdownLoader"></loader>
+               <button class="list-btn" (click)="dropdown ? dropdown = false : dropdown = true;selected=false"> <span class="glyphicon glyphicon-chevron-down custom-icon" ></span></button>               
+              <div class="studentList" *ngIf="(selected)">
+                <ul class="list-group">
+                  <li class="list-group-item" *ngIf="(emptySearchResult && !loader) || noStudents">No Data to Display</li> 
+                  <span *ngFor="let s of students">
+                      <li class="list-group-item" (click)="addForm=null;getStudentDetails(s.id)"> {{s.name}} </li> 
+                  </span>
+                </ul>
+              </div>
+
+               <div class="studentList" *ngIf="(dropdown)">
+                <ul class="list-group">
+                  <span *ngFor="let s of studentsCOPY">
+                        <li *ngIf="noStudents">No students are added in this class</li>
+                        <li class="list-group-item" (click)="dropdown=false;addForm=null;getStudentDetails(s.id)"> {{s.name}} </li> 
+                  </span>
+                </ul>
+              </div> 
+              
+              <!-- <select class="form-control">
+                <option *ngFor="let s of students" ><a (click)="">{{s.name}}</a></option>
+              </select> -->
           </div> 
-      </div>
     </div>
-
-    <div class="row" *ngIf="!showSearch && showTable">
+  </div>
+    <div class="row" *ngIf=" !showSearch && showTable">
       <div>
         <!-- <div class="col-sm-4 col-xs-4">
           <label>Order </label>
@@ -68,27 +75,30 @@
           <select (ngModelChange)="filterDetails($event)" [(ngModel)]="filter" class="form-control" >
             <option [value]="1" *ngIf="!showParent || !showSibling">All Details</option>
             <option [value]="2">Only Sibling Details</option>
-            <option [value]="3">Only Parent Details</option>                                    
+            <option [value]="3">Only Parent Details</option> 
+            <option [value]="4">Only Student List</option>                                   
           </select>
         </div>      
       </div>
       <div>
-        <loader [condition]="loader"></loader>
+        <div class="row text-center">
+          <loader [condition]="loader"></loader>
+        </div>
           <table class="table detail-table">
             <thead>
               <tr>
                 <th></th>
                 <th>Student's Name</th>
-                <th *ngIf="showParent">Parent's Details</th>
-                <th *ngIf="showSibling">Sibling's Details</th>
+                <th *ngIf="showParent && !showStudentOnly">Parent's Details</th>
+                <th *ngIf="showSibling && !showStudentOnly">Sibling's Details</th>
               </tr>
             </thead>
             <tbody *ngFor="let s of studentsInfo">
-              <tr>
-                <td><a (click)="getStudentDetails(s.id)"><img class="student-image" [attr.src]="fileUrl+'/' + s.picTimestamp"></a></td>
+              <tr (click)="getStudentDetails(s.id)" class="pointer">
+                <td><a ><img class="student-image" [attr.src]="fileUrl+'/' + s.picTimestamp"></a></td>
                 <td>{{s.name}}</td>
                 <!-- <td *ngFor="let p of s.parents">{{p.name}}</td> -->
-                <td *ngIf="showParent">
+                <td *ngIf="showParent && !showStudentOnly">
                    <table class="inner-table">
                      <thead>
                       <tr>
@@ -107,7 +117,7 @@
                      </tbody>
                   </table> 
                 </td>
-                <td *ngIf="showSibling">
+                <td *ngIf="showSibling && !showStudentOnly">
                   <table class=" inner-table" *ngIf="s.siblings.length>0">
                     <thead>
                       <tr>
@@ -132,7 +142,7 @@
     <div class="row" *ngIf="selectedStudent && showSearch">
       <div class="panel-group" id="accordion" *ngIf="selectedStudent" style="margin:5%;">
         <div class="panel panel-default">
-          <div class="row text-center"><loader [condition]="loader"></loader></div>
+          <!-- <div class="row text-center"><loader [condition]="loader"></loader></div> -->
           <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" data-target="#collapseOne">
             <h4 class="panel-title">
               Student Details
@@ -174,7 +184,7 @@
         <div class="panel panel-default" *ngIf="selectedStudent.siblings">
           <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo">
             <h4 class="panel-title">
-              Add Siblings
+              Sibling Details
             </h4>
           </div>
           <div id="collapseTwo" class="panel-collapse collapse">
@@ -232,16 +242,16 @@
                   <td>
                     <label for="sname3">Name</label>
                     <span>
-            <p *ngIf="(p.name==null)||(p.name=='')">-</p>
-            <p *ngIf="p.name!=null">{{p.name}}</p>
-            </span>
+                      <p *ngIf="(p.name==null)||(p.name=='')">-</p>
+                      <p *ngIf="p.name!=null">{{p.name}}</p>
+                    </span>
                   </td>
                   <td>
                     <label for="stnd3">Nickname</label>
                     <span>
-            <p *ngIf="(p.nickName==null)||(p.nickName=='')">-</p>
-            <p *ngIf="p.nickName!=null">{{p.nickName}}</p>
-            </span>
+                      <p *ngIf="(p.nickName==null)||(p.nickName=='')">-</p>
+                      <p *ngIf="p.nickName!=null">{{p.nickName}}</p>
+                    </span>
                   </td>
                   <td rowspan="2">
                     <button class="btn btn-primary pull-right " data-toggle="modal" data-target="#editParentModal" (click)="selectedParent = p;initEditParentForm()">Edit</button>
@@ -299,6 +309,7 @@
                 <div class="form-group col-sm-5">
                   <label for="stnd5">Select Standard</label>
                   <select id="stnd" class="form-control" formControlName="standardId">
+                        <option disabled="disabled" selected="selected">Select Standard</option>                                 
                         <option *ngFor="let s of standards" [value]="s.id">{{s.name}}</option>
                     </select>
                   <div [hidden]="addSiblingForm.controls.students.controls[i].controls.standardId.valid || addSiblingForm.controls.students.controls[i].controls.standardId.untouched" class="alert alert-warning">This field is required</div> 
@@ -425,6 +436,7 @@
           <input type="text" id="sname8" class="form-control" formControlName="name">
           <label for="stnd8">Standard</label>
           <select id="stnd8" class="form-control" formControlName="standardId">
+            <option disabled="disabled" selected="selected">Select Standard</option>                         
             <option *ngFor="let s of standards" [value]="s.id">{{s.name}}</option>
            </select>
         </div>
@@ -460,12 +472,23 @@
           <div class="form-group">
             <label for="mail">Email</label>
             <input type="text" id="mail" class="form-control" formControlName="email">
-            <div [hidden]="editParentForm.controls.email.valid||editParentForm.controls.email.untouched" class="alert alert-warning">Please enter a valid contact No</div>
+            <div [hidden]="editParentForm.controls.email.valid||editParentForm.controls.email.untouched" class="alert alert-warning">Please enter a valid Email Id</div>
             
+          </div>
+
+          <div class="form-group">
+            <label for="contactNo">Contact No</label>
+              <input type="text" maxlength="12" minlength="9" id="contactNo" class="form-control" name="contactNo" value="selectedParent.contactNo" [(ngModel)]="contactNo" (ngModelChange)="onContact($event)" [ngModelOptions]="{standalone:true}">  
+               
+           <div *ngIf="contactControl">
+            <div *ngIf="!editParentForm.controls.contactNo.valid||!editParentForm.controls.contactNo.untouched" class="alert alert-warning">Please enter a valid Contact Number 
+                 <div>The contact no should be between 9 to 12 digits</div> 
+               </div> 
+          </div> 
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-success pull-right" type="button" [disabled]="(!editParentForm.dirty)||(editParentForm.invalid)" (click)="submitEditParentForm()"
+          <button id="submitBtn" class="btn btn-success pull-right" type="button" [disabled]="(editParentForm.invalid)" (click)="submitEditParentForm()"
             data-dismiss="modal">Submit</button>
         </div>
       </form>

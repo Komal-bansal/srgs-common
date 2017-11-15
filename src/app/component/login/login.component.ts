@@ -2,20 +2,25 @@ import {Component} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../providers/auth.service';
 import { Router } from '@angular/router';
+declare let $: any;
+
 @Component({
   selector:'login',
   templateUrl:'./login.component.html',
   styleUrls:['./login.component.css']
 })
+
 export class LoginComponent{
-  public loader:boolean=false;
   loginForm: FormGroup;
   error:boolean = false;
+
+  public loader:boolean=false;
   constructor(public formBuilder: FormBuilder,
               public appService: AuthService,
               public router: Router){
-              if(appService.isLoggedIn()){                
-                router.navigate(['/dashboard']);
+              if(appService.isLoggedIn()){ 
+                $.noConflict();               
+                router.navigate(['/']);
               }
   }
   ngOnInit() {
@@ -24,12 +29,20 @@ export class LoginComponent{
       password: ['', [Validators.required]]
     });
   }
+  loaderOn(){
+    let url = document.URL;
+    if(url.indexOf('dashboard')){
+      return true;
+    }
+    else false;
+  }
   onSubmit(){
     this.loader=true;
     this.appService.verifyUser(this.loginForm.value).subscribe((res) => {
-      this.loader=false;
+      
       this.verifySuccessfully(res);
     }, (err) => {
+      this.loader=false;      
       this.verifyFailed(err);
     });
   }
@@ -37,6 +50,7 @@ export class LoginComponent{
   public verifySuccessfully(res:any) {
     localStorage.setItem("access_token", res.access_token);
     this.getUserInfo();
+
   }
 
   public verifyFailed(err:any) {
@@ -52,8 +66,9 @@ export class LoginComponent{
     });
   }
 
-  public loggedInSuccesfully(res:any) {    
+  public loggedInSuccesfully(res:any) {
     this.appService.storeData(res);
-    this.router.navigate(['/dashboard']);
+    this.loader=false;
+    this.router.navigate(['/']);
   }    
 }

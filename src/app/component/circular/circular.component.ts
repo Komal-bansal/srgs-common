@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { CircularService } from '../../providers/circular.service';
 import { Router } from '@angular/router';
+import { LoaderStop } from '../../providers/loaderstop.service';
 @Component({
   selector:'circular',
   templateUrl:'./circular.component.html',
@@ -20,7 +21,9 @@ export class CircularComponent implements OnInit {
    public noMore:boolean = true;
 
   constructor(private circularService: CircularService,
-                public router: Router) {
+                public router: Router , private ls : LoaderStop) {
+    this.ls.setLoader(false);
+                   
     
   }
 

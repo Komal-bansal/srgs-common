@@ -4,6 +4,7 @@ import { AdminService } from '../../../providers/admin.service';
 import { FormGroup, FormArray, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { ValidationService } from '../../../providers/formValidation.service';
 import { Router } from '@angular/router';
+import { LoaderStop } from '../../../providers/loaderstop.service';
 // import { Order } from '../../../providers/order.filter'; 
 
 
@@ -19,6 +20,8 @@ declare let $: any;
 export class ExistingStudentComponent {
 
   public loader: boolean = false;
+  public standardLoader:boolean=false;
+  public studentLoader:boolean=false;  
   public addForm: number; //for add sibling/parent form
 
 
@@ -49,15 +52,20 @@ export class ExistingStudentComponent {
   public studentsInfo:any;
   public showSearch:boolean=false;
   public showTable:boolean=false;
-
+  public filter:any;
+  public showSibling:boolean=true;
+  public showParent:boolean=true;
+  public showStudentOnly:boolean=false;
+  public noStudents:boolean=false;
   // public showStudentDetails:boolean=false;
   constructor(public _location: Location,
     public as: AdminService,
     public fb: FormBuilder,
-    public router: Router) {
+    public router: Router,
+    public ls : LoaderStop) {
 
     this.fileUrl = localStorage.getItem('fileUrl');
-
+    this.ls.setLoader(false);
     this.getStandards();
     // this.initNewStudentForm();
     // this.getStudents();
@@ -70,16 +78,14 @@ export class ExistingStudentComponent {
   }
 
   public getStandards() {
-    this.loader = true;
+    this.standardLoader = true;
     this.as.getStandards().subscribe(res => {
       this.standards = res;
-    console.log("fetch standard success");
       
-      this.loader = false;
+    this.standardLoader = false;
     },
       err => {
         this.errorPage();
-        // console.log("err", err);
       })
   }
 
@@ -91,18 +97,20 @@ export class ExistingStudentComponent {
   }
 
   public getStudents() {
-    this.loader = true;
+    this.studentLoader = true;
     this.as.getStudents(this.selectedStandardId).subscribe(res => {
+      if(res.status==204){
+        this.noStudents=true;
+      }
+      this.noStudents=false;
       this.totalStudents=res.length;
       this.students = res;
-      console.log(res);
       this.studentsCOPY = this.students;
-      this.loader = false;
+    this.studentLoader = false;
     },
       err => {
         // this.loader = false;
         this.errorPage();
-        // console.log(err);
       })
   }
   public selected: boolean = false;
@@ -132,7 +140,6 @@ export class ExistingStudentComponent {
     this.initAddSiblingForm();
     this.as.getStudentDetails(ev).subscribe(res => {
 
-      // console.log("res", res);
       this.selectedStudent = res;
       this.parentLimit = 3 - this.selectedStudent.parents.length;
       this.siblingLimit = 10 - this.selectedStudent.siblings.length;
@@ -146,12 +153,12 @@ export class ExistingStudentComponent {
   public getStudentsByStd(){
     // this.showStudentDetails=false;
     this.loader=true;
+      this.showTable=true;
+      this.showSearch=false;
+    
     this.as.getAllStudents(this.selectedStandardId).subscribe(res=>{
       this.loader=false;
-      this.showSearch=false;
-      this.showTable=true;
       this.studentsInfo=res;
-      console.log(this.studentsInfo);
     },err=>{
       this.errorPage();
     })
@@ -189,7 +196,6 @@ export class ExistingStudentComponent {
   public submitSibling() {
     this.loader = true;
     this.as.addSibling(this.selectedStudent.id, this.addSiblingForm.value.students).subscribe(res => {
-      // console.log(res);
       $('#updateModal').modal('show');
       this.getStudentDetails(this.selectedStudent.id);
       this.initAddSiblingForm();
@@ -198,7 +204,6 @@ export class ExistingStudentComponent {
       err => {
         // this.loader = false;
         this.errorPage();
-        // console.log(err);
       })
 
   }
@@ -207,7 +212,7 @@ export class ExistingStudentComponent {
     this.addParentForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
       nickName: new FormControl(''),
-      contactNo: new FormControl('', [Validators.required, Validators.pattern('[2-9]{2}[0-9]{8}$')]),
+      contactNo: new FormControl('', [Validators.required, Validators.maxLength(12),Validators.minLength(9)]),
       email: new FormControl('', [ValidationService.emailValidator]),
     })
   }
@@ -230,7 +235,6 @@ export class ExistingStudentComponent {
     },
       err => {
         this.loader = false;
-        // console.log(err);
         if (err === "400 - Bad Request") {
           this.initAddParentForm();
           $('#errModal').modal('show');
@@ -253,7 +257,6 @@ export class ExistingStudentComponent {
 
   public submitEditStudentForm() {
     this.loader = true;
-    // console.log(this.editStudentForm.value);
     this.as.updateStudent(this.selectedSibling.id, this.editStudentForm.value).subscribe(res => {
 
       $('#editSiblingModal').modal('hide');
@@ -263,31 +266,23 @@ export class ExistingStudentComponent {
     },
       err => {
         this.errorPage();
-        // console.log(err);
       })
   }
 
-  public initEditParentForm() {
-    // console.log(this.selectedParent);
-    if (this.selectedParent)
-      this.editParentForm = new FormGroup({
-        name: new FormControl(this.selectedParent.name),
-        nickName: new FormControl(this.selectedParent.nickName),
-        email: new FormControl(this.selectedParent.email, [ValidationService.emailValidator]),
-      });
-  }
+
 
   public submitEditParentForm() {
     this.loader = true;
     this.as.updateParent(this.selectedParent.id, this.editParentForm.value).subscribe(res => {
+      this.loader = false;      
       $('#editParentModal').modal('hide');
       this.getStudentDetails(this.selectedStudent.id);
       $('#updateModal').modal('show');
-      this.loader = false;
+      this.editParentForm.reset;
     },
       err => {
+      this.loader = false;        
         this.errorPage();
-        // console.log(err);
       })
   }
 
@@ -295,7 +290,6 @@ export class ExistingStudentComponent {
     this.loader = true;
     let formData = new FormData();
     formData.append('file', this.imgFile);
-    // console.log(this.selectedImageUpload.id);
     this.as.uploadParentImage(this.selectedImageUpload.id, formData).subscribe(res => {
       this.getStudentDetails(this.selectedStudent.id);
       $('#updateModal').modal('show');
@@ -303,7 +297,6 @@ export class ExistingStudentComponent {
       this.loader = false;
     },
       err => {
-        // console.log(err);
         this.errorPage();
       })
     this.selectedImageUpload = null;
@@ -313,7 +306,6 @@ export class ExistingStudentComponent {
     this.loader = true;
     let formData = new FormData();
     formData.append('file', this.imgFile);
-    // console.log(this.selectedImageUpload.id);
     this.as.uploadStudentImage(this.selectedImageUpload.id, formData).subscribe(res => {
       this.getStudentDetails(this.selectedStudent.id);
       $('#updateModal').modal('show');
@@ -322,7 +314,6 @@ export class ExistingStudentComponent {
     },
       err => {
         this.errorPage();
-        // console.log(err);
       })
     this.selectedImageUpload = null;
   }
@@ -344,31 +335,70 @@ export class ExistingStudentComponent {
     this.loader = false;
     this.router.navigate(['/error']);
   }
-public filter:any;
-public showSibling:boolean=true;
-public showParent:boolean=true;
+
   public filterDetails(e:any){
     if(e==1){
       this.showParent=true;
       this.showSibling=true;
+      this.showStudentOnly=false;
     }
 
     else if(e==2){
       this.showParent=false;
       this.showSibling= true;
+      this.showStudentOnly=false;
     }
 
     else if(e==3){
       this.showParent=true;
       this.showSibling=false;
+      this.showStudentOnly=false;
+    }
+    else if(e==4){
+      this.showParent=false;
+      this.showSibling=false;
+      this.showStudentOnly=true;
     }
   }
 // public order:any;
 //   public orderDetails(e:any){    
 //     if(e==1){
-//       // console.log("kjnkjn");
 //       this.studentsInfo.reverse;
 //     }
 //   }
+
+  public initEditParentForm() {
+    if (this.selectedParent)
+      this.editParentForm = new FormGroup({
+        name: new FormControl(this.selectedParent.name),
+        nickName: new FormControl(this.selectedParent.nickName),
+        email: new FormControl(this.selectedParent.email, [ValidationService.emailValidator]),
+        // contactNo: new FormControl(this.selectedParent.contactNo,[Validators.maxLength(12),Validators.minLength(9)])
+      });
+  }
+    
+public contactNo:any;
+public contactControl:boolean=false;
+public onContact(e:any){
+  if(this.selectedParent.contactNo!=e){
+    this.contactControl=true;    
+    this.editParentForm.addControl("contactNo", new FormControl(this.selectedParent.contactNo, [Validators.maxLength(12),Validators.minLength(9)]));
+    this.editParentForm.controls['contactNo'].patchValue(e);
+    // if(this.editParentForm.controls.contactNo.dirty || !this.editParentForm.dirty || this.editParentForm.invalid){
+    //   $('#submitBtn').addClass('disabled');
+    // }
+
+    // else{
+    //   $('#submitBtn').removeClass('disabled');
+      
+    // }
+
+  }
+  else{
+    this.contactControl=false;    
+    this.editParentForm.removeControl('contactNo');
+    
+  }
+}
 
 }

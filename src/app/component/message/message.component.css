@@ -250,12 +250,6 @@
     margin-right:0px !important;    
 }
 
-loader{
-    font-size:30px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-}
 .recipient{
     font-size: 100%;
 }
@@ -317,17 +311,35 @@ outline: none;
     width:200px;
 }
 
-.upload-img{
+.upload-dismiss{
+background: none;
+    outline: none;
+    border: none;
+    position: relative;
+    top: 31px;
+    font-size: 28px;
+    float: right;
+    opacity: 1 !important;
+     z-index: 1 !important; 
+}
+.upload-btn{
     background: none;
     outline: none;
     border: none;
     display: inline-block;
     position: relative;
-    left: 200px;
-    top: -77px;
-    font-size: 28px;
+    font-size: 74px;
+    right: -32%;
+    top: -145px;
+     opacity: 1 !important; 
+}
+.upload-btn span, .upload-img span{
+    color: black;
 }
 
+#img33{
+     opacity: 0.8; 
+}
 .input-msg{
     display: inline-block;
     width: 77%;
@@ -360,7 +372,10 @@ outline: none;
     border-style: none;
 }
 
-.standardLoad{
-  position: absolute;
-  top: 27%;
+.pic-modal{
+    width: 200px;
+}
+
+.pic-modal-content{
+    height: 200px;
 }

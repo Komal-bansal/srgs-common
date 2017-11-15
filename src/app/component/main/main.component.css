@@ -81,7 +81,7 @@ main{
 .profile-card{
     z-index:10000;
     outline: transparent;
-    position: absolute;
+    position: fixed;
     top: 58px;
     right: 7px;
     width:300px;
@@ -215,7 +215,7 @@ color: grey;
 }
 
 #toggle-header{
-  width: 25px;
+     width: 47px;
   -webkit-transition: all 0.4s ease;
     -moz-transition: all 0.4s ease;
     -o-transition: all 0.4s ease;
@@ -224,7 +224,7 @@ color: grey;
 
 #sidebar-wrapper {
     margin-top: 34px;
-    z-index:1;
+    z-index:1000;
     position: fixed;
     left: 250px;
     top: 18px;
@@ -248,7 +248,7 @@ color: grey;
     width: 100%;
     position: absolute;
     top: -10px;
-    padding:0 20px 20px 20px;
+    padding-right: 20px;
     /*padding: 15px;*/
     /*z-index: -10;*/
     /*z-index: 100;*/
@@ -341,7 +341,7 @@ color: grey;
 
     #page-content-wrapper {
         /* padding: 0px; */
-        padding-left:90px;
+        padding-left:80px;
         position: relative;
     }
 
@@ -464,10 +464,5 @@ div,table,a{
 }
 
 .shiftLeft{
-    padding:20px !important;
-    
-}
-
-.emp{
-    margin-bottom: 30px;
+    padding-left:20px !important;
 }

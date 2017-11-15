@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HomeworkService } from '../../../providers/homework.service';
 import { Router } from '@angular/router';
+import { LoaderStop } from '../../../providers/loaderstop.service';
 
 @Component({
   selector: 'current-homework',
@@ -19,8 +20,8 @@ export class CurrentHomework implements OnInit {
   public EmptyHomeworks: boolean = true;
 
 
-  constructor(private homeworkService: HomeworkService,
-    public router: Router) { }
+  constructor(private homeworkService: HomeworkService, private ls : LoaderStop,
+    public router: Router) { this.ls.setLoader(false); }
 
   ngOnInit(): void {
     this.fileUrl = localStorage.getItem("fileUrl") + "/";

@@ -19,8 +19,10 @@
         <div class="form-group col-sm-6">
           <label for="stnd">Select Standard</label>
           <select id="stnd" class="form-control" formControlName="standardId">
+            <option disabled="disabled" selected="selected">Select </option>             
             <option *ngFor="let s of standards" [value]="s.id">{{s.name}}</option>
           </select>
+          <loader [condition]="standardLoader" class="dropdownLoader"></loader>
           <div [hidden]="newStudentForm.controls.standardId.valid|| newStudentForm.controls.standardId.untouched" class="alert alert-warning">This field is required</div>
           
         </div>
@@ -53,7 +55,7 @@
                 <label for="ename">Parent's Contact Number</label>
                 <input type="text" id="ename" class="form-control" placeholder="Enter Parent's Contact Number" formControlName="contactNo">
                 <div [hidden]="newStudentForm.controls.parent.controls[i].controls.contactNo.valid || newStudentForm.controls.parent.controls[i].controls.contactNo.untouched || newStudentForm.controls.parent.controls[i].controls.contactNo.prestine" class="alert alert-warning">This field is required
-                  <div style="color:red">Contact No should be of 10 digits</div></div> 
+                  <div style="color:red">Contact No should be of 9 to 12 digits</div></div> 
 
               </div>
               <div class="form-group col-sm-12">
@@ -88,7 +90,7 @@
 
 </div>
 
-<div class="modal fade  " id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">

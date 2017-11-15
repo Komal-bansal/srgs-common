@@ -1,6 +1,6 @@
 .studentList 
 {
-    width: 95%;
+    /* width: 95%; */
     max-height: 200px;
     overflow:hidden;
     overflow-y:scroll;
@@ -82,4 +82,11 @@
 }
 th{
     padding-bottom: 15px;
+}
+
+.list-btn{
+    float: right;
+    margin-top: -30px;
+    border: none;
+    background: none;
 }

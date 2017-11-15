@@ -11,7 +11,7 @@ export class SuggestionComponent{
   public url:string ="";
   public tab:boolean = false;
   constructor(private route: ActivatedRoute,private router:Router){
-    
+     
     this.url = this.router.url;
     if(this.url == "/suggestion/for-me" || this.url == "/suggestion/for-student")
       this.tab = true;

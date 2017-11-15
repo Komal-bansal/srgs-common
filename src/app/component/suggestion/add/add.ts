@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
  @Component({
   selector:'suggestion-add',
   templateUrl:'./add.html',
-  styleUrls:['./../suggestion.component.css'],
+  // styleUrls:''
  })
  export class SuggestionAddComponent{
 
@@ -21,7 +21,8 @@ import { Router } from '@angular/router';
   public emptyStandards:boolean =  false;
   public emptyStudents: boolean = false;
   students:any=[];
-  public loader:any;
+  public standardLoader:boolean=false;
+  public studentLoader:boolean=false;
   // subjects:any = [];
   constructor(  private suggestionService:SuggestionService,
                 private commonService:CommonService,
@@ -58,16 +59,16 @@ import { Router } from '@angular/router';
        this.router.navigate(['/error']);
     });
     }
+
   public getStandards() {
-    // this.nl.showLoader();
-    this.loader=false;
+    this.standardLoader=true;
     this.suggestionService.getStandards().subscribe((res) => {
       if(res.status===204){
+    this.standardLoader=false;        
         this.emptyStandards = true;
-        this.loader=true;
         return;
       }
-      this.loader=true;
+    this.standardLoader=false;              
       this.emptyStandards=false;
       this.standards = res;
 
@@ -77,13 +78,15 @@ import { Router } from '@angular/router';
   }
 
    public getStudents(standardId:any) {
-    // this.nl.showLoader();
+    this.studentLoader=true;
     this.suggestion.controls["studentId"].reset();
     this.suggestionService.getStudents(standardId).subscribe((res) => {
       if(res.status === 204){
+    this.studentLoader=false;        
         this.emptyStudents = true;
         return;
       }
+    this.studentLoader=false;      
       this.emptyStudents = false;;
       this.students = res;
     }, (err) => {

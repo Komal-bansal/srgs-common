@@ -21,17 +21,14 @@
   <div class="panel-heading">
     Search Students
   </div>
-  <div class="panel-body">
-    <div class="row text-center">
-    <loader [condition]="loader"></loader>
-  </div>
-  
-      <div class="form-group row col-sm-12">
+  <div class="panel-body">  
+      <div class="form-group">
       
-        <input class="form-control" *ngIf="selectedStudent==null" type="text" placeholder="Search by Student Name ... " (keyup)="dropdown=false;searchStudents($event)" style="display:inline;width:95%">
+        <input class="form-control" *ngIf="selectedStudent==null" type="text" placeholder="Search by Student Name ... " (keyup)="dropdown=false;searchStudents($event)" >
         <input *ngIf="selectedStudent" class="form-control" type="text" value="{{selectedStudent.name}}" onfocus="this.value= ''"
-          (keyup)="dropdown=false;searchStudents($event)" style="display:inline;width:95%">
-        <button style="background:none;border:none;outline:none;margin-left: -28px;" (click)="dropdown ? dropdown = false : dropdown = true;selected=false"> <span class="glyphicon glyphicon-chevron-down" ></span></button>
+          (keyup)="dropdown=false;searchStudents($event)" >
+          <loader [condition]="loader" class="dropdownLoader"></loader>
+          <button class="list-btn" (click)="dropdown ? dropdown = false : dropdown = true;selected=false"> <span class="glyphicon glyphicon-chevron-down" ></span></button>
 
         <div class="studentList" *ngIf="(selected)">
           <ul class="list-group">
@@ -49,13 +46,13 @@
                </span>
           </ul>
         </div>
-      </div>
-    <br><br>
+        </div>
+    <!-- <br><br> -->
   <div class="panel panel-default" *ngIf="selectedStudent">
     <div class="panel-heading custom-panel-heading">{{selectedStudent.name}}</div>
     <div>
       <div class="row text-center">
-        <loader [condition]="loader1"></loader>
+        <loader [condition]="loader1" class="centerLoader"></loader>
       </div>
         <form [formGroup]="ratingForm" *ngIf="respStu" >
     <div class="panel-body">
@@ -81,16 +78,17 @@
                 <span  *ngFor="let p of respStu.rating;let ii=index">
                   <!--<div class="star-rating" >-->
                   <!--<div class="star-rating__wrap">-->
-                    <fieldset class="rating">
+                    <fieldset class="rating" id="star{{i+'af'+ii+1}}">
 
-                    <input *ngIf="respStu.isEmpty"  id="star{{i+'a'+ii+1}}" type="radio" formControlName="ratingId" [value]="p.id" [title]="p.name" >
-                    <label class="star-rating__ico fa fa-star-o fa-lg" for="star{{i+'a'+ii+1}}" *ngIf="respStu.isEmpty" ></label>
-                    </fieldset>
-                    <fieldset class="rating">
+                    <input *ngIf="respStu.isEmpty" id="star{{i+'a'+ii+1}}" (click)="updaterating($event,ii,i)" type="checkbox" formControlName="ratingId" [value]="p.id" [title]="p.name" >
+                    <label class="star-rating__ico fa fa-star-o fa-lg" id="star{{i+'af'+ii+1}}" for="star{{i+'a'+ii+1}}" *ngIf="respStu.isEmpty" ></label>
+                    </fieldset> 
+                     <fieldset class="rating" id="star{{i+'af'+ii+1}}">
    
-                    <input *ngIf="!respStu.isEmpty" id="star{{i+'a'+ii+1}}" [ngModel]="r.ratingId" type="radio" formControlName="ratingId" [value]="p.id" [title]="p.name">
-                    <label class="star-rating__ico fa fa-star-o fa-lg" for="star{{i+'a'+ii+1}}" *ngIf="!respStu.isEmpty"></label>
-                    </fieldset>
+                    <input *ngIf="!respStu.isEmpty" id="star{{i+'a'+ii+1}}" [ngModel]="r.ratingId" type="checkbox" formControlName="ratingId" [value]="p.id" [title]="p.name">
+                    <label class="star-rating__ico fa fa-star-o fa-lg" id="star{{i+'af'+ii+1}}" for="star{{i+'a'+ii+1}}" *ngIf="!respStu.isEmpty"></label>
+                    </fieldset> 
+
                     <!--</div>-->
                   <!--</div>-->
                   </span>

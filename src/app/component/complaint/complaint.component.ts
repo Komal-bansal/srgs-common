@@ -39,7 +39,8 @@ export class ComplaintComponent implements OnInit, AfterViewInit {
   public count: any = 0;
   constructor(public cs: ComplaintService,
     public router: Router,
-    public route: ActivatedRoute, ) {
+    public route: ActivatedRoute ) {
+       
     this.url = this.router.url;
 
     this.route.params.subscribe(param => {

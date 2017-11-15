@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@ang
 import { CommonService } from '../../../providers/common.service';
 import { PollService } from '../../../providers/poll.service';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 declare let $: any;
 
@@ -19,12 +20,17 @@ export class AddPollComponent implements OnInit {
   public selectedStandard: any;
   // public disable: boolean = false;
   public loader: boolean = false;
-
+  public submitProgress:boolean=false;
+  public standardLoader:boolean=false;
+  public infoLoader:boolean=false;
   public addPollForm: FormGroup;
+  public pollType:any=[];  
+  public pollOptionType:any=[];
 
   constructor(public fb: FormBuilder,
     public cs: CommonService,
     public ps: PollService,
+    public router:Router,
     private _location: Location) {
   }
 
@@ -48,21 +54,25 @@ export class AddPollComponent implements OnInit {
   }
 
   getStandards() {
+    this.standardLoader=true;
     this.ps.getStandards().subscribe(res => {
+      this.standardLoader=false;
       this.standards = res;
     },
       err => {
+        this.router.navigate(['/error']);
       })
   }
-
   getPollInfo() {
-    this.loader = true;
+    this.infoLoader = true;
     this.cs.getPollInfo().subscribe(res => {
       this.pollInfo = res;
-      this.loader = false;
+      this.pollType=this.pollInfo.pollType;
+      this.pollOptionType=this.pollInfo.pollOptionType;
+    this.infoLoader = false;      
     },
       err => {
-        this.loader = false;
+      this.router.navigate(['/error']);
       })
 
   }
@@ -78,6 +88,20 @@ export class AddPollComponent implements OnInit {
       // this.disable = true;
       this.addPollForm.addControl("standardIds", new FormControl('',Validators.required));
     }
+  }
+  stdIds: any = [];
+  selectStandards(a:any,e: any) {
+    if(e==true){
+      this.stdIds.push(a.id);
+    }
+    else if(e==false){
+      this.stdIds.forEach((element:any, index:any)=>{
+         if (element==a.id){
+          this.stdIds.splice(index,1);
+        }
+      })
+    }
+    this.addPollForm.controls['standardIds'].patchValue(this.stdIds);
   }
 
   public onStandards(ev: any) {
@@ -112,14 +136,14 @@ export class AddPollComponent implements OnInit {
   }
 
   public submitPoll(obj: any) {
+    this.submitProgress=true;
     this.ps.createPoll(obj).subscribe(res => {
-      this.loader = false;
+    this.submitProgress=false;      
       $('#submitModal').modal('show');
       this.initForm();
     },
       err => {
-        // console.log("err", err);
-        this.loader = false;
+        this.router.navigate(['/error']);
       })
   }
 

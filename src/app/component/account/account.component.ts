@@ -16,6 +16,7 @@ declare let $: any;
 export class AccountComponent implements OnInit {
     public details: any;
     public uploadPicForm: FormGroup;
+    public id:any;
     public name: any = "";
     public nickName: any;
     public picUrl: any;
@@ -25,18 +26,22 @@ export class AccountComponent implements OnInit {
     public newPicTimestamp: any;
     public imgFile: any;
     public loader: boolean = false;
-
+	public error : boolean = false;
+    public resetform:FormGroup;
+    public passwordMismatch:any="";
     constructor(public lg: LoggedInGuard,
         public cs: CommonService,
         public au: AuthService,
         public router: Router,
         public route: ActivatedRoute, ) {
+          
         this.url = this.router.url;
 
     }
 
 
     ngOnInit() {
+        this.buildForm();
         this.loadAccountDetails(this.details);
        this.initForm();
 
@@ -49,6 +54,19 @@ export class AccountComponent implements OnInit {
         })
     }
 
+    mismatch:boolean=false;
+
+  public buildForm() {
+    this.resetform = new FormGroup({
+      oldPassword: new FormControl('', [Validators.required]),
+      newPassword: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      confirmPassword: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    }, passwordMatchValidator);
+    function passwordMatchValidator(g: FormGroup) {
+       return g.get('newPassword').value === g.get('confirmPassword').value ? null : {'mismatch': true};
+    }
+  }
+
     public loadAccountDetails(details: any) {
 
         this.name = this.lg.getData('name');
@@ -56,6 +74,7 @@ export class AccountComponent implements OnInit {
         this.role = this.lg.getData('role');
         this.email = this.lg.getData('email');
         this.picUrl = this.lg.getData('picUrl');
+        this.id=this.lg.getData('id');
 
     }
 
@@ -86,4 +105,29 @@ export class AccountComponent implements OnInit {
             })
 
     }
+
+    public resetImage(){
+        this.loader=true;
+        this.au.resetImage().subscribe(res=>{
+        this.loader=false;
+        },err=>{
+            this.loader=false;            
+            this.router.navigate(['/error']);
+        })
+    }
+
+    onclick(){
+  	this.error = false;
+  }
+  onSubmit(){
+  	this.au.resetPassword(this.resetform.value)
+    .subscribe(response => {
+    },err => {
+        $('#mismatch').modal('show');
+    });
+    
+
+  }
+
+ 
 }

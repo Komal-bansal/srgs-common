@@ -16,45 +16,59 @@
     </div>
 
     <!--cards -->
-    <div style="margin-top: 2%;padding-top: 1%;" *ngIf="!EmptyComplaints">
-      <div class="container card" *ngFor="let c of complaints; let i = index;">
-        <div class="row">
-          <div class="col-sm-6 col-xs-6" *ngIf="!complaintStatus" style="margin: -8px -24px;">
+    <div style="margin-top: 2%;padding-top: 1%;">
+      <div  *ngIf="!EmptyComplaints">
+        <div class="container card" *ngFor="let c of complaints; let i = index;">
+          <div class="row">
+            <div class="col-sm-6 col-xs-6" *ngIf="!complaintStatus" style="margin: -8px -24px;">
+              <span [style.background]="c.statusColor" class="badge">@{{c.statusName}}</span>
+            </div>
+            <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(c,i)" data-toggle="modal" data-target="#myModal-card"></span>
+          </div>
+          <!-- <div class="row">
+          <div class="col-sm-6" *ngIf="!complaintStatus">
             <span [style.background]="c.statusColor" class="badge">@{{c.statusName}}</span>
           </div>
-          <span class="glyphicon glyphicon-resize-full expand" (click)="seletToExpand(c,i)" data-toggle="modal" data-target="#myModal-card"></span>
-        </div>
-        <!-- <div class="row">
-        <div class="col-sm-6" *ngIf="!complaintStatus">
-          <span [style.background]="c.statusColor" class="badge">@{{c.statusName}}</span>
-        </div>
-        <div class="col-sm-6" class="badge">{{c.priorityName}}</div>
-      </div> -->
-        <div class="row">
-          <img class="image" [attr.src]="fileUrl + c.studentPicUrl">
-        </div>
-        <div class="row name">{{c.studentName}}</div>
-        <div class="row class">{{c.studentStandardName}}</div>
-        <hr class="style-line">
-        <div class="row title">{{c.title}}</div>
-        <div class="row description">{{c.description}}</div>
-        <hr class="style-line">
-        <div class="row">
-          <div class="col-sm-6 col-xs-6 edit">
-            <a [ngClass]="{'disabled-click' : ((c.statusId == 4)|| (c.statusId == 6)) }" (click)="selectComplaint(c,i)" data-toggle="modal" data-target="#myModal"
-              class="action"><i class="glyphicon glyphicon-pencil"></i>
-          </a>
+          <div class="col-sm-6" class="badge">{{c.priorityName}}</div>
+        </div> -->
+          <div class="row">
+            <img class="image" [attr.src]="fileUrl + c.studentPicUrl">
           </div>
-          <div class="col-sm-6 col-xs-6 comment">
-            <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
-          </a>
+          <div class="row name">{{c.studentName}}</div>
+          <div class="row class">{{c.studentStandardName}}</div>
+          <hr class="style-line">
+          <div class="row title">{{c.title}}</div>
+          <div class="row description">{{c.description}}</div>
+          <hr class="style-line">
+          <div class="row">
+            <div class="col-sm-6 col-xs-6 edit">
+              <a [ngClass]="{'disabled-click' : ((c.statusId == 4)|| (c.statusId == 6)) }" (click)="selectComplaint(c,i)" data-toggle="modal" data-target="#myModal"
+                class="action"><i class="glyphicon glyphicon-pencil"></i>
+            </a>
+            </div>
+            <div class="col-sm-6 col-xs-6 comment">
+              <a onclick="$('.panel.panel-chat').show();" (click)="getComplaintCommentById(c)" class="action"><i class="glyphicon glyphicon-comment"></i>
+            </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <!--end cards-->
+
+    <div style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage==1)"><b>No Suggestion is added to View</b></div>
+    <div style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage!=1)"><b>No More Suggestion is added to View</b></div>
+    
+  </div>
+  <div class="panel-footer">
+    <!-- <button (click)="previousComplaint()" [disabled]="currentPage === 1" type="button" class="btn btn-primary">Previous</button> -->
+    <button (click)="nextComplaint()" type="button" [disabled]="EmptyComplaints || noMore" class="btn btn-primary">Load More</button>
+  </div>
+</div>
+
+
     <div class="modal fade" id="myModal-card" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
-      <div class="modal-dialog modal-custom" role="document">
+      <div class="modal-dialog" role="document">
         <div class="modal-content" *ngIf="selectedComplaint">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -97,7 +111,7 @@
             </div>
 
             <div class="row modal-description">
-              <div class="row "><label class="heading">Description : </label><span> {{selectedComplaint.description}}</span></div>
+              <div class="row "><label class="heading">Description : </label><span class="white-space"> {{selectedComplaint.description}}</span></div>
               <div class="row" *ngIf="selectedComplaint.rca"><label class="heading">Root Cause : </label><span> {{selectedComplaint.rca}}</span></div>
             </div>
             <hr class="style-line">
@@ -149,19 +163,9 @@
       <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
-    <div style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)"><b>No Suggestion is added to View</b></div>
-    <div class="row " style="text-align: center" *ngIf="(EmptyComplaints)&&(!loader)&&(currentPage!=1)" ><b>No More Suggestions</b></div>
-  </div>
-  <div class="panel-footer">
-    <!-- <button (click)="previousComplaint()" [disabled]="currentPage === 1" type="button" class="btn btn-primary">Previous</button> -->
-    <!-- <button (click)="nextComplaint()" type="button" [disabled]="EmptyComplaints || noMore" class="btn btn-primary">Next</button> -->
-    <div class="text-center"><button type="button" (click)="nextComplaint()" [disabled]="EmptyComplaints || noMore" class="btn btn-primary">Load More</button></div>
-
-  </div>
-</div>
 
 <!-- Edit Modal -->
-<div class="modal fade  " id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -175,6 +179,7 @@
           <div class="form-group">
             <label for="sel1">Assigned To:</label>
             <select class="form-control" formControlName="assignedTo">
+              <option disabled="disabled" selected="selected">Select</option>             
               <option *ngFor="let emp of employees" [value]="emp.id">{{emp.name}}</option>
             </select>
           </div>
@@ -203,7 +208,7 @@
 <!--End of Edit-->
 
 <!-- Close Modal -->
-<div class="modal fade  " id="myModal3" role="dialog">
+<div class="modal fade" id="myModal3" role="dialog">
   <div class="modal-dialog">
 
     <!-- Close Modal content-->
@@ -231,7 +236,7 @@
   </div>
 </div>
 
-<div class="modal fade  " id="myModal4" role="dialog">
+<div class="modal fade" id="myModal4" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

@@ -17,7 +17,7 @@
           <div class="row text-center">
             <loader [condition]="loader"></loader>
           </div>
-          <div   style="text-align: center" *ngIf="(responseByCategoryAndStatus == 0)">No data to display</div> 
+          <div   style="text-align: center" *ngIf="(responseByCategoryAndStatus == 0 &&  !loader)">No data to display</div> 
           <div class="flot-chart-content" *ngIf="complaintByCategoryAndStatus" GoogleChart id="chart_by_category_status" 
           [chartData]="complaintByCategoryAndStatus" [chartOptions]="categoryAndStatusChartOptions" chartType="BarChart" 
           (onSelected)="onSelected($event)"></div>
@@ -40,7 +40,7 @@
           <div class="row text-center">
             <loader [condition]="loader1"></loader>
           </div>
-          <div  style="text-align: center" *ngIf="(responseByStatus==0)">No data to display</div>
+          <div  style="text-align: center" *ngIf="(responseByStatus== 0 &&  !loader1)">No data to display</div>
      
           <div class="flot-chart-content" *ngIf="complaintByStatus" GoogleChart id="complaint_chart_by_status" 
           [chartData]="complaintByStatus"	[chartOptions]="complaintByStatusChartOptions" chartType="PieChart" 
